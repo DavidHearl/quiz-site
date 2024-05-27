@@ -40,7 +40,7 @@ class PictureQuestion(models.Model):
     choice_4 = models.CharField(max_length=100, null=True,  blank=True)
 
     def __str__(self):
-        return self.category
+        return f"{self.category.category} - {self.answer}"
 
 
 class MultipleChoice(models.Model):
@@ -55,7 +55,7 @@ class MultipleChoice(models.Model):
     choice_4 = models.CharField(max_length=100, null=True,  blank=True)
 
     def __str__(self):
-        return self.category
+        return f"{self.category.category} - {self.answer}"
 
 
 # True or False Questions
