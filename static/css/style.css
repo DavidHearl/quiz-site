@@ -1,12 +1,32 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
 }
 
 nav {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    width: 100px;
+    flex: 0 0 auto;
+    background-color: #1a2a3a;
+    height: 100vh;
+    max-width: 25%;
+}
+
+#main {
+    flex: 1 1 auto;
+    max-width: 20%;
+}
+
+/* Sidebar */
+.category-heading {
+    margin: 12px 24px 12px 12px;
+    color: #d9d2d2;
+}
+
+a {
+    text-decoration: none;
+    color: #d9d2d2;
 }

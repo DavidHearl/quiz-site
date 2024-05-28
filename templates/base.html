@@ -41,13 +41,17 @@
 <body>
     <!-- Navigation -->
     <nav>
+        <a href="{% url 'quiz_home' %}">Home</a>
 
+        <h3 class="category-heading">Question Categories</h3>
+        {% for question_category in catagories %}
+            <a href="{% url 'flag' %}">{{ question_category.category }}</a>
+        {% endfor %}
     </nav>
-
 
     <div id="main">
         {% block content %}
-
+            
         {% endblock %}
     </div>
     

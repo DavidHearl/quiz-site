@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            {{ flag_form.category.label_tag }} {{ flag_form.category }}
+        </div>
+        <div>
+            {{ flag_form.country.label_tag }} {{ flag_form.country }}
+        </div>
+        <div>
+            {{ flag_form.capital.label_tag }} {{ flag_form.capital }}
+        </div>
+        <div>
+            {{ flag_form.flag.label_tag }} {{ flag_form.flag }}
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
