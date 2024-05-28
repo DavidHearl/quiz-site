@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form method="post">
+    <!-- Add new item -->
+    <form class="flag-form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div>
             {{ flag_form.category.label_tag }} {{ flag_form.category }}
@@ -15,6 +16,25 @@
         <div>
             {{ flag_form.flag.label_tag }} {{ flag_form.flag }}
         </div>
+        <div>
+            {{ flag_form.created_by.label_tag }} {{ flag_form.created_by }}
+        </div>
         <button type="submit">Submit</button>
     </form>
+
+    <!-- Edit items -->
+    <div class="country-flex">
+        {% for country in countries %}
+            <div class="country">
+                <h2 class="country-title">{{ country.country }}</h2>
+                
+                {% if country.flag %}
+                    <img class="country-flag" src="{{ country.flag.url }}" alt="">
+                {% endif %}
+
+                <p>Capital: {{ country.capital }}</p>
+                <p>Difficulty: {{ country.difficulty }}</p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -10,3 +10,4 @@ class FlagForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Flag')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')

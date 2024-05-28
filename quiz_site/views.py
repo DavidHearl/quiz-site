@@ -23,17 +23,17 @@ def flag(request):
 
     if request.method == 'POST':
         flag_form = FlagForm(request.POST)
+        print(flag_form.errors)
         if flag_form.is_valid():
             flag = flag_form.save(commit=False)
             flag.save()
             messages.success(request, 'Area added successfully.')
+            print('Flag added successfully')
             return redirect('flag')
 
     context = {
         'countries': countries,
         'flag_form': FlagForm()
-
     }
 
     return render(request, 'quiz_site/guess_the_flag.html', context)
-
