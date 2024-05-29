@@ -41,12 +41,12 @@
 <body>
     <!-- Navigation -->
     <nav>
-        <a href="{% url 'quiz_home' %}">Home</a>
+        <a id="home" href="{% url 'quiz_home' %}">Home</a>
 
         <h3 class="category-heading">Question Categories</h3>
-        {% for question_category in catagories %}
-            <a href="{% url 'flag' %}">{{ question_category.category }}</a>
-        {% endfor %}
+
+        <a class="navigation-label" href="{% url 'flag' %}">Guess the Flag - TBF</a>
+        <a class="navigation-label" href="{% url 'logo' %}">Guess the Logo - TBF</a>
     </nav>
 
     <div id="main">

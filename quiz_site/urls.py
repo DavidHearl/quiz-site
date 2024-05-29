@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     path('flag/', views.flag, name='flag'),
+    path('logo/', views.logo, name='logo'),
 ]

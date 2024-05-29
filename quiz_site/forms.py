@@ -11,3 +11,14 @@ class FlagForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Flag')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
+
+
+class LogoForm(forms.ModelForm):
+    class Meta:
+        model = GuessTheLogo
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Logo')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')

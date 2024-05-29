@@ -13,6 +13,8 @@ nav {
     background-color: #1a2a3a;
     height: 100vh;
     max-width: 25%;
+    display: flex;
+    flex-direction: column;
 }
 
 #main {
@@ -21,14 +23,34 @@ nav {
 }
 
 /* Sidebar */
-.category-heading {
-    margin: 12px 24px 12px 12px;
+#home {
+    display: flex;
+    justify-content: center;
+    margin: 16px 24px 4px 12px;
+    padding: 4px;
     color: #d9d2d2;
+    font-size: 1.8rem;
+}
+
+.category-heading {
+    margin: 8px 24px 8px 12px;
+    padding: 4px;
+    color: #d9d2d2;
+    border-bottom: 1px solid #d9d2d2;
+}
+
+.navigation-label {
+    margin: 2px 24px 2px 12px;
+    padding: 4px;
 }
 
 a {
     text-decoration: none;
     color: #d9d2d2;
+}
+
+a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Flags */
@@ -40,7 +62,7 @@ a {
 }
 
 .country-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .country-flex {
@@ -57,7 +79,9 @@ a {
     flex-direction: column;
     border: 1px solid black;
     padding: 12px;
-    width: 150px;
+    width: 175px;
+    border-radius: 8px;
+    background: #d1d1d1;
 }
 
 .country-flag {

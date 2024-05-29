@@ -22,7 +22,7 @@ def flag(request):
     countries = GuessTheFlag.objects.all()
 
     if request.method == 'POST':
-        flag_form = FlagForm(request.POST)
+        flag_form = FlagForm(request.POST, request.FILES)
         print(flag_form.errors)
         if flag_form.is_valid():
             flag = flag_form.save(commit=False)
@@ -37,3 +37,24 @@ def flag(request):
     }
 
     return render(request, 'quiz_site/guess_the_flag.html', context)
+
+
+def logo(request):
+    logos = GuessTheLogo.objects.all()
+
+    if request.method == 'POST':
+        logo_form = LogoForm(request.POST, request.FILES)
+        print(logo.errors)
+        if logo_form.is_valid():
+            logo = logo_form.save(commit=False)
+            logo.save()
+            messages.success(request, 'Area added successfully.')
+            print('Logo added successfully')
+            return redirect('Logo')
+
+    context = {
+        'logos': logos,
+        'logo_form': LogoForm()
+    }
+
+    return render(request, 'quiz_site/guess_the_logo.html', context)
