@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from django.contrib.auth.models import User
 from .models import *
 from .forms import *
 
@@ -20,6 +21,7 @@ def quiz_home(request):
 
 def flag(request):
     countries = GuessTheFlag.objects.all()
+    users = User.objects.all()
 
     if request.method == 'POST':
         flag_form = FlagForm(request.POST, request.FILES)
@@ -33,7 +35,8 @@ def flag(request):
 
     context = {
         'countries': countries,
-        'flag_form': FlagForm()
+        'flag_form': flag_form,
+        'users': users,
     }
 
     return render(request, 'quiz_site/guess_the_flag.html', context)

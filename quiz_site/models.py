@@ -59,7 +59,7 @@ class GuessTheFlag(models.Model):
     flag = models.ImageField(null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

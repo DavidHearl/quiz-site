@@ -37,4 +37,40 @@
             </div>
         {% endfor %}
     </div>
+
+
+    {% for country in countries %}
+        <form class="edit-country-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label for="id_country">Country:</label>
+                <input id="id_country" type="text" name="country" value="{{ country.country }}">
+            </div>
+            <div>
+                <label for="id_capital">Capital:</label>
+                <input id="id_capital" type="text" name="capital" value="{{ country.capital }}">
+            </div>
+            <div>
+                <label for="id_difficulty">Difficulty:</label>
+                <input id="id_difficulty" type="text" name="difficulty" value="{{ country.difficulty }}">
+            </div>
+            <div>
+                <label for="id_flag">Flag:</label>
+                <input id="id_flag" type="file" name="flag">
+            </div>
+            <div>
+                <label for="id_created_by">Created By:</label>
+                <select id="id_created_by" name="created_by">
+                    {% for user in users %}
+                        <option value="{{ user.id }}" {% if user.id == country.created_by.id %}selected{% endif %}>
+                            {{ user.username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    {% endfor %}
+
+    
 {% endblock %}
