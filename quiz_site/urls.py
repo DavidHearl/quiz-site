@@ -3,6 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from . import views
 
 urlpatterns = [
-    path('flag/', views.flag, name='flag'),
-    path('Logos/', views.Logos, name='Logos'),
+    path('flags/', views.flags, name='flags'),
+    path('logos/', views.logos, name='logos'),
 ]

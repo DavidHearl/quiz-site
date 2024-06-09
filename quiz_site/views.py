@@ -19,13 +19,11 @@ def quiz_home(request):
     return render(request, 'quiz_site/quiz_home.html', context)
 
 
-def flag(request):
-<<<<<<< HEAD
-    countries = GuessTheFlag.objects.all()
+def flags(request):
     users = User.objects.all()
-=======
     countries = Flags.objects.all()
->>>>>>> 2a5f778273ccddf4cab88fc65c0e75cba568deb5
+    flag_form = FlagForm()
+
 
     if request.method == 'POST':
         flag_form = FlagForm(request.POST, request.FILES)
@@ -43,11 +41,12 @@ def flag(request):
         'users': users,
     }
 
-    return render(request, 'quiz_site/guess_the_flag.html', context)
+    return render(request, 'quiz_site/flags.html', context)
 
 
-def logo(request):
-    logos = Logo.objects.all()
+def logos(request):
+    logos = Logos.objects.all()
+    logo_form = LogoForm()
 
     if request.method == 'POST':
         logo_form = LogoForm(request.POST, request.FILES)
@@ -61,7 +60,7 @@ def logo(request):
 
     context = {
         'logos': logos,
-        'logo_form': LogoForm()
+        'logo_form': logo_form,
     }
 
-    return render(request, 'quiz_site/guess_the_logo.html', context)
+    return render(request, 'quiz_site/logos.html', context)

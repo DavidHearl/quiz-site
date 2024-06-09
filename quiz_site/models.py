@@ -97,9 +97,9 @@ class Celebrities(models.Model):
     difficulty = models.FloatField(null=True,  blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    full_name = self.first_name + " " + self.last_name
-
     def __str__(self):
+        full_name = self.first_name + " " + self.last_name
+
         return full_name
 
 
