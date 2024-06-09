@@ -9,7 +9,7 @@ from .forms import *
 # Create your views here.
 def quiz_home(request):
     catagories = QuestionCategory.objects.all()
-    countries = GuessTheFlag.objects.all()
+    countries = Flags.objects.all()
 
     context = {
         'countries': countries,
@@ -20,8 +20,12 @@ def quiz_home(request):
 
 
 def flag(request):
+<<<<<<< HEAD
     countries = GuessTheFlag.objects.all()
     users = User.objects.all()
+=======
+    countries = Flags.objects.all()
+>>>>>>> 2a5f778273ccddf4cab88fc65c0e75cba568deb5
 
     if request.method == 'POST':
         flag_form = FlagForm(request.POST, request.FILES)
@@ -43,7 +47,7 @@ def flag(request):
 
 
 def logo(request):
-    logos = GuessTheLogo.objects.all()
+    logos = Logo.objects.all()
 
     if request.method == 'POST':
         logo_form = LogoForm(request.POST, request.FILES)

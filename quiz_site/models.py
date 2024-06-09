@@ -33,6 +33,7 @@ class QuestionCategory(models.Model):
 # ----------------------------- Question Models ---------------------------------
 # -------------------------------------------------------------------------------
 
+
 class GeneralKnowledge(models.Model):
     # Question Category
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
@@ -49,7 +50,7 @@ class GeneralKnowledge(models.Model):
         return self.question
 
 
-class GuessTheFlag(models.Model):
+class Flags(models.Model):
     # Question Category
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
@@ -67,7 +68,7 @@ class GuessTheFlag(models.Model):
             return self.country
         
 
-class GuessTheLogo(models.Model):
+class Logos(models.Model):
     # Question Category
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
@@ -83,6 +84,32 @@ class GuessTheLogo(models.Model):
         if self.company:
             return self.company
         
+
+class Celebrities(models.Model):
+    # Question Category
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+
+    first_name = models.CharField(max_length=100, null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
+    photo = models.ImageField(null=True, blank=True)
+
+    # Question Stats
+    difficulty = models.FloatField(null=True,  blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    full_name = self.first_name + " " + self.last_name
+
+    def __str__(self):
+        return full_name
+
+
+class Movies(models.Model):
+    # Question Category
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+
+    name = models.CharField(max_length=100, null=True, blank=True)
+    actors = models.ManyToManyField(Celebrities)
+
 
 
 # Multiple Choice Questions
@@ -130,5 +157,3 @@ class GuessTheLogo(models.Model):
 
 #     def __str__(self):
 #         return self.question
-
-

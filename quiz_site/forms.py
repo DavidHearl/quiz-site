@@ -4,7 +4,7 @@ from .models import *
 
 class FlagForm(forms.ModelForm):
     class Meta:
-        model = GuessTheFlag
+        model = Flags
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -13,12 +13,12 @@ class FlagForm(forms.ModelForm):
         self.fields['created_by'].initial = User.objects.get(player_name='David')
 
 
-class LogoForm(forms.ModelForm):
+class LogosForm(forms.ModelForm):
     class Meta:
-        model = GuessTheLogo
+        model = Logos
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Logo')
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Logos')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
