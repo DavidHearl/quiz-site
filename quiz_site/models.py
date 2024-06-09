@@ -33,7 +33,6 @@ class QuestionCategory(models.Model):
 # ----------------------------- Question Models ---------------------------------
 # -------------------------------------------------------------------------------
 
-
 class GeneralKnowledge(models.Model):
     # Question Category
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
@@ -109,51 +108,3 @@ class Movies(models.Model):
 
     name = models.CharField(max_length=100, null=True, blank=True)
     actors = models.ManyToManyField(Celebrities)
-
-
-
-# Multiple Choice Questions
-# class PictureQuestion(models.Model):
-#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-#     answer = models.CharField(max_length=100)
-#     difficulty = models.FloatField(null=True,  blank=True)
-#     image = models.ImageField()
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     choice_1 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_2 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_3 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_4 = models.CharField(max_length=100, null=True,  blank=True)
-
-#     def __str__(self):
-#         return f"{self.category.category} - {self.answer}"
-
-
-# class MultipleChoice(models.Model):
-#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE,null=True,  blank=True)
-#     answer = models.CharField(max_length=100)
-#     difficulty = models.FloatField(null=True,  blank=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     choice_1 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_2 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_3 = models.CharField(max_length=100, null=True,  blank=True)
-#     choice_4 = models.CharField(max_length=100, null=True,  blank=True)
-
-#     def __str__(self):
-#         return f"{self.category.category} - {self.answer}"
-
-
-# True or False Questions
-# class TrueFalseQuestion(models.Model):
-#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE,null=True,  blank=True)
-#     question = models.CharField(max_length=128)
-#     answer = models.CharField(max_length=100)
-#     difficulty = models.FloatField(null=True,  blank=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     true_statement = models.CharField(max_length=100)
-#     false_statement = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return self.question

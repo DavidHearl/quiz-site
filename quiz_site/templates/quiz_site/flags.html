@@ -63,7 +63,7 @@
                 <select id="id_created_by" name="created_by">
                     {% for user in users %}
                         <option value="{{ user.id }}" {% if user.id == country.created_by.id %}selected{% endif %}>
-                            {{ user.username }}
+                            {{ user.player_name }}
                         </option>
                     {% endfor %}
                 </select>

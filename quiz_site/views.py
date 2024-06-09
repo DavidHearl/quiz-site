@@ -33,7 +33,7 @@ def flags(request):
             flag.save()
             messages.success(request, 'Area added successfully.')
             print('Flag added successfully')
-            return redirect('flag')
+            return redirect('flags')
 
     context = {
         'countries': countries,
