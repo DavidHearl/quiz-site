@@ -53,43 +53,8 @@ a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Flags */
-.flag-form {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid black;
-    padding: 16px;
+.missing {
+    background: #f4c3c3;
+    border: 1px solid gray;
+    border-radius: 4px;
 }
-
-.country-title {
-    font-size: 1rem;
-}
-
-.country-flex {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 16px;
-}
-
-.country {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    border: 1px solid black;
-    padding: 12px;
-    width: 175px;
-    border-radius: 8px;
-    background: #d1d1d1;
-}
-
-.country-flag {
-    width: 100%;
-    border: 1px solid black;
-    border-radius: 2px;
-    margin: 4px 0;
-}
-
-
-

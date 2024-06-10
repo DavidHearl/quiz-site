@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404, reverse
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -21,7 +21,7 @@ def quiz_home(request):
 
 def flags(request):
     users = User.objects.all()
-    countries = Flags.objects.all()
+    flags = Flags.objects.all()
     flag_form = FlagForm()
 
 
@@ -31,12 +31,36 @@ def flags(request):
         if flag_form.is_valid():
             flag = flag_form.save(commit=False)
             flag.save()
-            messages.success(request, 'Area added successfully.')
+            messages.success(request, 'Flag added successfully.')
             print('Flag added successfully')
             return redirect('flags')
 
     context = {
-        'countries': countries,
+        'flags': flags,
+        'flag_form': flag_form,
+        'users': users,
+    }
+
+    return render(request, 'quiz_site/flags.html', context)
+
+
+def edit_flags(request, flag_id):
+    users = User.objects.all()
+    flag = get_object_or_404(Flags, pk=flag_id)
+    flag_form = FlagForm(instance=flag)
+
+    if request.method == 'POST':
+        edit_flag_form = FlagForm(request.POST, request.FILES, instance=flag)
+        print(edit_flag_form.errors)
+        if edit_flag_form.is_valid():
+            flag = edit_flag_form.save(commit=False)
+            flag.save()
+            messages.success(request, 'Area added successfully.')
+            print('Flag edited successfully')
+            return redirect('flags')
+
+    context = {
+        'flags': flags,  # changed to flag
         'flag_form': flag_form,
         'users': users,
     }

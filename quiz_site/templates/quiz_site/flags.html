@@ -1,76 +1,97 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/flags.css' %}">
+{% endblock %}
+
 {% block content %}
     <!-- Add new item -->
-    <form class="flag-form" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div>
-            {{ flag_form.category.label_tag }} {{ flag_form.category }}
-        </div>
-        <div>
-            {{ flag_form.country.label_tag }} {{ flag_form.country }}
-        </div>
-        <div>
-            {{ flag_form.capital.label_tag }} {{ flag_form.capital }}
-        </div>
-        <div>
-            {{ flag_form.flag.label_tag }} {{ flag_form.flag }}
-        </div>
-        <div>
-            {{ flag_form.created_by.label_tag }} {{ flag_form.created_by }}
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-
-    <!-- Edit items -->
     <div class="country-flex">
-        {% for country in countries %}
+        <div class="country">
+            <form class="flag-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div>
+                    <input id="id_country" type="text" name="country" value="{{ flag.country }}">
+                </div>
+                <div>
+                    <label for="id_flag">Flag:</label>
+                    <input id="id_flag" type="file" name="flag">
+                </div>
+                <!-- <div class="flex">
+                    <label for="file-upload" class="custom-file-upload">
+                        Upload Image
+                    </label>
+                    <input id="file-upload" type="file"/>
+                </div> -->
+                <div class="column-flex">
+                    <label for="id_capital">Capital:</label>
+                    <input id="id_capital"" type="text" name="capital" value="{{ flag.capital }}">
+                </div>
+                <div class="column-flex">
+                    <label for="id_difficulty">Difficulty:</label>
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ flag.difficulty }}">
+                </div>
+                <div class="column-flex">
+                    <label for="id_created_by">Created By:</label>
+                    <select class="created_by" id="id_created_by" name="created_by">
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
+                                {{ user.player_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="submit" type="submit">Submit</button>
+            </form> 
+        </div>
+        
+        {% for flag in flags %}
             <div class="country">
-                <h2 class="country-title">{{ country.country }}</h2>
-                
-                {% if country.flag %}
-                    <img class="country-flag" src="{{ country.flag.url }}" alt="">
-                {% endif %}
-
-                <p>Capital: {{ country.capital }}</p>
-                <p>Difficulty: {{ country.difficulty }}</p>
+                <form class="edit-country-form" method="post" enctype="multipart/form-data" action="{% url 'edit_flags' flag.id %}">
+                    {% csrf_token %}
+                    <div>
+                        <input id="id_country" type="text" name="country" value="{{ flag.country }}">
+                    </div>
+                    <div class="flex">
+                        {% if flag.flag %}
+                            <img class="country-flag" src="{{ flag.flag.url }}" alt="">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_flag">Flag:</label>
+                        <input id="id_flag" type="file" name="flag">
+                    </div>
+                    <!-- <div class="flex">
+                        <label for="file-upload" class="custom-file-upload">
+                            Upload Image
+                        </label>
+                        <input id="file-upload" type="file"/>
+                    </div> -->
+                    <div class="column-flex">
+                        <label for="id_capital">Capital:</label>
+                        <input id="id_capital" class="{% if flag.capital == None %}missing{% endif %} type="text" name="capital" value="{{ flag.capital }}">
+                    </div>
+                    <div class="column-flex">
+                        <label for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" class="{% if flag.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ flag.difficulty }}">
+                    </div>
+                    <div class="column-flex">
+                        <label for="id_created_by">Created By:</label>
+                        <select class="created_by" id="id_created_by" name="created_by">
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
+                                    {{ user.player_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="submit" type="submit">Save</button>
+                </form>
             </div>
         {% endfor %}
     </div>
-
-
-    {% for country in countries %}
-        <form class="edit-country-form" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div>
-                <label for="id_country">Country:</label>
-                <input id="id_country" type="text" name="country" value="{{ country.country }}">
-            </div>
-            <div>
-                <label for="id_capital">Capital:</label>
-                <input id="id_capital" type="text" name="capital" value="{{ country.capital }}">
-            </div>
-            <div>
-                <label for="id_difficulty">Difficulty:</label>
-                <input id="id_difficulty" type="text" name="difficulty" value="{{ country.difficulty }}">
-            </div>
-            <div>
-                <label for="id_flag">Flag:</label>
-                <input id="id_flag" type="file" name="flag">
-            </div>
-            <div>
-                <label for="id_created_by">Created By:</label>
-                <select id="id_created_by" name="created_by">
-                    {% for user in users %}
-                        <option value="{{ user.id }}" {% if user.id == country.created_by.id %}selected{% endif %}>
-                            {{ user.player_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit">Save</button>
-        </form>
-    {% endfor %}
 
     
 {% endblock %}
