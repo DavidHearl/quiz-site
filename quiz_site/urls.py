@@ -6,4 +6,5 @@ urlpatterns = [
     path('flags/', views.flags, name='flags'),
     path('edit_flags/<int:flag_id>/', views.edit_flags, name='edit_flags'),
     path('logos/', views.logos, name='logos'),
+    path('edit_logos/<int:logo_id>/', views.edit_logos, name='edit_logos'),
 ]

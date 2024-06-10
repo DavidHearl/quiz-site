@@ -72,7 +72,7 @@ class Logos(models.Model):
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
     # Answers
-    company = models.CharField(max_length=100, null=True, blank=True)
+    company = models.CharField(max_length=100)
     logo = models.ImageField(null=True, blank=True)
 
     # Question Stats
@@ -81,30 +81,30 @@ class Logos(models.Model):
 
     def __str__(self):
         if self.company:
-            return self.company
+            return self.company if self.company else ''
         
 
-class Celebrities(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+# class Celebrities(models.Model):
+#     # Question Category
+#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
-    photo = models.ImageField(null=True, blank=True)
+#     first_name = models.CharField(max_length=100, null=True, blank=True)
+#     last_name = models.CharField(max_length=100, null=True, blank=True)
+#     photo = models.ImageField(null=True, blank=True)
 
-    # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     # Question Stats
+#     difficulty = models.FloatField(null=True,  blank=True)
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self):
-        full_name = self.first_name + " " + self.last_name
+#     def __str__(self):
+#         full_name = self.first_name + " " + self.last_name
 
-        return full_name
+#         return full_name
 
 
-class Movies(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+# class Movies(models.Model):
+#     # Question Category
+#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
-    name = models.CharField(max_length=100, null=True, blank=True)
-    actors = models.ManyToManyField(Celebrities)
+#     name = models.CharField(max_length=100, null=True, blank=True)
+#     actors = models.ManyToManyField(Celebrities)

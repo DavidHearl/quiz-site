@@ -11,7 +11,7 @@ body {
 nav {
     flex: 0 0 auto;
     background-color: #1a2a3a;
-    height: 100vh;
+    min-height: 100vh;
     max-width: 25%;
     display: flex;
     flex-direction: column;
@@ -20,6 +20,7 @@ nav {
 #main {
     flex: 1 1 auto;
     margin: 16px;
+    flex-grow: 1;
 }
 
 /* Sidebar */

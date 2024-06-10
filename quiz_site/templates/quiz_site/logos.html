@@ -1,5 +1,121 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/logos.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Add new item -->
+    <div class="logo-flex">
+        <div class="logo">
+            <form class="logo-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Company -->
+                <div>
+                    <input id="id_company" type="text" name="company" value="{{ logo.company }}">
+                </div>
+
+                <!-- Logo Image -->
+                <div>
+                    <label for="id_logo">Logo:</label>
+                    <input id="id_logo" type="file" name="logo">
+                </div>
+
+                <!-- Difficulty -->
+                <div class="column-flex">
+                    <label for="id_difficulty">Difficulty:</label>
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ logo.difficulty }}">
+                </div>
+
+                <!-- Created By -->
+                <div class="column-flex">
+                    <label for="id_created_by">Created By:</label>
+                    <select class="created_by" id="id_created_by" name="created_by">
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == logo.created_by.id %}selected{% endif %}>
+                                {{ user.player_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Category -->
+                <div class="column-flex">
+                    <label for="id_category">Category:</label>
+                    <select class="category" id="id_category" name="category">
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id == logo.category.id %}selected{% endif %}>
+                                {{ category.category }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button class="submit" type="submit">Submit</button>
+            </form> 
+        </div>
+
+        {% for logo in logos %}
+            <div class="logo">
+                <form class="edit-country-form" method="post" enctype="multipart/form-data" action="{% url 'edit_logos' logo.id %}">
+                    {% csrf_token %}
+
+                    <!-- Country -->
+                    <div>
+                        <input id="id_company" type="text" name="company" value="{{ logo.company }}">
+                    </div>
+
+                    <!-- Logo Image -->
+                    <div class="flex">
+                        {% if logo.logo %}
+                            <img class="company-logo" src="{{ logo.logo.url }}" alt="">
+                        {% endif %}
+                    </div>
+
+                    <!-- Logo -->
+                    <div>
+                        <label for="id_logo">Logo:</label>
+                        <input id="id_logo" type="file" name="logo">
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="column-flex">
+                        <label for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" class="{% if logo.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ logo.difficulty }}">
+                    </div>
+
+                    <!-- Created By -->
+                    <div class="column-flex">
+                        <label for="id_created_by">Created By:</label>
+                        <select class="created_by" id="id_created_by" name="created_by">
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if user.id == logo.created_by.id %}selected{% endif %}>
+                                    {{ user.player_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="column-flex">
+                        <label for="id_category">Category:</label>
+                        <select class="category" id="id_category" name="category">
+                            <option value="" {% if not logo.category %}selected{% endif %}>None</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if logo.category and category.id == logo.category.id %}selected{% endif %}>
+                                    {{ category.category }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button class="submit" type="submit">Save</button>
+                </form>
+            </div>
+        {% endfor %}
+
+    </div>
 {% endblock %}
