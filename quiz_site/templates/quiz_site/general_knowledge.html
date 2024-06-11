@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general_knowledge.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="database-container">
+        <div class="data-card-wide">
+            <form class="form-container" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="question-row">
+                    <!-- Question -->
+                    <div class="question">
+                        <label for="id_question">Question:</label>
+                        <input class="question-input" id="id_question" type="text" name="question" value="{{ general_knowledge.question }}">
+                    </div>
+
+                    <!-- Answer -->
+                    <div class="answer">
+                        <label for="id_answer">Answer:</label>
+                        <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
+                    </div>
+                </div>
+                
+                <div class="question-row">
+                    <!-- Difficulty -->
+                    <div class="column-flex row-width">
+                        <label for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
+                    </div>
+
+                    <!-- Created By -->
+                    <div class="column-flex row-width">
+                        <label for="id_created_by">Created By:</label>
+                        <select class="created_by" id="id_created_by" name="created_by">
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if user.id == general_knowledge.created_by.id %}selected{% endif %}>
+                                    {{ user.player_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="column-flex row-width">
+                        <label for="id_category">Category:</label>
+                        <select class="category" id="id_category" name="category">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id == general_knowledge.category.id %}selected{% endif %}>
+                                    {{ category.category }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button class="submit-wide" type="submit">Submit</button>
+                </div>
+            </form> 
+        </div>
+
+        {% for question in general_knowledge %}
+            <div class="data-card-wide">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
+                    {% csrf_token %}
+                    <div class="question-row">
+                        <!-- Question -->
+                        <div class="question">
+                            <label for="id_question">Question:</label>
+                            <input class="question-input" id="id_question" type="text" name="question" value="{{ question.question }}">
+                        </div>
+
+                        <!-- Answer -->
+                        <div class="answer">
+                            <label for="id_answer">Answer:</label>
+                            <input class="question-input" id="id_answer" type="text" name="answer" value="{{ question.answer }}">
+                        </div>
+                    </div>
+                    
+                    <div class="question-row">
+                        <!-- Difficulty -->
+                        <div class="column-flex row-width">
+                            <label for="id_difficulty">Difficulty:</label>
+                            <input id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
+                        </div>
+
+                        <!-- Created By -->
+                        <div class="column-flex row-width">
+                            <label for="id_created_by">Created By:</label>
+                            <select class="created_by" id="id_created_by" name="created_by">
+                                {% for user in users %}
+                                    <option value="{{ user.id }}" {% if user.id == question.created_by.id %}selected{% endif %}>
+                                        {{ user.player_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="column-flex row-width">
+                            <label for="id_category">Category:</label>
+                            <select class="category" id="id_category" name="category">
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if category.id == question.category.id %}selected{% endif %}>
+                                        {{ category.category }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button class="submit-wide" type="submit">Submit</button>
+                    </div>
+                </form> 
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

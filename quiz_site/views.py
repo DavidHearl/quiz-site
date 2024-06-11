@@ -18,6 +18,59 @@ def quiz_home(request):
 
     return render(request, 'quiz_site/quiz_home.html', context)
 
+
+def general_knowledge(request):
+    users = User.objects.all()
+    general_knowledge = GeneralKnowledge.objects.all()
+    general_knowledge_form = GeneralKnowledgeForm()
+    categories = QuestionCategory.objects.all()
+
+    if request.method == 'POST':
+        general_knowledge_form = GeneralKnowledgeForm(request.POST, request.FILES)
+        print(general_knowledge_form.errors)
+        if general_knowledge_form.is_valid():
+            general_knowledge = general_knowledge_form.save(commit=False)
+            general_knowledge.save()
+            messages.success(request, 'Question added successfully.')
+            print('Question added successfully')
+            return redirect('general_knowledge')
+
+    context = {
+        'general_knowledge': general_knowledge,
+        'general_knowledge_form': general_knowledge_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/general_knowledge.html', context)
+
+
+def edit_general_knowledge(request, question_id):
+    users = User.objects.all()
+    categories = QuestionCategory.objects.all()
+    question = get_object_or_404(GeneralKnowledge, pk=question_id)
+    general_knowledge_form = GeneralKnowledgeForm(instance=question)
+
+    if request.method == 'POST':
+        edit_general_knowledge_form = GeneralKnowledgeForm(request.POST, request.FILES, instance=question)
+        print(edit_general_knowledge_form.errors)
+        if edit_general_knowledge_form.is_valid():
+            question = edit_general_knowledge_form.save(commit=False)
+            question.save()
+            messages.success(request, 'Question edited successfully.')
+            print('Question edited successfully')
+            return redirect('general_knowledge')
+
+    context = {
+        'general_knowledge': general_knowledge,
+        'general_knowledge_form': general_knowledge_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/general_knowledge.html', context)
+    
+
 def flags(request):
     users = User.objects.all()
     flags = Flags.objects.all()

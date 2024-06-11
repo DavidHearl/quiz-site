@@ -170,3 +170,47 @@ input {
     border-radius: 4px;
     color: #ccc;
 }
+
+/* Wide Database */
+.data-card-wide {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 8px;
+    width: 100%;
+    border-radius: 16px;
+    background: rgba(20,28,44,255);
+    margin: 0px 16px;
+}
+
+.question-row {
+    display: flex;
+    gap: 12px;
+}
+
+.question-input {
+    text-align: start;
+}
+
+.question {
+    width: 60%;
+}
+
+.answer {
+    width: 40%;
+}
+
+.row-width {
+    width: 25%;
+}
+
+.submit-wide {
+    margin-top: 16px;
+    height: 28px;
+    background: rgba(94,65,255,255);
+    border: 1px solid darkgreen;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 25%;
+}

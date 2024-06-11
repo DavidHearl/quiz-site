@@ -2,6 +2,17 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import *
 
+class GeneralKnowledgeForm(forms.ModelForm):
+    class Meta:
+        model = GeneralKnowledge
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='General Knowledge')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        
+
 class FlagForm(forms.ModelForm):
     class Meta:
         model = Flags
