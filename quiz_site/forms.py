@@ -44,3 +44,20 @@ class CelebrityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Celebrity')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
+
+
+class MovieForm(forms.ModelForm):
+    actors = forms.ModelMultipleChoiceField(
+        queryset=Celebrities.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    class Meta:
+        model = Movies
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        movie = kwargs.pop('movie', None)
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Movie')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')

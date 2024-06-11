@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/movies.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="database-container">
+        <div class="data-card">
+            <form class="form-containe" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Title -->
+                <div>
+                    <label for="id_title">Title:</label>
+                    <input id="id_title" type="text" name="title" value="{{ movie.title }}">
+                </div>
+                    
+                <!-- Placeholder Image -->
+                <div class="flex">
+                    <div class="image-placeholder">Placeholder</div>
+                </div>
+
+                <!-- Photo Button -->
+                <div>
+                    <label for="id_poster">Photo:</label>
+                    <input id="id_poster" type="file" name="poster">
+                </div>
+
+                <!-- Actors -->
+                <div>
+                    <label for="id_actors">Actors:</label>
+                    <div class="actor-container">
+                        {% for choice in movie_form.actors.field.choices %}
+                            <div class="actor">
+                                <input class="actor-checkbox" type="checkbox" name="actors" value="{{ choice.0 }}"
+                            {% if choice.0 in movie_form.actors.value %}checked{% endif %}>
+                                <label class="actor-label">{{ choice.1 }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Release Date -->
+                <div class="column-flex">
+                    <label for="id_release_date">Release:</label>
+                    <input id="id_release_date" class="{% if movie.release_date == None %}missing{% endif %}" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
+                </div>
+
+                <!-- Difficulty -->
+                <div class="column-flex">
+                    <label for="id_difficulty">Difficulty:</label>
+                    <input id="id_difficulty" class="{% if movie.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ movie.difficulty }}">
+                </div>
+
+                <!-- Created By -->
+                <div class="column-flex">
+                    <label for="id_created_by">Created By:</label>
+                    <select class="created_by" id="id_created_by" name="created_by">
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == movie.created_by.id %}selected{% endif %}>
+                                {{ user.player_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Category -->
+                <div class="column-flex">
+                    <label for="id_category">Category:</label>
+                    <select class="category" id="id_category" name="category">
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id == flag.category.id %}selected{% endif %}>
+                                {{ category.category }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button class="submit" type="submit">Submit</button>
+            </form> 
+        </div>
+
+        {% for movie in movies %}
+            <div class="data-card">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_movies' movie.id %}">
+                    {% csrf_token %}
+
+                    <!-- Title -->
+                    <div>
+                        <label for="id_title">Title:</label>
+                        <input id="id_title" type="text" name="title" value="{{ movie.title }}">
+                    </div>
+                        
+                    <!-- Placeholder Image -->
+                    <div class="flex">
+                        {% if movie.poster %}
+                            <img class="card-image" src="{{ movie.poster.url }}" alt="">
+                        {% endif %}
+                    </div>
+
+                    <!-- Photo Button -->
+                    <div>
+                        <label for="id_poster">Photo:</label>
+                        <input id="id_poster" type="file" name="poster">
+                    </div>
+
+                    <!-- Actors -->
+                    <div class="actors-in-film">
+                        <label for="id_actors">Actors:</label>
+                        <div class="actor-container">
+                            {% for actor in movie.actors.all %}
+                                <div class="actor">
+                                    <p class="actor-name">{{ actor.first_name }} {{ actor.last_name }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Release Date -->
+                    <div class="column-flex">
+                        <label for="id_release_date">Release:</label>
+                        <input id="id_release_date" class="{% if movie.release_date == None %}missing{% endif %}" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="column-flex">
+                        <label for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" class="{% if movie.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ movie.difficulty }}">
+                    </div>
+
+                    <!-- Created By -->
+                    <div class="column-flex">
+                        <label for="id_created_by">Created By:</label>
+                        <select class="created_by" id="id_created_by" name="created_by">
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if user.id == movie.created_by.id %}selected{% endif %}>
+                                    {{ user.player_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="column-flex">
+                        <label for="id_category">Category:</label>
+                        <select class="category" id="id_category" name="category">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id == movie.category.id %}selected{% endif %}>
+                                    {{ category.category }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button class="submit" type="submit">Submit</button>
+                </form> 
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

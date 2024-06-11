@@ -120,9 +120,18 @@ class Celebrities(models.Model):
         return full_name
 
 
-# class Movies(models.Model):
-#     # Question Category
-#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+class Movies(models.Model):
+    # Question Category
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
-#     name = models.CharField(max_length=100, null=True, blank=True)
-#     actors = models.ManyToManyField(Celebrities)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    poster = models.ImageField(null=True, blank=True)
+    release_date = models.DateField(null=True, blank=True)
+    actors = models.ManyToManyField(Celebrities)
+
+    # Question Stats
+    difficulty = models.FloatField(null=True,  blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title

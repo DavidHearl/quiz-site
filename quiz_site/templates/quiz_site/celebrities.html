@@ -9,7 +9,7 @@
 {% block content %}
     <div class="database-container">
         <div class="data-card">
-            <form class="form-containe" method="post" enctype="multipart/form-data">
+            <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- First Name -->
@@ -122,7 +122,7 @@
                         <label for="id_created_by">Created By:</label>
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
+                                <option value="{{ user.id }}" {% if user.id == movie.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
                                 </option>
                             {% endfor %}

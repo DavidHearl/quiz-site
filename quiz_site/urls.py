@@ -11,4 +11,6 @@ urlpatterns = [
     path('edit_jets/<int:jet_id>/', views.edit_jets, name='edit_jets'),
     path('celebrities/', views.celebrities, name='celebrities'),
     path('edit_celebrities/<int:celebrity_id>/', views.edit_celebrities, name='edit_celebrities'),
+    path('movies/', views.movies, name='movies'),
+    path('edit_movies/<int:movie_id>/', views.edit_movies, name='edit_movies'),
 ]

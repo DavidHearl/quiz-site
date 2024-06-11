@@ -224,3 +224,57 @@ def edit_celebrities(request, celebrity_id):
     }
 
     return render(request, 'quiz_site/celebrities.html', context)
+
+
+def movies(request):
+    users = User.objects.all()
+    movies = Movies.objects.all()
+    movie_form = MovieForm()
+    categories = QuestionCategory.objects.all()
+
+    if request.method == 'POST':
+        movie_form = MovieForm(request.POST, request.FILES)
+        print(movie_form.errors)
+        if movie_form.is_valid():
+            movie = movie_form.save(commit=False)
+            movie.save()
+            movie_form.save_m2m()
+            messages.success(request, 'Movie added successfully.')
+            print('Movie added successfully')
+            return redirect('movies')
+
+    context = {
+        'movies': movies,
+        'movie_form': movie_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/movies.html', context)
+
+
+def edit_movies(request, movie_id):
+    users = User.objects.all()
+    categories = QuestionCategory.objects.all()
+    movie = get_object_or_404(Movies, pk=movie_id)
+    movie_form = MovieForm(instance=movie)
+
+    if request.method == 'POST':
+        edit_movie_form = MovieForm(request.POST, request.FILES, instance=movie)
+        print(edit_movie_form.errors)
+        if edit_movie_form.is_valid():
+            movie = edit_movie_form.save(commit=False)
+            movie.save()
+            movie_form.save_m2m()
+            messages.success(request, 'Movie edited successfully.')
+            print('Movie edited successfully')
+            return redirect('movies')
+
+    context = {
+        'movies': movies,
+        'movie_form': movie_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/movies.html', context)
