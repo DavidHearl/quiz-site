@@ -3,42 +3,48 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/jets.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/celebrities.css' %}">
 {% endblock %}
 
 {% block content %}
-    <!-- Add new item -->
     <div class="database-container">
         <div class="data-card">
             <form class="form-containe" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- Name -->
+                <!-- First Name -->
                 <div>
-                    <input id="id_name" type="text" name="name" value="{{ jet.name }}">
+                    <label for="id_first_name">First Name:</label>
+                    <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
                 </div>
 
-                <!-- Code name -->
+                <!-- Last Name -->
                 <div>
-                    <label for="id_code_name">Code Name:</label>
-                    <input id="id_code_name" type="text" name="code_name" value="{{ jet.code_name }}">
+                    <label for="id_last_name">Last Name:</label>
+                    <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
                 </div>
-
+                    
                 <!-- Placeholder Image -->
                 <div class="flex">
                     <div class="image-placeholder">Placeholder</div>
                 </div>
 
-                <!-- Photo -->
+                <!-- Photo Button -->
                 <div>
-                    <label for="id_photo">Jet:</label>
+                    <label for="id_photo">Photo:</label>
                     <input id="id_photo" type="file" name="photo">
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="column-flex">
+                    <label for="id_date_of_birth">Birthday:</label>
+                    <input id="id_date_of_birth" class="{% if celebrity.date_of_birth == None %}missing{% endif %}" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
                     <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ jet.difficulty }}">
+                    <input id="id_difficulty" class="{% if celebrity.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ celebrity.difficulty }}">
                 </div>
 
                 <!-- Created By -->
@@ -46,7 +52,7 @@
                     <label for="id_created_by">Created By:</label>
                     <select class="created_by" id="id_created_by" name="created_by">
                         {% for user in users %}
-                            <option value="{{ user.id }}" {% if user.id == jet.created_by.id %}selected{% endif %}>
+                            <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
                                 {{ user.player_name }}
                             </option>
                         {% endfor %}
@@ -58,50 +64,57 @@
                     <label for="id_category">Category:</label>
                     <select class="category" id="id_category" name="category">
                         {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == jet.category.id %}selected{% endif %}>
+                            <option value="{{ category.id }}" {% if category.id == flag.category.id %}selected{% endif %}>
                                 {{ category.category }}
                             </option>
                         {% endfor %}
                     </select>
                 </div>
-
+                
                 <button class="submit" type="submit">Submit</button>
             </form> 
         </div>
 
-        {% for jet in jets %}
+        {% for celebrity in celebrities %}
             <div class="data-card">
-                <form class="form-containe" method="post" enctype="multipart/form-data" action="{% url 'edit_jets' jet.id %}">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_celebrities' celebrity.id %}">
                     {% csrf_token %}
 
-                    <!-- Name -->
+                    <!-- First Name -->
                     <div>
-                        <input id="id_name" type="text" name="name" value="{{ jet.name }}">
+                        <label for="id_flag">First Name:</label>
+                        <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
                     </div>
 
-                    <!-- Code name -->
+                    <!-- Last Name -->
                     <div>
-                        <label for="id_code_name">Code Name:</label>
-                        <input id="id_code_name" type="text" name="code_name" value="{{ jet.code_name }}">
+                        <label for="id_flag">Last Name:</label>
+                        <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
                     </div>
-
-                    <!-- Jet Image -->
+                    
+                    <!-- Celebrity Photo -->
                     <div class="flex">
-                        {% if jet.photo %}
-                            <img class="card-image" src="{{ jet.photo.url }}" alt="">
+                        {% if celebrity.photo %}
+                            <img class="card-image" src="{{ celebrity.photo.url }}" alt="">
                         {% endif %}
                     </div>
 
-                    <!-- Jet Image -->
+                    <!-- Photo Button -->
                     <div>
-                        <label for="id_photo">Jet:</label>
+                        <label for="id_photo">Photo:</label>
                         <input id="id_photo" type="file" name="photo">
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="column-flex">
+                        <label for="id_date_of_birth">Birthday:</label>
+                        <input id="id_date_of_birth" class="{% if celebrity.date_of_birth == None %}missing{% endif %}" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
                         <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" type="text" name="difficulty" value="{{ jet.difficulty }}">
+                        <input id="id_difficulty" class="{% if celebrity.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ celebrity.difficulty }}">
                     </div>
 
                     <!-- Created By -->
@@ -109,7 +122,7 @@
                         <label for="id_created_by">Created By:</label>
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == jet.created_by.id %}selected{% endif %}>
+                                <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
                                 </option>
                             {% endfor %}
@@ -120,18 +133,18 @@
                     <div class="column-flex">
                         <label for="id_category">Category:</label>
                         <select class="category" id="id_category" name="category">
+                            <option value="" {% if not celebrity.category %}selected{% endif %}>None</option>
                             {% for category in categories %}
-                                <option value="{{ category.id }}" {% if category.id == jet.category.id %}selected{% endif %}>
+                                <option value="{{ category.id }}" {% if celebrity.category and category.id == celebrity.category.id %}selected{% endif %}>
                                     {{ category.category }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <button class="submit" type="submit">Submit</button>
+                    <button class="submit" type="submit">Save</button>
                 </form>
             </div>
         {% endfor %}
     </div>
-
 {% endblock %}

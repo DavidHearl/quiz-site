@@ -34,3 +34,13 @@ class JetForm(forms.ModelForm):
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Jet')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
 
+
+class CelebrityForm(forms.ModelForm):
+    class Meta:
+        model = Celebrities
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Celebrity')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')

@@ -102,22 +102,22 @@ class Jets(models.Model):
             return self.name if self.name else ''
         
 
-# class Celebrities(models.Model):
-#     # Question Category
-#     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+class Celebrities(models.Model):
+    # Question Category
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
 
-#     first_name = models.CharField(max_length=100, null=True, blank=True)
-#     last_name = models.CharField(max_length=100, null=True, blank=True)
-#     photo = models.ImageField(null=True, blank=True)
+    first_name = models.CharField(max_length=100, null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
+    photo = models.ImageField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
 
-#     # Question Stats
-#     difficulty = models.FloatField(null=True,  blank=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Question Stats
+    difficulty = models.FloatField(null=True,  blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
-#     def __str__(self):
-#         full_name = self.first_name + " " + self.last_name
-
-#         return full_name
+    def __str__(self):
+        full_name = self.first_name + " " + self.last_name
+        return full_name
 
 
 # class Movies(models.Model):

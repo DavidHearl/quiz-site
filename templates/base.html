@@ -43,12 +43,13 @@
     <nav>
         <a id="home" href="{% url 'quiz_home' %}">Home</a>
 
-        <h3 class="category-heading">Question Categories</h3>
+        <h3 class="category-heading">Question Databases</h3>
+        <a class="navigation-label" href="{% url 'flags' %}">Guess the Flag <span class="to-finish">X</span></a>
+        <a class="navigation-label" href="{% url 'logos' %}">Guess the Logo <span class="to-finish">X</span></a>
+        <a class="navigation-label" href="{% url 'jets' %}">Guess the Jet</a>
+        <a class="navigation-label" href="{% url 'celebrities' %}">Guess the Celebrity <span class="to-finish">X</span></a>
 
-        <a class="navigation-label" href="{% url 'flags' %}">Guess the Flag - TBF</a>
-        <a class="navigation-label" href="{% url 'logos' %}">Guess the Logo - TBF</a>
-        <a class="navigation-label" href="{% url 'jets' %}">Guess the Jet - TBF</a>
-
+        <h3 class="category-heading">Profile</h3>
         <a class="navigation-label" href="{% url 'admin:index' %}">Admin</a>
     </nav>
 

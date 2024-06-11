@@ -8,14 +8,19 @@
 
 {% block content %}
     <!-- Add new item -->
-    <div class="country-flex">
-        <div class="country">
-            <form class="flag-form" method="post" enctype="multipart/form-data">
+    <div class="database-container">
+        <div class="data-card">
+            <form class="form-containe" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- Country -->
                 <div>
                     <input id="id_country" type="text" name="country" value="{{ flag.country }}">
+                </div>
+
+                <!-- Placeholder Image -->
+                <div class="flex">
+                    <div class="image-placeholder">Placeholder</div>
                 </div>
 
                 <!-- Flag Image -->
@@ -65,8 +70,8 @@
         </div>
         
         {% for flag in flags %}
-            <div class="country">
-                <form class="edit-country-form" method="post" enctype="multipart/form-data" action="{% url 'edit_flags' flag.id %}">
+            <div class="data-card">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_flags' flag.id %}">
                     {% csrf_token %}
 
                     <!-- Country -->
@@ -77,7 +82,7 @@
                     <!-- Flag Image -->
                     <div class="flex">
                         {% if flag.flag %}
-                            <img class="country-flag" src="{{ flag.flag.url }}" alt="">
+                            <img class="card-image" src="{{ flag.flag.url }}" alt="">
                         {% endif %}
                     </div>
 

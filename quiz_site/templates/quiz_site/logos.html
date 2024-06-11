@@ -8,14 +8,19 @@
 
 {% block content %}
     <!-- Add new item -->
-    <div class="logo-flex">
-        <div class="logo">
-            <form class="logo-form" method="post" enctype="multipart/form-data">
+    <div class="database-container">
+        <div class="data-card">
+            <form class="form-containe" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- Company -->
                 <div>
                     <input id="id_company" type="text" name="company" value="{{ logo.company }}">
+                </div>
+
+                <!-- Placeholder Image -->
+                <div class="flex">
+                    <div class="image-placeholder">Placeholder</div>
                 </div>
 
                 <!-- Logo Image -->
@@ -59,8 +64,8 @@
         </div>
 
         {% for logo in logos %}
-            <div class="logo">
-                <form class="edit-country-form" method="post" enctype="multipart/form-data" action="{% url 'edit_logos' logo.id %}">
+            <div class="data-card">
+                <form class="form-containe" method="post" enctype="multipart/form-data" action="{% url 'edit_logos' logo.id %}">
                     {% csrf_token %}
 
                     <!-- Country -->
@@ -71,7 +76,7 @@
                     <!-- Logo Image -->
                     <div class="flex">
                         {% if logo.logo %}
-                            <img class="company-logo" src="{{ logo.logo.url }}" alt="">
+                            <img class="card-image" src="{{ logo.logo.url }}" alt="">
                         {% endif %}
                     </div>
 

@@ -172,3 +172,55 @@ def edit_jets(request, jet_id):
     }
 
     return render(request, 'quiz_site/jets.html', context)
+
+
+def celebrities(request):
+    users = User.objects.all()
+    celebrities = Celebrities.objects.all()
+    celebrity_form = CelebrityForm()
+    categories = QuestionCategory.objects.all()
+
+    if request.method == 'POST':
+        celebrity_form = CelebrityForm(request.POST, request.FILES)
+        print(celebrity_form.errors)
+        if celebrity_form.is_valid():
+            celebrity = celebrity_form.save(commit=False)
+            celebrity.save()
+            messages.success(request, 'Celebrity added successfully.')
+            print('Celebrity added successfully')
+            return redirect('celebrities')
+
+    context = {
+        'celebrities': celebrities,
+        'celebrity_form': celebrity_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/celebrities.html', context)
+
+
+def edit_celebrities(request, celebrity_id):
+    users = User.objects.all()
+    categories = QuestionCategory.objects.all()
+    celebrity = get_object_or_404(Celebrities, pk=celebrity_id)
+    celebrity_form = CelebrityForm(instance=celebrity)
+
+    if request.method == 'POST':
+        edit_celebrity_form = CelebrityForm(request.POST, request.FILES, instance=celebrity)
+        print(edit_celebrity_form.errors)
+        if edit_celebrity_form.is_valid():
+            celebrity = edit_celebrity_form.save(commit=False)
+            celebrity.save()
+            messages.success(request, 'Celebrity edited successfully.')
+            print('Celebrity edited successfully')
+            return redirect('celebrities')
+
+    context = {
+        'celebrities': celebrities,
+        'celebrity_form': celebrity_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/celebrities.html', context)
