@@ -23,18 +23,16 @@
                         <label for="id_answer">Answer:</label>
                         <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
                     </div>
-                </div>
-                
-                <div class="question-row">
+
                     <!-- Difficulty -->
                     <div class="column-flex row-width">
                         <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
+                        <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
                     </div>
 
                     <!-- Created By -->
                     <div class="column-flex row-width">
-                        <label for="id_created_by">Created By:</label>
+                        <label class="question-label" for="id_created_by">Created By:</label>
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == general_knowledge.created_by.id %}selected{% endif %}>
@@ -77,18 +75,16 @@
                             <label for="id_answer">Answer:</label>
                             <input class="question-input" id="id_answer" type="text" name="answer" value="{{ question.answer }}">
                         </div>
-                    </div>
-                    
-                    <div class="question-row">
+
                         <!-- Difficulty -->
                         <div class="column-flex row-width">
                             <label for="id_difficulty">Difficulty:</label>
-                            <input id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
+                            <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
                         </div>
 
                         <!-- Created By -->
                         <div class="column-flex row-width">
-                            <label for="id_created_by">Created By:</label>
+                            <label class="question-label" for="id_created_by">Created By:</label>
                             <select class="created_by" id="id_created_by" name="created_by">
                                 {% for user in users %}
                                     <option value="{{ user.id }}" {% if user.id == question.created_by.id %}selected{% endif %}>

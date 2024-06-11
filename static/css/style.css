@@ -190,18 +190,23 @@ input {
 
 .question-input {
     text-align: start;
+    margin-bottom: 0;
+}
+
+.question-label {
+    width: 100%;
 }
 
 .question {
-    width: 60%;
+    width: 35%;
 }
 
 .answer {
-    width: 40%;
+    width: 20%;
 }
 
 .row-width {
-    width: 25%;
+    width: 10%;
 }
 
 .submit-wide {
@@ -212,5 +217,5 @@ input {
     color: white;
     border-radius: 8px;
     cursor: pointer;
-    width: 25%;
+    width: 10%;
 }
