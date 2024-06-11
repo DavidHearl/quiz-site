@@ -82,6 +82,24 @@ class Logos(models.Model):
     def __str__(self):
         if self.company:
             return self.company if self.company else ''
+
+
+class Jets(models.Model):
+    # Question Category
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+
+    # Answers
+    name = models.CharField(max_length=100)
+    code_name = models.CharField(max_length=100, blank=True, null=True)
+    photo = models.ImageField(null=True, blank=True)
+
+    # Question Stats
+    difficulty = models.FloatField(null=True,  blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.name:
+            return self.name if self.name else ''
         
 
 # class Celebrities(models.Model):

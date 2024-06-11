@@ -22,3 +22,15 @@ class LogoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Logo')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
+
+
+class JetForm(forms.ModelForm):
+    class Meta:
+        model = Jets
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Jet')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')
+

@@ -120,3 +120,55 @@ def edit_logos(request, logo_id):
     }
 
     return render(request, 'quiz_site/logos.html', context)
+
+
+def jets(request):
+    users = User.objects.all()
+    jets = Jets.objects.all()
+    jet_form = JetForm()
+    categories = QuestionCategory.objects.all()
+
+    if request.method == 'POST':
+        jet_form = JetForm(request.POST, request.FILES)
+        print(jet_form.errors)
+        if jet_form.is_valid():
+            jet = jet_form.save(commit=False)
+            jet.save()
+            messages.success(request, 'Jet added successfully.')
+            print('Jet added successfully')
+            return redirect('jets')
+
+    context = {
+        'jets': jets,
+        'jet_form': jet_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/jets.html', context)
+
+
+def edit_jets(request, jet_id):
+    users = User.objects.all()
+    categories = QuestionCategory.objects.all()
+    jet = get_object_or_404(Jets, pk=jet_id)
+    jet_form = JetForm(instance=jet)
+
+    if request.method == 'POST':
+        edit_jet_form = JetForm(request.POST, request.FILES, instance=jet)
+        print(edit_jet_form.errors)
+        if edit_jet_form.is_valid():
+            jet = edit_jet_form.save(commit=False)
+            jet.save()
+            messages.success(request, 'Jet edited successfully.')
+            print('Jet edited successfully')
+            return redirect('jets')
+
+    context = {
+        'jets': jets,
+        'jet_form': jet_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/jets.html', context)

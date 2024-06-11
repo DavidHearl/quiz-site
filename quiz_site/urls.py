@@ -7,4 +7,6 @@ urlpatterns = [
     path('edit_flags/<int:flag_id>/', views.edit_flags, name='edit_flags'),
     path('logos/', views.logos, name='logos'),
     path('edit_logos/<int:logo_id>/', views.edit_logos, name='edit_logos'),
+    path('jets/', views.jets, name='jets'),
+    path('edit_jets/<int:jet_id>/', views.edit_jets, name='edit_jets'),
 ]
