@@ -278,3 +278,55 @@ def edit_movies(request, movie_id):
     }
 
     return render(request, 'quiz_site/movies.html', context)
+
+
+def location(request):
+    users = User.objects.all()
+    locations = Location.objects.all()
+    location_form = LocationForm()
+    categories = QuestionCategory.objects.all()
+
+    if request.method == 'POST':
+        location_form = LocationForm(request.POST, request.FILES)
+        print(location_form.errors)
+        if location_form.is_valid():
+            location = location_form.save(commit=False)
+            location.save()
+            messages.success(request, 'Location added successfully.')
+            print('Location added successfully')
+            return redirect('location')
+
+    context = {
+        'locations': locations,
+        'location_form': location_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/location.html', context)
+
+
+def edit_location(request, location_id):
+    users = User.objects.all()
+    categories = QuestionCategory.objects.all()
+    location = get_object_or_404(Location, pk=location_id)
+    location_form = LocationForm(instance=location)
+
+    if request.method == 'POST':
+        edit_location_form = LocationForm(request.POST, request.FILES, instance=location)
+        print(edit_location_form.errors)
+        if edit_location_form.is_valid():
+            location = edit_location_form.save(commit=False)
+            location.save()
+            messages.success(request, 'Location edited successfully.')
+            print('Location edited successfully')
+            return redirect('location')
+
+    context = {
+        'locations': locations,
+        'location_form': location_form,
+        'users': users,
+        'categories': categories,
+    }
+
+    return render(request, 'quiz_site/location.html', context)

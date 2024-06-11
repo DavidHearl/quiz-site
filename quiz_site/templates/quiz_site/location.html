@@ -3,19 +3,18 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/flags.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/movies.css' %}">
 {% endblock %}
 
 {% block content %}
-    <!-- Add new item -->
     <div class="database-container">
         <div class="data-card">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- Country -->
+                <!-- Location -->
                 <div>
-                    <input id="id_country" type="text" name="country" value="{{ flag.country }}">
+                    <input id="id_location" type="text" name="location" value="{{ location.location }}">
                 </div>
 
                 <!-- Placeholder Image -->
@@ -23,22 +22,16 @@
                     <div class="image-placeholder">Placeholder</div>
                 </div>
 
-                <!-- Flag Image -->
+                <!-- Photo -->
                 <div>
-                    <label for="id_flag">Flag:</label>
-                    <input id="id_flag" type="file" name="flag">
-                </div>
-
-                <!-- Capital -->
-                <div class="column-flex">
-                    <label for="id_capital">Capital:</label>
-                    <input id="id_capital"" type="text" name="capital" value="{{ flag.capital }}">
+                    <label for="id_photo">Photo:</label>
+                    <input id="id_photo" type="file" name="photo">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
                     <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ flag.difficulty }}">
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
                 </div>
 
                 <!-- Created By -->
@@ -46,7 +39,7 @@
                     <label for="id_created_by">Created By:</label>
                     <select class="created_by" id="id_created_by" name="created_by">
                         {% for user in users %}
-                            <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
+                            <option value="{{ user.id }}" {% if user.id == location.created_by.id %}selected{% endif %}>
                                 {{ user.player_name }}
                             </option>
                         {% endfor %}
@@ -58,7 +51,7 @@
                     <label for="id_category">Category:</label>
                     <select class="category" id="id_category" name="category">
                         {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == flag.category.id %}selected{% endif %}>
+                            <option value="{{ category.id }}" {% if category.id == location.category.id %}selected{% endif %}>
                                 {{ category.category }}
                             </option>
                         {% endfor %}
@@ -68,40 +61,34 @@
                 <button class="submit" type="submit">Submit</button>
             </form> 
         </div>
-        
-        {% for flag in flags %}
+
+        {% for location in locations %}
             <div class="data-card">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_flags' flag.id %}">
+                <form class="form-container" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <!-- Country -->
+                    <!-- Location -->
                     <div>
-                        <input id="id_country" type="text" name="country" value="{{ flag.country }}">
+                        <input id="id_location" type="text" name="location" value="{{ location.location }}">
                     </div>
 
                     <!-- Flag Image -->
                     <div class="flex">
-                        {% if flag.flag %}
-                            <img class="card-image" src="{{ flag.flag.url }}" alt="">
+                        {% if location.photo %}
+                            <img class="card-image" src="{{ location.photo.url }}" alt="">
                         {% endif %}
                     </div>
 
-                    <!-- Flag -->
+                    <!-- Photo -->
                     <div>
-                        <label for="id_flag">Flag:</label>
-                        <input id="id_flag" type="file" name="flag">
-                    </div>
-
-                    <!-- Capital -->
-                    <div class="column-flex">
-                        <label for="id_capital">Capital:</label>
-                        <input id="id_capital" class="{% if flag.capital == None %}missing{% endif %} type="text" name="capital" value="{{ flag.capital }}">
+                        <label for="id_photo">Photo:</label>
+                        <input id="id_photo" type="file" name="photo">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
                         <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if flag.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ flag.difficulty }}">
+                        <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
                     </div>
 
                     <!-- Created By -->
@@ -109,7 +96,7 @@
                         <label for="id_created_by">Created By:</label>
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == flag.created_by.id %}selected{% endif %}>
+                                <option value="{{ user.id }}" {% if user.id == location.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
                                 </option>
                             {% endfor %}
@@ -120,20 +107,18 @@
                     <div class="column-flex">
                         <label for="id_category">Category:</label>
                         <select class="category" id="id_category" name="category">
-                            <option value="" {% if not flag.category %}selected{% endif %}>None</option>
                             {% for category in categories %}
-                                <option value="{{ category.id }}" {% if flag.category and category.id == flag.category.id %}selected{% endif %}>
+                                <option value="{{ category.id }}" {% if category.id == location.category.id %}selected{% endif %}>
                                     {{ category.category }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
-
-                    <button class="submit" type="submit">Save</button>
-                </form>
+                    
+                    <button class="submit" type="submit">Submit</button>
+                </form> 
             </div>
         {% endfor %}
-    </div>
 
-    
+
 {% endblock %}

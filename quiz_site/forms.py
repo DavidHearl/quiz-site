@@ -61,3 +61,14 @@ class MovieForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Movie')
         self.fields['created_by'].initial = User.objects.get(player_name='David')
+
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].initial = QuestionCategory.objects.get(category='Guess the Location')
+        self.fields['created_by'].initial = User.objects.get(player_name='David')
