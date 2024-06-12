@@ -79,6 +79,14 @@ a:hover {
     margin-top: 16px;
 }
 
+.database-container-tf {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 12px;
+    gap: 8px;
+}
+
 .data-card {
     display: flex;
     align-items: center;
@@ -132,6 +140,7 @@ label {
     font-size: 0.7rem;
     color: white;
     margin: 2px 0;
+    padding-left: 2px;
 }
 
 input {
@@ -161,12 +170,13 @@ input {
 }
 
 .created_by,
-.category {
+.category,
+.select-box {
     width: 100%;
     padding: 2px;
     background: rgba(18,26,39,255);
     border: 1px solid rgb(95, 99, 108);
-    padding: 4px;
+    padding: 3px;
     border-radius: 4px;
     color: #ccc;
 }
@@ -176,11 +186,16 @@ input {
     display: flex;
     flex-direction: column;
     border: 1px solid black;
-    padding: 8px;
+    padding: 6px;
     width: 100%;
     border-radius: 16px;
     background: rgba(20,28,44,255);
     margin: 0px 16px;
+}
+
+.create-input {
+    background: rgba(40,48,64,255);
+    margin-bottom: 16px;
 }
 
 .question-row {
@@ -198,15 +213,23 @@ input {
 }
 
 .question {
-    width: 35%;
+    width: 47%;
 }
 
 .answer {
-    width: 20%;
+    width: 23%;
+}
+
+.question-tf {
+    width: 62%;
+}
+
+.answer-tf {
+    width: 8%;
 }
 
 .row-width {
-    width: 10%;
+    width: 8%;
 }
 
 .submit-wide {
@@ -215,7 +238,7 @@ input {
     background: rgba(94,65,255,255);
     border: 1px solid darkgreen;
     color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     width: 10%;
 }

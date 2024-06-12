@@ -46,13 +46,13 @@
                 <!-- Release Date -->
                 <div class="column-flex">
                     <label for="id_release_date">Release:</label>
-                    <input id="id_release_date" class="{% if movie.release_date == None %}missing{% endif %}" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
+                    <input id="id_release_date" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
                     <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" class="{% if movie.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ movie.difficulty }}">
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ movie.difficulty }}">
                 </div>
 
                 <!-- Created By -->
@@ -62,18 +62,6 @@
                         {% for user in users %}
                             <option value="{{ user.id }}" {% if user.id == movie.created_by.id %}selected{% endif %}>
                                 {{ user.player_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Category -->
-                <div class="column-flex">
-                    <label for="id_category">Category:</label>
-                    <select class="category" id="id_category" name="category">
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == flag.category.id %}selected{% endif %}>
-                                {{ category.category }}
                             </option>
                         {% endfor %}
                     </select>
@@ -138,18 +126,6 @@
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == movie.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Category -->
-                    <div class="column-flex">
-                        <label for="id_category">Category:</label>
-                        <select class="category" id="id_category" name="category">
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if category.id == movie.category.id %}selected{% endif %}>
-                                    {{ category.category }}
                                 </option>
                             {% endfor %}
                         </select>

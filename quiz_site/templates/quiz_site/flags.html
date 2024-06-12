@@ -15,6 +15,7 @@
 
                 <!-- Country -->
                 <div>
+                    <label for="id_country">Country:</label>
                     <input id="id_country" type="text" name="country" value="{{ flag.country }}">
                 </div>
 
@@ -52,18 +53,6 @@
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- Category -->
-                <div class="column-flex">
-                    <label for="id_category">Category:</label>
-                    <select class="category" id="id_category" name="category">
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == flag.category.id %}selected{% endif %}>
-                                {{ category.category }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
                 
                 <button class="submit" type="submit">Submit</button>
             </form> 
@@ -76,6 +65,7 @@
 
                     <!-- Country -->
                     <div>
+                        <label for="id_country">Country:</label>
                         <input id="id_country" type="text" name="country" value="{{ flag.country }}">
                     </div>
 
@@ -116,24 +106,10 @@
                         </select>
                     </div>
 
-                    <!-- Category -->
-                    <div class="column-flex">
-                        <label for="id_category">Category:</label>
-                        <select class="category" id="id_category" name="category">
-                            <option value="" {% if not flag.category %}selected{% endif %}>None</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if flag.category and category.id == flag.category.id %}selected{% endif %}>
-                                    {{ category.category }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
                     <button class="submit" type="submit">Save</button>
                 </form>
             </div>
         {% endfor %}
     </div>
-
     
 {% endblock %}

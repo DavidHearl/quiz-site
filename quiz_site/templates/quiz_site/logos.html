@@ -15,6 +15,7 @@
 
                 <!-- Company -->
                 <div>
+                    <label for="id_company">Company:</label>
                     <input id="id_company" type="text" name="company" value="{{ logo.company }}">
                 </div>
 
@@ -42,18 +43,6 @@
                         {% for user in users %}
                             <option value="{{ user.id }}" {% if user.id == logo.created_by.id %}selected{% endif %}>
                                 {{ user.player_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Category -->
-                <div class="column-flex">
-                    <label for="id_category">Category:</label>
-                    <select class="category" id="id_category" name="category">
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == logo.category.id %}selected{% endif %}>
-                                {{ category.category }}
                             </option>
                         {% endfor %}
                     </select>
@@ -99,19 +88,6 @@
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == logo.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Category -->
-                    <div class="column-flex">
-                        <label for="id_category">Category:</label>
-                        <select class="category" id="id_category" name="category">
-                            <option value="" {% if not logo.category %}selected{% endif %}>None</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if logo.category and category.id == logo.category.id %}selected{% endif %}>
-                                    {{ category.category }}
                                 </option>
                             {% endfor %}
                         </select>

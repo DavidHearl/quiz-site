@@ -53,18 +53,6 @@
                     </select>
                 </div>
 
-                <!-- Category -->
-                <div class="column-flex">
-                    <label for="id_category">Category:</label>
-                    <select class="category" id="id_category" name="category">
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == jet.category.id %}selected{% endif %}>
-                                {{ category.category }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
                 <button class="submit" type="submit">Submit</button>
             </form> 
         </div>
@@ -111,18 +99,6 @@
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == jet.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Category -->
-                    <div class="column-flex">
-                        <label for="id_category">Category:</label>
-                        <select class="category" id="id_category" name="category">
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if category.id == jet.category.id %}selected{% endif %}>
-                                    {{ category.category }}
                                 </option>
                             {% endfor %}
                         </select>

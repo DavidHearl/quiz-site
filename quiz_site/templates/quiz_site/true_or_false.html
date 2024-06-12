@@ -3,31 +3,35 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/general_knowledge.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/true_or_false.css' %}">
 {% endblock %}
 
 {% block content %}
+
     <div class="database-container-tf">
         <div class="data-card-wide create-input">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="question-row">
                     <!-- Question -->
-                    <div class="question">
+                    <div class="question-tf">
                         <label for="id_question">Question:</label>
-                        <input class="question-input" id="id_question" type="text" name="question" value="{{ general_knowledge.question }}">
+                        <input class="question-input" id="id_question" type="text" name="question" value="{{ true_or_false.question }}">
                     </div>
 
                     <!-- Answer -->
-                    <div class="answer">
+                    <div class="answer-tf">
                         <label for="id_answer">Answer:</label>
-                        <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
+                        <select class="select-box" id="id_answer" name="answer">
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex row-width">
                         <label for="id_difficulty">Difficulty:</label>
-                        <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
+                        <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ true_or_false.difficulty }}">
                     </div>
 
                     <!-- Created By -->
@@ -35,7 +39,7 @@
                         <label class="question-label" for="id_created_by">Created By:</label>
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == general_knowledge.created_by.id %}selected{% endif %}>
+                                <option value="{{ user.id }}" {% if user.id == true_or_false.created_by.id %}selected{% endif %}>
                                     {{ user.player_name }}
                                 </option>
                             {% endfor %}
@@ -47,21 +51,24 @@
             </form> 
         </div>
 
-        {% for question in general_knowledge %}
+        {% for question in true_or_false %}
             <div class="data-card-wide">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_true_or_false' question.id %}">
                     {% csrf_token %}
                     <div class="question-row">
                         <!-- Question -->
-                        <div class="question">
+                        <div class="question-tf">
                             <label for="id_question">Question:</label>
                             <input class="question-input" id="id_question" type="text" name="question" value="{{ question.question }}">
                         </div>
 
                         <!-- Answer -->
-                        <div class="answer">
+                        <div class="answer-tf">
                             <label for="id_answer">Answer:</label>
-                            <input class="question-input" id="id_answer" type="text" name="answer" value="{{ question.answer }}">
+                            <select class="select-box" id="id_answer" name="answer">
+                                <option value="true" {% if question.answer %}selected{% endif %}>True</option>
+                                <option value="false" {% if not question.answer %}selected{% endif %}>False</option>
+                            </select>
                         </div>
 
                         <!-- Difficulty -->

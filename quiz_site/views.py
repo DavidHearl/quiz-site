@@ -8,12 +8,10 @@ from .forms import *
 
 # Create your views here.
 def quiz_home(request):
-    catagories = QuestionCategory.objects.all()
     countries = Flags.objects.all()
 
     context = {
         'countries': countries,
-        'catagories': catagories
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)
@@ -23,7 +21,6 @@ def general_knowledge(request):
     users = User.objects.all()
     general_knowledge = GeneralKnowledge.objects.all()
     general_knowledge_form = GeneralKnowledgeForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         general_knowledge_form = GeneralKnowledgeForm(request.POST, request.FILES)
@@ -39,7 +36,6 @@ def general_knowledge(request):
         'general_knowledge': general_knowledge,
         'general_knowledge_form': general_knowledge_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
@@ -47,7 +43,6 @@ def general_knowledge(request):
 
 def edit_general_knowledge(request, question_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     question = get_object_or_404(GeneralKnowledge, pk=question_id)
     general_knowledge_form = GeneralKnowledgeForm(instance=question)
 
@@ -65,17 +60,63 @@ def edit_general_knowledge(request, question_id):
         'general_knowledge': general_knowledge,
         'general_knowledge_form': general_knowledge_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
+
+
+def true_or_false(request):
+    users = User.objects.all()
+    true_or_false = TrueOrFalse.objects.all()
+    true_or_false_form = TrueOrFalseForm()
+
+    if request.method == 'POST':
+        true_or_false_form = TrueOrFalseForm(request.POST, request.FILES)
+        print(true_or_false_form.errors)
+        if true_or_false_form.is_valid():
+            true_or_false = true_or_false_form.save(commit=False)
+            true_or_false.save()
+            messages.success(request, 'Question added successfully.')
+            print('Question added successfully')
+            return redirect('true_or_false')
+
+    context = {
+        'true_or_false': true_or_false,
+        'true_or_false_form': true_or_false_form,
+        'users': users,
+    }
+
+    return render(request, 'quiz_site/true_or_false.html', context)
+
+
+def edit_true_or_false(request, question_id):
+    users = User.objects.all()
+    question = get_object_or_404(TrueOrFalse, pk=question_id)
+    true_or_false_form = TrueOrFalseForm(instance=question)
+
+    if request.method == 'POST':
+        edit_true_or_false_form = TrueOrFalseForm(request.POST, request.FILES, instance=question)
+        print(edit_true_or_false_form.errors)
+        if edit_true_or_false_form.is_valid():
+            question = edit_true_or_false_form.save(commit=False)
+            question.save()
+            messages.success(request, 'Question edited successfully.')
+            print('Question edited successfully')
+            return redirect('true_or_false')
+
+    context = {
+        'true_or_false': true_or_false,
+        'true_or_false_form': true_or_false_form,
+        'users': users,
+    }
+
+    return render(request, 'quiz_site/true_or_false.html', context)
     
 
 def flags(request):
     users = User.objects.all()
     flags = Flags.objects.all()
     flag_form = FlagForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         flag_form = FlagForm(request.POST, request.FILES)
@@ -91,7 +132,6 @@ def flags(request):
         'flags': flags,
         'flag_form': flag_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/flags.html', context)
@@ -99,7 +139,6 @@ def flags(request):
 
 def edit_flags(request, flag_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     flag = get_object_or_404(Flags, pk=flag_id)
     flag_form = FlagForm(instance=flag)
 
@@ -117,7 +156,6 @@ def edit_flags(request, flag_id):
         'flags': flags,
         'flag_form': flag_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/flags.html', context)
@@ -127,7 +165,6 @@ def logos(request):
     users = User.objects.all()
     logos = Logos.objects.all()
     logo_form = LogoForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         logo_form = LogoForm(request.POST, request.FILES)
@@ -143,7 +180,6 @@ def logos(request):
         'logos': logos,
         'logo_form': logo_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/logos.html', context)
@@ -151,7 +187,6 @@ def logos(request):
 
 def edit_logos(request, logo_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     logo = get_object_or_404(Logos, pk=logo_id)
     logo_form = LogoForm(instance=logo)
 
@@ -169,7 +204,6 @@ def edit_logos(request, logo_id):
         'logos': logos,
         'logo_form': logo_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/logos.html', context)
@@ -179,7 +213,6 @@ def jets(request):
     users = User.objects.all()
     jets = Jets.objects.all()
     jet_form = JetForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         jet_form = JetForm(request.POST, request.FILES)
@@ -195,7 +228,6 @@ def jets(request):
         'jets': jets,
         'jet_form': jet_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/jets.html', context)
@@ -203,7 +235,6 @@ def jets(request):
 
 def edit_jets(request, jet_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     jet = get_object_or_404(Jets, pk=jet_id)
     jet_form = JetForm(instance=jet)
 
@@ -221,7 +252,6 @@ def edit_jets(request, jet_id):
         'jets': jets,
         'jet_form': jet_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/jets.html', context)
@@ -231,7 +261,6 @@ def celebrities(request):
     users = User.objects.all()
     celebrities = Celebrities.objects.all()
     celebrity_form = CelebrityForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         celebrity_form = CelebrityForm(request.POST, request.FILES)
@@ -247,7 +276,6 @@ def celebrities(request):
         'celebrities': celebrities,
         'celebrity_form': celebrity_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/celebrities.html', context)
@@ -255,7 +283,6 @@ def celebrities(request):
 
 def edit_celebrities(request, celebrity_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     celebrity = get_object_or_404(Celebrities, pk=celebrity_id)
     celebrity_form = CelebrityForm(instance=celebrity)
 
@@ -273,7 +300,6 @@ def edit_celebrities(request, celebrity_id):
         'celebrities': celebrities,
         'celebrity_form': celebrity_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/celebrities.html', context)
@@ -283,7 +309,6 @@ def movies(request):
     users = User.objects.all()
     movies = Movies.objects.all()
     movie_form = MovieForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         movie_form = MovieForm(request.POST, request.FILES)
@@ -300,7 +325,6 @@ def movies(request):
         'movies': movies,
         'movie_form': movie_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/movies.html', context)
@@ -308,7 +332,6 @@ def movies(request):
 
 def edit_movies(request, movie_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     movie = get_object_or_404(Movies, pk=movie_id)
     movie_form = MovieForm(instance=movie)
 
@@ -327,7 +350,6 @@ def edit_movies(request, movie_id):
         'movies': movies,
         'movie_form': movie_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/movies.html', context)
@@ -337,7 +359,6 @@ def location(request):
     users = User.objects.all()
     locations = Location.objects.all()
     location_form = LocationForm()
-    categories = QuestionCategory.objects.all()
 
     if request.method == 'POST':
         location_form = LocationForm(request.POST, request.FILES)
@@ -353,7 +374,6 @@ def location(request):
         'locations': locations,
         'location_form': location_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/location.html', context)
@@ -361,7 +381,6 @@ def location(request):
 
 def edit_location(request, location_id):
     users = User.objects.all()
-    categories = QuestionCategory.objects.all()
     location = get_object_or_404(Location, pk=location_id)
     location_form = LocationForm(instance=location)
 
@@ -379,7 +398,6 @@ def edit_location(request, location_id):
         'locations': locations,
         'location_form': location_form,
         'users': users,
-        'categories': categories,
     }
 
     return render(request, 'quiz_site/location.html', context)

@@ -14,19 +14,9 @@ class User(models.Model):
 # Quiz model, used to create the game and assign the players playing the game
 class Quiz(models.Model):
     players = models.ManyToManyField(User)
-    question_set = models.ManyToManyField('QuestionCategory')
-
+    
     def __str__(self):
         return self.players
-
-
-# Question Category model, used to categorize the questions
-class QuestionCategory(models.Model):
-    category = models.CharField(max_length=100)
-    category_question = models.CharField(max_length=128, blank=True, null=True)
-
-    def __str__(self):
-        return self.category
 
 
 # -------------------------------------------------------------------------------
@@ -34,9 +24,6 @@ class QuestionCategory(models.Model):
 # -------------------------------------------------------------------------------
 
 class GeneralKnowledge(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     # Question and Answer
     question = models.CharField(max_length=128)
     answer = models.CharField(max_length=100)
@@ -49,10 +36,20 @@ class GeneralKnowledge(models.Model):
         return self.question
 
 
-class Flags(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
+class TrueOrFalse(models.Model):
+    # Question and Answer
+    question = models.CharField(max_length=128)
+    answer = models.BooleanField()
 
+    # Question Stats
+    difficulty = models.FloatField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+
+    def __str__(self):
+        return self.question
+
+
+class Flags(models.Model):
     # Answers
     country = models.CharField(max_length=100, null=True, blank=True)
     capital = models.CharField(max_length=100, null=True, blank=True)
@@ -68,9 +65,6 @@ class Flags(models.Model):
         
 
 class Logos(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     # Answers
     company = models.CharField(max_length=100)
     logo = models.ImageField(null=True, blank=True)
@@ -85,9 +79,6 @@ class Logos(models.Model):
 
 
 class Jets(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     # Answers
     name = models.CharField(max_length=100)
     code_name = models.CharField(max_length=100, blank=True, null=True)
@@ -103,9 +94,6 @@ class Jets(models.Model):
         
 
 class Celebrities(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     first_name = models.CharField(max_length=100, null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     photo = models.ImageField(null=True, blank=True)
@@ -121,9 +109,6 @@ class Celebrities(models.Model):
 
 
 class Movies(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     title = models.CharField(max_length=100, null=True, blank=True)
     poster = models.ImageField(null=True, blank=True)
     release_date = models.DateField(null=True, blank=True)
@@ -138,9 +123,6 @@ class Movies(models.Model):
 
 
 class Location(models.Model):
-    # Question Category
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, null=True,  blank=True)
-
     # Answers
     location = models.CharField(max_length=100)
     photo = models.ImageField(null=True, blank=True)
