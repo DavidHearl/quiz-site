@@ -355,9 +355,9 @@ def edit_movies(request, movie_id):
     return render(request, 'quiz_site/movies.html', context)
 
 
-def location(request):
+def locations(request):
     users = User.objects.all()
-    locations = Location.objects.all()
+    locations = Locations.objects.all()
     location_form = LocationForm()
 
     if request.method == 'POST':
@@ -368,7 +368,7 @@ def location(request):
             location.save()
             messages.success(request, 'Location added successfully.')
             print('Location added successfully')
-            return redirect('location')
+            return redirect('locations')
 
     context = {
         'locations': locations,
@@ -379,7 +379,7 @@ def location(request):
     return render(request, 'quiz_site/location.html', context)
 
 
-def edit_location(request, location_id):
+def edit_locations(request, location_id):
     users = User.objects.all()
     location = get_object_or_404(Location, pk=location_id)
     location_form = LocationForm(instance=location)
@@ -392,7 +392,7 @@ def edit_location(request, location_id):
             location.save()
             messages.success(request, 'Location edited successfully.')
             print('Location edited successfully')
-            return redirect('location')
+            return redirect('locations')
 
     context = {
         'locations': locations,

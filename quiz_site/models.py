@@ -28,6 +28,12 @@ class GeneralKnowledge(models.Model):
     question = models.CharField(max_length=128)
     answer = models.CharField(max_length=100)
 
+    # Multiple Choice Answers
+    choice_1 = models.CharField(max_length=100, null=True, blank=True)
+    choice_2 = models.CharField(max_length=100, null=True, blank=True)
+    choice_3 = models.CharField(max_length=100, null=True, blank=True)
+    choice_4 = models.CharField(max_length=100, null=True, blank=True)
+
     # Question Stats
     difficulty = models.FloatField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
@@ -122,7 +128,7 @@ class Movies(models.Model):
         return self.title
 
 
-class Location(models.Model):
+class Locations(models.Model):
     # Answers
     location = models.CharField(max_length=100)
     photo = models.ImageField(null=True, blank=True)

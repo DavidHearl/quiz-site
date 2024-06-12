@@ -80,7 +80,7 @@ class MovieForm(forms.ModelForm):
 
 class LocationForm(forms.ModelForm):
     class Meta:
-        model = Location
+        model = Locations
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):

@@ -14,7 +14,7 @@
 
                 <!-- Location -->
                 <div>
-                    <input id="id_location" type="text" name="location" value="{{ location.location }}">
+                    <input id="id_location" type="text" name="location" value="{{ locations.location }}">
                 </div>
 
                 <!-- Placeholder Image -->
@@ -31,7 +31,7 @@
                 <!-- Difficulty -->
                 <div class="column-flex">
                     <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ locations.difficulty }}">
                 </div>
 
                 <!-- Created By -->
@@ -39,7 +39,7 @@
                     <label for="id_created_by">Created By:</label>
                     <select class="created_by" id="id_created_by" name="created_by">
                         {% for user in users %}
-                            <option value="{{ user.id }}" {% if user.id == location.created_by.id %}selected{% endif %}>
+                            <option value="{{ user.id }}" {% if user.id == locations.created_by.id %}selected{% endif %}>
                                 {{ user.player_name }}
                             </option>
                         {% endfor %}

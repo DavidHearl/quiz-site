@@ -65,7 +65,7 @@
                         <!-- Answer -->
                         <div class="answer-tf">
                             <label for="id_answer">Answer:</label>
-                            <select class="select-box" id="id_answer" name="answer">
+                            <select class="select-box {% if question.answer == True %}true{% else %}false{% endif %}" id="id_answer" name="answer">
                                 <option value="true" {% if question.answer %}selected{% endif %}>True</option>
                                 <option value="false" {% if not question.answer %}selected{% endif %}>False</option>
                             </select>

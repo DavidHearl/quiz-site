@@ -44,14 +44,14 @@
         <a id="home" href="{% url 'quiz_home' %}">Home</a>
 
         <h3 class="category-heading">Question Databases</h3>
-        <a class="navigation-label" href="{% url 'general_knowledge' %}">General Knowledge <span class="to-finish">X</span></a>
-        <a class="navigation-label" href="{% url 'true_or_false' %}">True or False <span class="to-finish">X</span></a>
-        <a class="navigation-label" href="{% url 'flags' %}">Countries/Flag</a>
-        <a class="navigation-label" href="{% url 'logos' %}">Companies/Logo <span class="to-finish">X</span></a>
-        <a class="navigation-label" href="{% url 'jets' %}">Fighter Jets</a>
-        <a class="navigation-label" href="{% url 'celebrities' %}">Celebrities <span class="to-finish">X</span></a>
-        <a class="navigation-label" href="{% url 'movies' %}">Movies <span class="to-finish">X</span></a>
-        <a class="navigation-label" href="{% url 'location' %}">Locations <span class="to-finish">X</span></a>
+        <a class="navigation-label" href="{% url 'general_knowledge' %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
+        <a class="navigation-label" href="{% url 'true_or_false' %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
+        <a class="navigation-label" href="{% url 'flags' %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
+        <a class="navigation-label" href="{% url 'logos' %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
+        <a class="navigation-label" href="{% url 'jets' %}">Fighter Jets <span class="finished">({{jets_count}})</span></a>
+        <a class="navigation-label" href="{% url 'celebrities' %}">Celebrities <span class="to-finish">({{celebrities_count}})</span></a>
+        <a class="navigation-label" href="{% url 'movies' %}">Movies <span class="to-finish">({{movies_count}})</span></a>
+        <a class="navigation-label" href="{% url 'locations' %}">Locations <span class="to-finish">({{locations_count}})</span></a>
 
         <h3 class="category-heading">Profile</h3>
         <a class="navigation-label" href="{% url 'admin:index' %}">Admin</a>
