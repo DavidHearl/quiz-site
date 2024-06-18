@@ -201,6 +201,19 @@ input {
     margin: 0px 16px;
 }
 
+.data-card-medium {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 8px;
+    width: 275px;
+    border-radius: 16px;
+    background: rgba(20,28,44,255);
+    position: relative;
+    padding-bottom: 44px;
+}
+
 .create-input {
     background: rgba(40,48,64,255);
     margin-bottom: 16px;
@@ -227,6 +240,7 @@ input {
     color: white;
     padding: 4px;
     box-sizing: border-box;
+    font-size: 0.85rem;
 }
 
 .question-label {

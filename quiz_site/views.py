@@ -8,10 +8,10 @@ from .forms import *
 
 # Create your views here.
 def quiz_home(request):
-    countries = Flags.objects.all()
+    questions = Questions.objects.all()
 
     context = {
-        'countries': countries,
+        'questions': questions,
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)
@@ -31,6 +31,8 @@ def general_knowledge(request):
             messages.success(request, 'Question added successfully.')
             print('Question added successfully')
             return redirect('general_knowledge')
+        else:
+            print(general_knowledge_form.errors)
 
     context = {
         'general_knowledge': general_knowledge,
@@ -393,6 +395,8 @@ def edit_locations(request, location_id):
             messages.success(request, 'Location edited successfully.')
             print('Location edited successfully')
             return redirect('locations')
+        else:
+            print(edit_location_form.errors)
 
     context = {
         'locations': locations,

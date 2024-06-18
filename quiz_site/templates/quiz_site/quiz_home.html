@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Select The Question Sets</h1>
+
+    {% for question in questions %}
+        <div class="question">
+            <h2>{{ question.question_type }}</h2>
+            <input type="checkbox" name="question_set" value="{{ question.selected }}">
+        </div>
+    {% endfor %}
 {% endblock %}

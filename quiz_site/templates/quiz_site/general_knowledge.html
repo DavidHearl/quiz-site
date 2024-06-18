@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="database-container">
-        <div class="data-card create-input">
+        <div class="data-card-medium create-input">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="question-row-gk">
@@ -42,12 +42,6 @@
                         <input class="question-input" id="id_choice_3" type="text" name="choice_3" value="{{ general_knowledge.choice_3 }}">
                     </div>
 
-                    <!-- Choice 4 -->
-                    <div>
-                        <label for="id_choice_4">Choice 4:</label>
-                        <input class="question-input" id="id_choice_4" type="text" name="choice_4" value="{{ general_knowledge.choice_4 }}">
-                    </div>
-
                     <!-- Difficulty -->
                     <div class="column-flex">
                         <label for="id_difficulty">Difficulty:</label>
@@ -72,14 +66,14 @@
         </div>
 
         {% for question in general_knowledge %}
-            <div class="data-card-wide">
+            <div class="data-card-medium">
                 <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
                     {% csrf_token %}
                     <div class="question-row-gk">
                         <!-- Question -->
                         <div>
                             <label for="id_question">Question:</label>
-                            <input class="question-input" id="id_question" type="text" name="question" value="{{ question.question }}">
+                            <textarea class="question-input" id="id_question" name="question" rows="2">{{ question.question }}</textarea>
                         </div>
 
                         <!-- Answer -->
@@ -91,25 +85,19 @@
                         <!-- Choice 1 -->
                         <div>
                             <label for="id_choice_1">Choice 1:</label>
-                            <input class="question-input" id="id_choice_1" type="text" name="choice_1" value="{{ general_knowledge.choice_1 }}">
+                            <input class="question-input {% if question.choice_1 == None %}missing{% endif %}" id="id_choice_1" type="text" name="choice_1" value="{{ question.choice_1 }}">
                         </div>
 
                         <!-- Choice 2 -->
                         <div>
                             <label for="id_choice_2">Choice 2:</label>
-                            <input class="question-input" id="id_choice_2" type="text" name="choice_2" value="{{ general_knowledge.choice_2 }}">
+                            <input class="question-input {% if question.choice_2 == None %}missing{% endif %}" id="id_choice_2" type="text" name="choice_2" value="{{ question.choice_2 }}">
                         </div>
 
                         <!-- Choice 3 -->
                         <div>
                             <label for="id_choice_3">Choice 3:</label>
-                            <input class="question-input" id="id_choice_3" type="text" name="choice_3" value="{{ general_knowledge.choice_3 }}">
-                        </div>
-
-                        <!-- Choice 4 -->
-                        <div>
-                            <label for="id_choice_4">Choice 4:</label>
-                            <input class="question-input" id="id_choice_4" type="text" name="choice_4" value="{{ general_knowledge.choice_4 }}">
+                            <input class="question-input {% if question.choice_3 == None %}missing{% endif %}" id="id_choice_3" type="text" name="choice_3" value="{{ question.choice_3 }}">
                         </div>
 
                         <!-- Difficulty -->
@@ -130,7 +118,7 @@
                             </select>
                         </div>
                         
-                        <button class="submit-wide" type="submit">Submit</button>
+                        <button class="submit" type="submit">Submit</button>
                     </div>
                 </form> 
             </div>

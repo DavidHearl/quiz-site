@@ -11,6 +11,14 @@ class User(models.Model):
         return self.player_name
 
 
+class Questions(models.Model):
+    question_type = models.CharField(max_length=100)
+    selected = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.question_type
+
+
 # Quiz model, used to create the game and assign the players playing the game
 class Quiz(models.Model):
     players = models.ManyToManyField(User)
@@ -32,7 +40,6 @@ class GeneralKnowledge(models.Model):
     choice_1 = models.CharField(max_length=100, null=True, blank=True)
     choice_2 = models.CharField(max_length=100, null=True, blank=True)
     choice_3 = models.CharField(max_length=100, null=True, blank=True)
-    choice_4 = models.CharField(max_length=100, null=True, blank=True)
 
     # Question Stats
     difficulty = models.FloatField()

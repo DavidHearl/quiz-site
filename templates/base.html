@@ -41,7 +41,7 @@
 <body>
     <!-- Navigation -->
     <nav>
-        <a id="home" href="{% url 'quiz_home' %}">Home</a>
+        <a id="home" href="{% url 'quiz_home' %}">Home {% if user.is_superuser %}(A){% endif %}</a>
 
         <h3 class="category-heading">Question Databases</h3>
         <a class="navigation-label" href="{% url 'general_knowledge' %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
