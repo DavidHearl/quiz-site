@@ -336,7 +336,7 @@ background-color: #568869;
     width: 100%;
     color: white;
     padding: 6px;
-    background: linear-gradient(to bottom, rgb(101, 133, 202), rgb(51, 87, 204));
+    background: linear-gradient(315deg, rgb(101, 133, 202), rgb(51, 87, 204));
     border: none;
     border-radius: 8px;
     margin-top: 16px;

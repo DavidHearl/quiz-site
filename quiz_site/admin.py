@@ -3,6 +3,8 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Quiz)
+
+# Question Models
 admin.site.register(GeneralKnowledge)
 admin.site.register(TrueOrFalse)
 admin.site.register(Flags)

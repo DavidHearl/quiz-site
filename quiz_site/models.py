@@ -22,10 +22,12 @@ class Questions(models.Model):
 
 # Quiz model, used to create the game and assign the players playing the game
 class Quiz(models.Model):
+    quiz_name = models.CharField(max_length=100, default="Quiz")
     players = models.ManyToManyField(User)
-    
+    questions = models.ManyToManyField(Questions)
+
     def __str__(self):
-        return self.players
+        return self.quiz_name
 
 
 # -------------------------------------------------------------------------------

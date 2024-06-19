@@ -8,28 +8,52 @@
 
 {% block content %}
     <div class="title-block">
-        <h1>Quiz Home</h1>
-        <p>Welcome to the Quiz Home page. Here you can select the question sets you want to use for the quiz.</p>
-    </div>
+        <h1 class="title">Quiz Home</h1>
+        <p class="instructions large-spacing">Welcome to the Quiz Home page.</p>
+        {% if not user.is_authenticated %}
+            <hr>
+            <p class="instructions small-spacing">If you already have an account you can <a class="authentication-label" href="{% url 'account_login' %}">Login</a> using the credentials below</p>
+            <p class="instructions">Username: <span class="bold">yourname</span> (all lower case)</p>
+            <p class="instructions small-spacing">Password: <span class="bold">quizparticipant**</span></p>
+            <p class="instructions small-spacing">If you do not have an account you can <a class="authentication-label" href="{% url 'account_signup' %}">Register</a>. Use the password above.</p>
+            <hr>
+            <p class="instructions">Not Sure? If you are not on this list please <a class="authentication-label" href="{% url 'account_signup' %}">Register</a></p>
 
-    <div class="setup-container">
-        <div class="select-questions">
-            {% for question in questions %}
-                <div class="question">
-                    <input class="question-checkbox" type="checkbox" name="question_set" value="{{ question.selected }}">
-                    <h2 class="question-title">{{ question.question_type }} ?</h2>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="select-users">
             {% for user in users %}
                 <div class="question">
-                    <input class="question-checkbox" type="checkbox" name="question_set" value="{{ user.participating }}">
                     <h2 class="user-title">{{ user.username }}</h2>
                 </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <p class="instructions">Enter the quiz name:</p>
+                <div class="form-group">
+                    {{ quiz_selection_form.quiz_name }}
+                </div>
+                <p class="instructions">Who is participating in the quiz ?</p>
+                <div class="select-users small-spacing">
+                    {% for user in quiz_selection_form.users.field.queryset %}
+                        {% if not user.is_superuser %}
+                            <div class="user">
+                                <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.users.html_name }}" value="{{ user.id }}">
+                                <h2 class="user-title">{{ user.username }}</h2>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="instructions">What question sets do you want ?</p>
+                <div class="select-questions">
+                    {% for question in quiz_selection_form.questions.field.queryset %}
+                        <div class="question">
+                            <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.questions.html_name }}" value="{{ question.id }}">
+                            <h2 class="question-title">{{ question.question_type }}</h2>
+                        </div>
+                    {% endfor %}
+                </div>
+                <input class="quiz-submit" type="submit" value="Create Quiz">
+            </form>
+        {% endif %}
     </div>
-    
+
 {% endblock %}

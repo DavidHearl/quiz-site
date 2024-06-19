@@ -1,5 +1,48 @@
 .title-block {
-    margin: 8px 16px; 
+    margin: 16px 24px;
+}
+
+.title {
+    color: white;
+    margin-bottom: 8px;
+    font-size: 2.5rem;
+    text-shadow: 1px 1px black;
+}
+
+.sub-title {
+    color: white;
+    margin-bottom: 4px;
+    font-size: 1.3rem;
+}
+
+.instructions {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.authentication-label {
+    color: #eff27e;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.small-spacing {
+    margin-bottom: 16px;
+}
+
+.large-spacing {
+    margin-bottom: 20px;
+}
+
+.bold {
+    color: #d52f2f;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
 }
 
 .setup-container {
@@ -9,13 +52,9 @@
 
 .select-questions,
 .select-users {
-    width: 50%;
     display: flex;
-    flex-wrap: 2;
-    column-count: 2;
     flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 4px;
+    gap: 2px 6px;
 }
 
 .question {
@@ -24,10 +63,29 @@
     border: 1px solid black;
     background: white;  
     border-radius: 4px;
-    width: 46%;
-    min-width: 250px;
+    width: 250px;
     padding: 8px;
     max-height: 24px;
+    margin-bottom: 4px;
+    box-shadow: 1px 1px 2px;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+    background: white;  
+    border-radius: 4px;
+    width: 175px;
+    padding: 8px;
+    max-height: 24px;
+    margin-bottom: 4px;
+    box-shadow: 1px 1px 2px;
+}
+
+.user-item {
+    color: black;
+    text-transform: capitalize;
 }
 
 .question-checkbox {
@@ -45,4 +103,34 @@
 
 .user-title {
     text-transform: capitalize;
+}
+
+hr {
+    color: white;
+    margin: 16px 0px;
+}
+
+#id_quiz_name {
+    max-width: 300px;
+    padding: 8px;
+    background: white;
+    color: black;
+    border-radius: 4px;
+    text-align: start;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    box-shadow: 1px 1px 2px;
+    border: 1px solid black;
+}
+
+.quiz-submit {
+    margin-top: 16px;
+    max-width: 250px;
+    padding: 8px;
+    font-size: 1.1rem;
+    box-shadow: 1px 1px 2px;
+    background: linear-gradient(315deg, rgb(161, 198, 247), rgb(255, 255, 255));
+    cursor: pointer;
+    color: black;
+    border: 1px solid black;
 }

@@ -10,14 +10,32 @@ from .forms import *
 def quiz_home(request):
     questions = Questions.objects.all()
     users = User.objects.all()
+    quiz = Quiz.objects.all()
+    quiz_selection_form = QuizSelectionForm()
+
+    if request.method == 'POST':
+        quiz_selection_form = QuizSelectionForm(request.POST)
+        if quiz_selection_form.is_valid():
+            quiz = Quiz.objects.create(quiz_name='Quiz Name')
+            quiz.players.set(quiz_selection_form.cleaned_data['users'])
+            quiz.questions.set(quiz_selection_form.cleaned_data['questions'])
+            quiz.save()
+            return redirect('quiz_home')
+    else:
+        quiz_selection_form = QuizSelectionForm()
 
     context = {
         'questions': questions,
+        'quiz_selection_form': quiz_selection_form,
         'users': users,
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)
 
+
+# -------------------------------------------------------------------------------
+# ----------------------------- Question Models ---------------------------------
+# -------------------------------------------------------------------------------
 
 def general_knowledge(request):
     users = User.objects.all()
