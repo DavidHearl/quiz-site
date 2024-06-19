@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+
+{% block head_title %}
+    {% trans "Sign Out" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="auth-container">
+        <div class="auth-with-fields">
+            <h2 class="auth-primary logout-message">Loggin out of Scene Automation</h2>
+            <!-- <p class="auth-secondary">Are you Sure ?</p> -->
+
+            {% url 'account_logout' as action_url %}
+
+            <form method="post" action="{{ action_url }}">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <a class="auth-link2 return-home" href="{% url 'quiz_home' %}">Return Home</a>
+                <button class="auth-button" type="submit">{% trans 'Sign Out' %}</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

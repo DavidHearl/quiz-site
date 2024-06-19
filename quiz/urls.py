@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', quiz_home, name='quiz_home'),
     path('quiz/', include('quiz_site.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:

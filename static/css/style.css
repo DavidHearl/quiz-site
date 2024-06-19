@@ -285,3 +285,96 @@ background-color: #568869;
 .false {
     background-color:#af6969;
 }
+
+/* ------------------------------------------------------------------------------ */
+/* -------------------------------- Authentication ------------------------------ */
+/* ------------------------------------------------------------------------------ */
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+}
+
+.auth-with-fields {
+    display: flex;
+    margin-top: 96px;
+    flex-direction: column;
+    border: 1px solid black;
+    background: linear-gradient(315deg, #edeeff, lightblue);
+    padding: 16px;
+    border-radius: 16px;
+    width: 360px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.auth-primary {
+    justify-content: center;
+    display: flex;
+    color: black;
+    font-weight: 600;
+}
+
+.auth-secondary {
+    justify-content: center;
+    display: flex;
+    margin-top: 16px;
+}
+
+.auth-link1 {
+    margin: 0;
+    margin-right: 6px;
+    font-size: 0.9rem;
+}
+
+.auth-link2 {
+    margin: 0;
+    color: #217e82;
+    font-size: 0.9rem;
+}
+
+.auth-button {
+    width: 100%;
+    color: white;
+    padding: 6px;
+    background: linear-gradient(to bottom, rgb(101, 133, 202), rgb(51, 87, 204));
+    border: none;
+    border-radius: 8px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+
+.login > ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    list-style: disc;
+}
+
+.form-check {
+    margin: 12px 0;
+    float: right;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    color: black;
+}
+
+.form-control {
+    background: white;
+    color: black;
+    text-align: start;
+}
+
+.logout-message {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.return-home {
+    display: flex;
+    justify-content: center;
+    font-size: 1rem;
+    margin-top: 8px;
+}

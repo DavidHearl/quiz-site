@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth account socialaccount %}
+
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="auth-container">
+        <div class="auth-with-fields">
+            <h2 class="auth-primary">Login</h2>
+
+            <form method="post" action="{% url 'account_login' %}" class="entrance login">
+                {% csrf_token %}
+            
+                <div class="form-group">
+                    <label class="form-label" for="id_login">{% trans "Username" %}:</label>
+                    <input type="text" name="login" class="form-control" required id="id_login">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_password">{% trans "Password" %}:</label>
+                    <input type="password" name="password" class="form-control" required id="id_password">
+                </div>
+                <!-- <div class="form-group form-check">
+                    <input type="checkbox" name="remember" class="form-check-input" id="id_remember">
+                    <label class="form-check-label" for="id_remember">{% trans "Remember me" %}</label>
+                </div> -->
+            
+                <button type="submit" class="auth-button login-button">{% trans "Login" %}</button>
+            </form>
+
+            <div class="auth-secondary">
+                {% blocktrans %}
+                    <p class="auth-link1">Don't have an account? </p>
+                    <a class="auth-link2" href="{{ signup_url }}">Signup</a>
+                {% endblocktrans %}
+            </div>
+            
+            {% url 'account_login' as login_url %}
+
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% load allauth account socialaccount %}
+
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="auth-container">
+        <div class="auth-with-fields">
+            <h2 class="auth-primary">Register</h2>
+            
+            <form method="post" action="{{ action_url }}" class="entrance login">
+                {% csrf_token %}
+            
+                <div class="form-group">
+                    <label class="form-label" for="id_username">{% trans "Username" %}</label>
+                    <input type="text" name="username" class="form-control" required id="id_username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_email">{% trans "Email" %}</label>
+                    <input type="email" name="email" class="form-control" required id="id_email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_email2">{% trans "Confirm Email" %}</label>
+                    <input type="email" name="email2" class="form-control" required id="id_email2">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_password1">{% trans "Password" %}</label>
+                    <input type="password" name="password1" class="form-control" required id="id_password1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_password2">{% trans "Confirm Password" %}</label>
+                    <input type="password" name="password2" class="form-control" required id="id_password2">
+                </div>
+            
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                
+                <button type="submit" class="auth-button login-button">{% trans "Register" %}</button>
+            </form>
+
+            <div class="auth-secondary">
+                {% blocktrans %}
+                    <p class="auth-link1">Already have an account?</p>
+                    <a class="auth-link2" href="{{ login_url }}">Login</a>
+                {% endblocktrans %}
+            </div>
+        </div>
+    </div>
+
+    {% url 'account_signup' as action_url %}
+
+   
+
+    
+{% endblock content %}

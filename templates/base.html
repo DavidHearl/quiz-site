@@ -44,9 +44,7 @@
         <a id="home" href="{% url 'quiz_home' %}">Home {% if user.is_superuser %}(A){% endif %}</a>
 
         <h3 class="category-heading">Question Databases</h3>
-        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'general_knowledge' %}{% endif %}">
-            General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span>
-        </a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'general_knowledge' %}{% endif %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
         <a class="navigation-label" href="{% if user.is_superuser %}{% url 'true_or_false' %}{% endif %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
         <a class="navigation-label" href="{% if user.is_superuser %}{% url 'flags' %}{% endif %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
         <a class="navigation-label" href="{% if user.is_superuser %}{% url 'logos' %}{% endif %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
@@ -57,6 +55,12 @@
 
         <h3 class="category-heading">Profile</h3>
         <a class="navigation-label" href="{% url 'admin:index' %}">Admin</a>
+        {% if user.is_authenticated %}
+            <a class="navigation-label" href="{% url 'account_logout' %}">Logout</a>
+        {% else %}
+            <a class="navigation-label" href="{% url 'account_login' %}">Login</a>
+            <a class="navigation-label" href="{% url 'account_signup' %}">Register</a>
+        {% endif %}
     </nav>
 
     <div id="main">
