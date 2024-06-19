@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 
 
 # User model, used to store player names and scores
-class User(models.Model):
-    player_name = models.CharField(max_length=100)
+class Player(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     player_score = models.IntegerField(null=True, blank=True)
+    participating = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.player_name
+        return self.user
 
 
 class Questions(models.Model):

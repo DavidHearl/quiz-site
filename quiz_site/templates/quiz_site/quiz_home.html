@@ -7,12 +7,29 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Select The Question Sets</h1>
+    <div class="title-block">
+        <h1>Quiz Home</h1>
+        <p>Welcome to the Quiz Home page. Here you can select the question sets you want to use for the quiz.</p>
+    </div>
 
-    {% for question in questions %}
-        <div class="question">
-            <h2>{{ question.question_type }}</h2>
-            <input type="checkbox" name="question_set" value="{{ question.selected }}">
+    <div class="setup-container">
+        <div class="select-questions">
+            {% for question in questions %}
+                <div class="question">
+                    <input class="question-checkbox" type="checkbox" name="question_set" value="{{ question.selected }}">
+                    <h2 class="question-title">{{ question.question_type }} ?</h2>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+
+        <div class="select-users">
+            {% for user in users %}
+                <div class="question">
+                    <input class="question-checkbox" type="checkbox" name="question_set" value="{{ user.participating }}">
+                    <h2 class="user-title">{{ user.username }}</h2>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
 {% endblock %}

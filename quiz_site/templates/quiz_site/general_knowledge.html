@@ -54,7 +54,7 @@
                         <select class="created_by" id="id_created_by" name="created_by">
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == general_knowledge.created_by.id %}selected{% endif %}>
-                                    {{ user.player_name }}
+                                    {{ user.username }}
                                 </option>
                             {% endfor %}
                         </select>
@@ -112,7 +112,7 @@
                             <select class="created_by" id="id_created_by" name="created_by">
                                 {% for user in users %}
                                     <option value="{{ user.id }}" {% if user.id == question.created_by.id %}selected{% endif %}>
-                                        {{ user.player_name }}
+                                        {{ user.username }}
                                     </option>
                                 {% endfor %}
                             </select>

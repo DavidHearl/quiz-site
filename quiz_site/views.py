@@ -9,9 +9,11 @@ from .forms import *
 # Create your views here.
 def quiz_home(request):
     questions = Questions.objects.all()
+    users = User.objects.all()
 
     context = {
         'questions': questions,
+        'users': users,
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)

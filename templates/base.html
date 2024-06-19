@@ -44,14 +44,16 @@
         <a id="home" href="{% url 'quiz_home' %}">Home {% if user.is_superuser %}(A){% endif %}</a>
 
         <h3 class="category-heading">Question Databases</h3>
-        <a class="navigation-label" href="{% url 'general_knowledge' %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
-        <a class="navigation-label" href="{% url 'true_or_false' %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
-        <a class="navigation-label" href="{% url 'flags' %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
-        <a class="navigation-label" href="{% url 'logos' %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
-        <a class="navigation-label" href="{% url 'jets' %}">Fighter Jets <span class="finished">({{jets_count}})</span></a>
-        <a class="navigation-label" href="{% url 'celebrities' %}">Celebrities <span class="to-finish">({{celebrities_count}})</span></a>
-        <a class="navigation-label" href="{% url 'movies' %}">Movies <span class="to-finish">({{movies_count}})</span></a>
-        <a class="navigation-label" href="{% url 'locations' %}">Locations <span class="to-finish">({{locations_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'general_knowledge' %}{% endif %}">
+            General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span>
+        </a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'true_or_false' %}{% endif %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'flags' %}{% endif %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'logos' %}{% endif %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'jets' %}{% endif %}">Fighter Jets <span class="finished">({{jets_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'celebrities' %}{% endif %}">Celebrities <span class="to-finish">({{celebrities_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'movies' %}{% endif %}">Movies <span class="to-finish">({{movies_count}})</span></a>
+        <a class="navigation-label" href="{% if user.is_superuser %}{% url 'locations' %}{% endif %}">Locations <span class="to-finish">({{locations_count}})</span></a>
 
         <h3 class="category-heading">Profile</h3>
         <a class="navigation-label" href="{% url 'admin:index' %}">Admin</a>

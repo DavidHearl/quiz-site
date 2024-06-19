@@ -9,7 +9,7 @@ class GeneralKnowledgeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class TrueOrFalseForm(forms.ModelForm):
@@ -19,7 +19,7 @@ class TrueOrFalseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
         
 
 class FlagForm(forms.ModelForm):
@@ -29,7 +29,7 @@ class FlagForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class LogoForm(forms.ModelForm):
@@ -39,7 +39,7 @@ class LogoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class JetForm(forms.ModelForm):
@@ -49,7 +49,7 @@ class JetForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class CelebrityForm(forms.ModelForm):
@@ -59,7 +59,7 @@ class CelebrityForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class MovieForm(forms.ModelForm):
@@ -75,7 +75,7 @@ class MovieForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         movie = kwargs.pop('movie', None)
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
 
 
 class LocationForm(forms.ModelForm):
@@ -85,4 +85,4 @@ class LocationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['created_by'].initial = User.objects.get(player_name='David')
+        self.fields['created_by'].initial = User.objects.get(username='david')
