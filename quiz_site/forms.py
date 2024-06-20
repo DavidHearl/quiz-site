@@ -9,7 +9,7 @@ class QuizSelectionForm(forms.Form):
 
     quiz_name = forms.CharField(max_length=200)
     users = forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=forms.CheckboxSelectMultiple)
-    questions = forms.ModelMultipleChoiceField(queryset=Rounds.objects.all(), widget=forms.CheckboxSelectMultiple)
+    rounds = forms.ModelMultipleChoiceField(queryset=Rounds.objects.all(), widget=forms.CheckboxSelectMultiple)
 
 
 # -------------------------------------------------------------------------------

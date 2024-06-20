@@ -8,8 +8,8 @@ from .forms import *
 
 # Create your views here.
 def quiz_home(request):
-    rounds = Rounds.objects.all()
     users = User.objects.all()
+    rounds = Rounds.objects.all()
     quiz = Quiz.objects.all()
     quiz_selection_form = QuizSelectionForm()
 
@@ -18,7 +18,7 @@ def quiz_home(request):
         if quiz_selection_form.is_valid():
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
-            quiz.questions.set(quiz_selection_form.cleaned_data['questions'])
+            quiz.rounds.set(quiz_selection_form.cleaned_data['rounds'])  # Updated this line
             quiz.save()
             return redirect('active_quizzes')
     else:
@@ -37,8 +37,17 @@ def quiz_home(request):
 def active_quizzes(request):
     quiz = Quiz.objects.latest('date_created')
 
+    questions = []
+    for round in quiz.rounds.all():
+        round_questions = list(round.questions_set.all())
+        questions.extend(round_questions)
+
+        for question in round_questions:
+            print(f"Round: {question.quiz_round.question_type}, Question: {question.question}")
+
     context = {
         'quiz': quiz,
+        'questions': questions,
     }
 
     return render(request, 'quiz_site/active_quiz.html', context)
