@@ -3,7 +3,11 @@ from django.contrib.auth.models import User
 from .models import *
 
 class QuizSelectionForm(forms.Form):
-    quiz_name = forms.CharField(max_length=100)
+    class Meta:
+        model = Quiz
+        fields = ['quiz_name']
+
+    quiz_name = forms.CharField(max_length=200)
     users = forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=forms.CheckboxSelectMultiple)
     questions = forms.ModelMultipleChoiceField(queryset=Questions.objects.all(), widget=forms.CheckboxSelectMultiple)
 

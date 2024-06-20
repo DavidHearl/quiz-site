@@ -16,21 +16,32 @@ def quiz_home(request):
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
-            quiz = Quiz.objects.create(quiz_name='Quiz Name')
+            quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             quiz.questions.set(quiz_selection_form.cleaned_data['questions'])
             quiz.save()
-            return redirect('quiz_home')
+            return redirect('active_quizzes')
     else:
         quiz_selection_form = QuizSelectionForm()
 
     context = {
         'questions': questions,
+        'quiz': quiz,
         'quiz_selection_form': quiz_selection_form,
         'users': users,
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)
+
+
+def active_quizzes(request):
+    quiz = Quiz.objects.latest('date_created')
+
+    context = {
+        'quiz': quiz,
+    }
+
+    return render(request, 'quiz_site/active_quiz.html', context)
 
 
 # -------------------------------------------------------------------------------

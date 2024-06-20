@@ -29,7 +29,7 @@
                 {% csrf_token %}
                 <p class="instructions">Enter the quiz name:</p>
                 <div class="form-group">
-                    {{ quiz_selection_form.quiz_name }}
+                    <input id="id_quiz_name" type="text" name="quiz_name" required>
                 </div>
                 <p class="instructions">Who is participating in the quiz ?</p>
                 <div class="select-users small-spacing">

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from . import views
 
 urlpatterns = [
+    path('active_quizzes/', views.active_quizzes, name='active_quizzes'),
     path('general_knowledge/', views.general_knowledge, name='general_knowledge'),
     path('edit_general_knowledge/<int:question_id>/', views.edit_general_knowledge, name='edit_general_knowledge'),
     path('true_or_false/', views.true_or_false, name='true_or_false'),

@@ -20,7 +20,7 @@ nav {
 #main {
     flex: 1 1 auto;
     flex-grow: 1;
-    background: #3b578c;;
+    background: linear-gradient(315deg, #3b578c, #31648c);
     background-size: 600% 600%;
 }
 
@@ -216,7 +216,6 @@ input {
 
 .create-input {
     background: rgba(40,48,64,255);
-    margin-bottom: 16px;
 }
 
 .question-row {

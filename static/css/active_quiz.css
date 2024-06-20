@@ -1,0 +1,32 @@
+.quiz-container {
+    padding: 16px;
+}
+
+.score-container {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+.player-information {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid white;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 2px 2px 1px black;
+    width: 100px;
+}
+
+.player-name {
+    text-transform: capitalize;
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+.player-score {
+    color: #bd2c0a;
+}

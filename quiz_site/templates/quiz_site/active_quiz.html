@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="quiz-container">
+        <div class="score-container">
+            {% for player in quiz.players.all %}
+                <div class="player-information">
+                    <h2 class="player-name">{{ player }}</h2>
+                    <h3 class="player-score"> {{ player.player.player_score }}</h3>
+                </div>            
+            {% endfor %}
+        </div>
+    </div>
+
+    {% for question_set in quiz.questions.all %}
+
+        {{ question_set.question_type }}
+
+    {% endfor %}
+    
+{% endblock %}
