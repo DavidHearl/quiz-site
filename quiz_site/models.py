@@ -13,7 +13,7 @@ class Player(models.Model):
         return self.user.username
 
 
-class Questions(models.Model):
+class Rounds(models.Model):
     question_type = models.CharField(max_length=100)
     selected = models.BooleanField(default=False)
 
@@ -25,15 +25,20 @@ class Questions(models.Model):
 class Quiz(models.Model):
     quiz_name = models.CharField(max_length=100, default="Quiz")
     players = models.ManyToManyField(User)
-    questions = models.ManyToManyField(Questions)
+    rounds = models.ManyToManyField(Rounds)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.quiz_name
 
-
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------
+# -------------------------------------------------------------------------------
+class Questions(models.Model):
+    quiz_round = models.ForeignKey(Rounds, on_delete=models.CASCADE, null=True, blank=True)
+
+# -------------------------------------------------------------------------------
+# ---------------------------- Question Database --------------------------------
 # -------------------------------------------------------------------------------
 
 class GeneralKnowledge(models.Model):

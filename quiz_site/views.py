@@ -8,7 +8,7 @@ from .forms import *
 
 # Create your views here.
 def quiz_home(request):
-    questions = Questions.objects.all()
+    rounds = Rounds.objects.all()
     users = User.objects.all()
     quiz = Quiz.objects.all()
     quiz_selection_form = QuizSelectionForm()
@@ -25,7 +25,7 @@ def quiz_home(request):
         quiz_selection_form = QuizSelectionForm()
 
     context = {
-        'questions': questions,
+        'rounds': rounds,
         'quiz': quiz,
         'quiz_selection_form': quiz_selection_form,
         'users': users,

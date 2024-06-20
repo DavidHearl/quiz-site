@@ -4,6 +4,8 @@ from .models import *
 # Register your models here.
 admin.site.register(Quiz)
 admin.site.register(Player)
+admin.site.register(Rounds)
+admin.site.register(Questions)
 
 # Question Models
 admin.site.register(GeneralKnowledge)
@@ -14,4 +16,3 @@ admin.site.register(Jets)
 admin.site.register(Celebrities)
 admin.site.register(Movies)
 admin.site.register(Locations)
-admin.site.register(Questions)
