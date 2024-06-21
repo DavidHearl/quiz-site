@@ -37,19 +37,23 @@ class Quiz(models.Model):
 # -------------------------------------------------------------------------------
 class Questions(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
-    quiz_round = models.ForeignKey(Rounds, on_delete=models.CASCADE, null=True, blank=True)
 
-    general_knowledge_questions = models.ManyToManyField('GeneralKnowledge', blank=True)
-    true_or_false_questions = models.ManyToManyField('TrueOrFalse', blank=True)
-    flag_questions = models.ManyToManyField('Flags', blank=True)
-    logo_questions = models.ManyToManyField('Logos', blank=True)
-    jet_questions = models.ManyToManyField('Jets', blank=True)
-    celebrity_questions = models.ManyToManyField('Celebrities', blank=True)
-    movie_questions = models.ManyToManyField('Movies', blank=True)
-    location_questions = models.ManyToManyField('Locations', blank=True)
+    movie_release_dates = models.ManyToManyField('GeneralKnowledge', blank=True, related_name='movie_release_date_questions')
+    who_is_the_imposter = models.ManyToManyField('Celebrities', blank=True, related_name='imposter_questions')
+    who_is_the_oldest = models.ManyToManyField('Celebrities', blank=True, related_name='oldest_questions')
+    true_or_false = models.ManyToManyField('TrueOrFalse', blank=True, related_name='true_or_false_questions')
+    guess_the_age = models.ManyToManyField('Celebrities', blank=True, related_name='guess_the_age_questions')
+    movies = models.ManyToManyField('Movies', blank=True, related_name='movie_questions')
+    logos = models.ManyToManyField('Logos', blank=True, related_name='logo_questions')
+    locations = models.ManyToManyField('Locations', blank=True, related_name='location_questions')
+    fight_jets = models.ManyToManyField('Jets', blank=True, related_name='fight_jet_questions')
+    celebrities = models.ManyToManyField('Celebrities', blank=True, related_name='celebrity_questions')
+    capitals = models.ManyToManyField('Flags', blank=True, related_name='capital_questions')
+    general_knowledge = models.ManyToManyField('GeneralKnowledge', blank=True, related_name='general_knowledge_questions')
+    flags = models.ManyToManyField('Flags', blank=True, related_name='flag_questions')
 
     def __str__(self):
-        return self.quiz.quiz_name + ' : ' + self.quiz_round.question_type
+        return self.quiz.quiz_name
 
 # -------------------------------------------------------------------------------
 # ---------------------------- Question Database --------------------------------

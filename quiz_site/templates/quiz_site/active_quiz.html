@@ -25,7 +25,6 @@
     {% endfor %}
 
     {% for question in questions %}
-        <p>Flag Questions:</p>
         <ul>
             {% for flag_question in question.flag_questions.all %}
                 <li>{{ flag_question }}</li>
