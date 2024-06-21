@@ -1,5 +1,13 @@
+.quiz-title {
+    margin: 8px 8px;
+    color: white;
+    font-size: 1rem;
+    text-shadow: 1px 1px black;
+}
+
 .quiz-container {
     padding: 16px;
+    padding-top: 0;
 }
 
 .score-container {

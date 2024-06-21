@@ -36,28 +36,20 @@ class Quiz(models.Model):
 # ----------------------------- Question Models ---------------------------------
 # -------------------------------------------------------------------------------
 class Questions(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     quiz_round = models.ForeignKey(Rounds, on_delete=models.CASCADE, null=True, blank=True)
 
-    # All possible fields types
-    question = models.CharField(max_length=128, null=True, blank=True)
-    answer = models.CharField(max_length=100, null=True, blank=True)
-
-    # Extra Fields
-    photo = models.ImageField(null=True, blank=True)
-    date = models.DateField(null=True, blank=True)
-    capital = models.CharField(max_length=100, null=True, blank=True)
-
-    # Multiple Choice Answers
-    choice_1 = models.CharField(max_length=100, null=True, blank=True)
-    choice_2 = models.CharField(max_length=100, null=True, blank=True)
-    choice_3 = models.CharField(max_length=100, null=True, blank=True)
-
-    # Question Stats
-    difficulty = models.FloatField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+    general_knowledge_questions = models.ManyToManyField('GeneralKnowledge', blank=True)
+    true_or_false_questions = models.ManyToManyField('TrueOrFalse', blank=True)
+    flag_questions = models.ManyToManyField('Flags', blank=True)
+    logo_questions = models.ManyToManyField('Logos', blank=True)
+    jet_questions = models.ManyToManyField('Jets', blank=True)
+    celebrity_questions = models.ManyToManyField('Celebrities', blank=True)
+    movie_questions = models.ManyToManyField('Movies', blank=True)
+    location_questions = models.ManyToManyField('Locations', blank=True)
 
     def __str__(self):
-        return self.question
+        return self.quiz.quiz_name + ' : ' + self.quiz_round.question_type
 
 # -------------------------------------------------------------------------------
 # ---------------------------- Question Database --------------------------------

@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+    <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
 
     <div class="quiz-container">
         <div class="score-container">
@@ -18,5 +19,20 @@
             {% endfor %}
         </div>
     </div>
+
+    {% for round in quiz.rounds.all %}
+        <p>Question Type: {{ round.question_type }}</p>
+    {% endfor %}
+
+    {% for question in questions %}
+        <p>Flag Questions:</p>
+        <ul>
+            {% for flag_question in question.flag_questions.all %}
+                <li>{{ flag_question }}</li>
+                <li>{{ flag_question.capital }}</li>
+                <li>{{ flag_question.flag.url }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 
 {% endblock %}

@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import *
 from .forms import *
+import random
 
 
 # Create your views here.
@@ -18,9 +19,23 @@ def quiz_home(request):
         if quiz_selection_form.is_valid():
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
-            quiz.rounds.set(quiz_selection_form.cleaned_data['rounds'])  # Updated this line
+            quiz.rounds.set(quiz_selection_form.cleaned_data['rounds'])
             quiz.save()
+
+            # Add question functions here
+            print('Adding Questions...')
+            add_flag_questions(request)
+            add_general_knowledge_questions(request)
+            add_true_or_false_questions(request)
+            add_logo_questions(request)
+            add_jet_questions(request)
+            add_celebrity_questions(request)
+            add_movie_questions(request)
+            add_location_questions(request)
+            
             return redirect('active_quizzes')
+        else:
+            print(quiz_selection_form.errors)
     else:
         quiz_selection_form = QuizSelectionForm()
 
@@ -36,14 +51,7 @@ def quiz_home(request):
 
 def active_quizzes(request):
     quiz = Quiz.objects.latest('date_created')
-
-    questions = []
-    for round in quiz.rounds.all():
-        round_questions = list(round.questions_set.all())
-        questions.extend(round_questions)
-
-        for question in round_questions:
-            print(f"Round: {question.quiz_round.question_type}, Question: {question.question}")
+    questions = Questions.objects.filter(quiz=quiz)
 
     context = {
         'quiz': quiz,
@@ -52,7 +60,136 @@ def active_quizzes(request):
 
     return render(request, 'quiz_site/active_quiz.html', context)
 
+# -------------------------------------------------------------------------------
+# -------------------------- Add Question Functions -----------------------------
+# -------------------------------------------------------------------------------
+def add_flag_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    flags = Flags.objects.all()
 
+    for round in quiz.rounds.all():
+        if round.question_type == 'Flags':
+            random_flags = random.sample(list(flags), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for flag in random_flags:
+                question.flag_questions.add(flag)
+            question.save()
+            print(f"Added question for round {round.id} with flags: {[flag.id for flag in random_flags]}")
+        else:
+            print(f"Round {round.id} question type is not 'Flags', it's '{round.question_type}'")
+
+
+def add_general_knowledge_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    general_knowledge = GeneralKnowledge.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'General Knowledge':
+            random_general_knowledge = random.sample(list(general_knowledge), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_general_knowledge:
+                question.general_knowledge_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with general knowledge questions: {[question.id for question in random_general_knowledge]}")
+        else:
+            print(f"Round {round.id} question type is not 'General Knowledge', it's '{round.question_type}'")
+
+
+def add_true_or_false_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    true_or_false = TrueOrFalse.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'True or False':
+            random_true_or_false = random.sample(list(true_or_false), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_true_or_false:
+                question.true_or_false_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with true or false questions: {[question.id for question in random_true_or_false]}")
+        else:
+            print(f"Round {round.id} question type is not 'True or False', it's '{round.question_type}'")
+
+
+def add_logo_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    logos = Logos.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'Logos':
+            random_logos = random.sample(list(logos), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for logo in random_logos:
+                question.logo_questions.add(logo)
+            question.save()
+            print(f"Added question for round {round.id} with logo questions: {[logo.id for logo in random_logos]}")
+        else:
+            print(f"Round {round.id} question type is not 'Logos', it's '{round.question_type}'")
+
+
+def add_jet_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    jets = Jets.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'Jets':
+            random_jets = random.sample(list(jets), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_jets:
+                question.jet_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with jet questions: {[question.id for question in random_jets]}")
+        else:
+            print(f"Round {round.id} question type is not 'Jets', it's '{round.question_type}'")
+
+
+def add_celebrity_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    celebrities = Celebrities.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'Celebrities':
+            random_celebrities = random.sample(list(celebrities), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_celebrities:
+                question.celebrity_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with celebrity questions: {[question.id for question in random_celebrities]}")
+        else:
+            print(f"Round {round.id} question type is not 'Celebrities', it's '{round.question_type}'")
+
+
+def add_movie_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    movies = Movies.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'Movies':
+            random_movies = random.sample(list(movies), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_movies:
+                question.movie_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with movie questions: {[question.id for question in random_movies]}")
+        else:
+            print(f"Round {round.id} question type is not 'Movies', it's '{round.question_type}'")
+
+
+def add_location_questions(request):
+    quiz = Quiz.objects.latest('date_created')
+    locations = Locations.objects.all()
+
+    for round in quiz.rounds.all():
+        if round.question_type == 'Locations':
+            random_locations = random.sample(list(locations), 10)
+            question = Questions.objects.create(quiz=quiz, quiz_round=round)
+            for question in random_locations:
+                question.location_questions.add(question)
+            question.save()
+            print(f"Added question for round {round.id} with location questions: {[question.id for question in random_locations]}")
+        else:
+            print(f"Round {round.id} question type is not 'Locations', it's '{round.question_type}'")
+    
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------
 # -------------------------------------------------------------------------------
