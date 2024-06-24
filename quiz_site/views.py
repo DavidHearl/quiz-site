@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404, reverse
 from django.http import HttpResponse
 from django.contrib import messages
@@ -25,13 +26,13 @@ def quiz_home(request):
             # Add question functions here
             print('Adding Questions...')
             add_flag_questions(request)
-            add_general_knowledge_questions(request)
-            add_true_or_false_questions(request)
-            add_logo_questions(request)
-            add_jet_questions(request)
-            add_celebrity_questions(request)
-            add_movie_questions(request)
-            add_location_questions(request)
+            # add_general_knowledge_questions(request)
+            # add_true_or_false_questions(request)
+            # add_logo_questions(request)
+            # add_jet_questions(request)
+            # add_celebrity_questions(request)
+            # add_movie_questions(request)
+            # add_location_questions(request)
             
             return redirect('active_quizzes')
         else:
@@ -65,130 +66,25 @@ def active_quizzes(request):
 # -------------------------------------------------------------------------------
 def add_flag_questions(request):
     quiz = Quiz.objects.latest('date_created')
-    flags = Flags.objects.all()
+    flags_round_exists = quiz.rounds.filter(question_type="Flags").exists()
 
-    for round in quiz.rounds.all():
-        if round.question_type == 'Flags':
-            random_flags = random.sample(list(flags), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for flag in random_flags:
-                question.flag_questions.add(flag)
-            question.save()
-            print(f"Added question for round {round.id} with flags: {[flag.id for flag in random_flags]}")
-        else:
-            print(f"Round {round.id} question type is not 'Flags', it's '{round.question_type}'")
+    if flags_round_exists:
+        # Ensure there is a Questions instance for the quiz
+        questions, created = Questions.objects.get_or_create(quiz=quiz)
 
+        # Efficiently select 10 random flag questions if the Flags model is large
+        count = Flags.objects.aggregate(count=Count('id'))['count']
+        random_indexes = sorted([random.randint(0, count - 1) for _ in range(10)])
+        flag_questions = [Flags.objects.all()[index] for index in random_indexes]
 
-def add_general_knowledge_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    general_knowledge = GeneralKnowledge.objects.all()
+        for flag_question in flag_questions:
+            questions.flags.add(flag_question)
 
-    for round in quiz.rounds.all():
-        if round.question_type == 'General Knowledge':
-            random_general_knowledge = random.sample(list(general_knowledge), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_general_knowledge:
-                question.general_knowledge_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with general knowledge questions: {[question.id for question in random_general_knowledge]}")
-        else:
-            print(f"Round {round.id} question type is not 'General Knowledge', it's '{round.question_type}'")
+        print('Flag questions added successfully')
+    else:
+        print('No Flags round for this quiz')
 
-
-def add_true_or_false_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    true_or_false = TrueOrFalse.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'True or False':
-            random_true_or_false = random.sample(list(true_or_false), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_true_or_false:
-                question.true_or_false_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with true or false questions: {[question.id for question in random_true_or_false]}")
-        else:
-            print(f"Round {round.id} question type is not 'True or False', it's '{round.question_type}'")
-
-
-def add_logo_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    logos = Logos.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'Logos':
-            random_logos = random.sample(list(logos), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for logo in random_logos:
-                question.logo_questions.add(logo)
-            question.save()
-            print(f"Added question for round {round.id} with logo questions: {[logo.id for logo in random_logos]}")
-        else:
-            print(f"Round {round.id} question type is not 'Logos', it's '{round.question_type}'")
-
-
-def add_jet_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    jets = Jets.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'Jets':
-            random_jets = random.sample(list(jets), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_jets:
-                question.jet_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with jet questions: {[question.id for question in random_jets]}")
-        else:
-            print(f"Round {round.id} question type is not 'Jets', it's '{round.question_type}'")
-
-
-def add_celebrity_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    celebrities = Celebrities.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'Celebrities':
-            random_celebrities = random.sample(list(celebrities), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_celebrities:
-                question.celebrity_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with celebrity questions: {[question.id for question in random_celebrities]}")
-        else:
-            print(f"Round {round.id} question type is not 'Celebrities', it's '{round.question_type}'")
-
-
-def add_movie_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    movies = Movies.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'Movies':
-            random_movies = random.sample(list(movies), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_movies:
-                question.movie_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with movie questions: {[question.id for question in random_movies]}")
-        else:
-            print(f"Round {round.id} question type is not 'Movies', it's '{round.question_type}'")
-
-
-def add_location_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    locations = Locations.objects.all()
-
-    for round in quiz.rounds.all():
-        if round.question_type == 'Locations':
-            random_locations = random.sample(list(locations), 10)
-            question = Questions.objects.create(quiz=quiz, quiz_round=round)
-            for question in random_locations:
-                question.location_questions.add(question)
-            question.save()
-            print(f"Added question for round {round.id} with location questions: {[question.id for question in random_locations]}")
-        else:
-            print(f"Round {round.id} question type is not 'Locations', it's '{round.question_type}'")
+    return redirect('active_quizzes')
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------
