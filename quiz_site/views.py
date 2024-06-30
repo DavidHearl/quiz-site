@@ -54,9 +54,34 @@ def active_quizzes(request):
     quiz = Quiz.objects.latest('date_created')
     questions = Questions.objects.filter(quiz=quiz)
 
+    if quiz.rounds.filter(question_type="Flags").exists():
+        flag_questions = questions[0].flags.all()
+        flag_question_set = []
+        
+        for flag_question in flag_questions:  # Iterate over each flag question
+            question_subset = []
+            correct_country = flag_question.country
+            question_subset.append(correct_country)  # Add the correct country
+            
+            # Get all countries except the correct one
+            all_countries = Flags.objects.exclude(country=correct_country).values_list('country', flat=True)
+            decoy_countries = random.sample(list(all_countries), 3)  # Select 3 random decoy countries
+            
+            # Combine correct country with decoys
+            question_subset.extend(decoy_countries)
+            
+            # Optionally shuffle the answers so the correct one isn't always first
+            random.shuffle(question_subset)
+            
+            flag_question_set.append(question_subset)
+    
+    print(flag_question_set)
+
     context = {
         'quiz': quiz,
         'questions': questions,
+        'flags': flag_question_set,
+        'flag_questions': flag_questions,
     }
 
     return render(request, 'quiz_site/active_quiz.html', context)

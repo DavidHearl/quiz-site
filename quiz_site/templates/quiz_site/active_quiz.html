@@ -25,13 +25,26 @@
     {% endfor %}
 
     {% for question in questions %}
-        <ul>
-            {% for flag_question in question.flag_questions.all %}
-                <li>{{ flag_question }}</li>
-                <li>{{ flag_question.capital }}</li>
-                <li>{{ flag_question.flag.url }}</li>
+        <div>
+            <h2>Question: {{ question.text }}</h2>
+            <!-- Display any other question details here -->
+        </div>
+    {% endfor %}
+
+    <hr>
+    <h2>Flag Questions:</h2>
+    {% for flag in flag_questions %}
+        <img src="{{ flag.flag.url }}" class="flag-image">
+    {% endfor %}
+
+    {% for flag_set in flags %}
+        {{ flag_set.flag }}
+        <div>
+            {% for country in flag_set %}
+                <button>{{ country }}</button>
+                <img src="{{ flag }}" class="flag-image">
             {% endfor %}
-        </ul>
+        </div>
     {% endfor %}
 
 {% endblock %}
