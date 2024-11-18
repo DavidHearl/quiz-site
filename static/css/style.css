@@ -27,7 +27,7 @@ nav {
 /* Sidebar */
 #home {
     display: flex;
-    margin: 12px 24px 0px 12px;
+    margin: 0 24px 0 12px;
     padding: 4px;
     color: white;
     font-size: 1.8rem;
@@ -40,6 +40,24 @@ nav {
     padding: 4px;
     color: #868686;
     font-size: 0.8rem;
+}
+
+.user {
+    padding: 4px;
+    font-size: 0.8rem;
+}
+
+.welcome-user {
+    margin: 8px 24px 0px 12px;
+    padding: 4px;
+    color: #c6c6c6;
+    font-weight: 400;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.welcome-user span {
+    text-transform: capitalize;
 }
 
 .navigation-label {
@@ -177,7 +195,6 @@ input {
     cursor: pointer;
 }
 
-.created_by,
 .category,
 .select-box {
     width: 100%;
@@ -186,7 +203,7 @@ input {
     border: 1px solid rgb(95, 99, 108);
     padding: 3px;
     border-radius: 4px;
-    color: #ccc;
+    color: #fff;
 }
 
 /* Wide Database */

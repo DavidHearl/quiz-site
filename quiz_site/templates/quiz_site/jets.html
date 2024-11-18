@@ -41,18 +41,6 @@
                     <input id="id_difficulty" type="text" name="difficulty" value="{{ jet.difficulty }}">
                 </div>
 
-                <!-- Created By -->
-                <div class="column-flex">
-                    <label for="id_created_by">Created By:</label>
-                    <select class="created_by" id="id_created_by" name="created_by">
-                        {% for user in users %}
-                            <option value="{{ user.id }}" {% if user.id == jet.created_by.id %}selected{% endif %}>
-                                {{ user.username }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
                 <button class="submit" type="submit">Submit</button>
             </form> 
         </div>
@@ -90,18 +78,6 @@
                     <div class="column-flex">
                         <label for="id_difficulty">Difficulty:</label>
                         <input id="id_difficulty" type="text" name="difficulty" value="{{ jet.difficulty }}">
-                    </div>
-
-                    <!-- Created By -->
-                    <div class="column-flex">
-                        <label for="id_created_by">Created By:</label>
-                        <select class="created_by" id="id_created_by" name="created_by">
-                            {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == jet.created_by.id %}selected{% endif %}>
-                                    {{ user.username }}
-                                </option>
-                            {% endfor %}
-                        </select>
                     </div>
 
                     <button class="submit" type="submit">Submit</button>

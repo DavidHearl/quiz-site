@@ -1,40 +1,46 @@
 .quiz-title {
-    margin: 8px 8px;
+    margin: 8px;
     color: white;
     font-size: 1rem;
     text-shadow: 1px 1px black;
 }
 
 .quiz-container {
-    padding: 16px;
-    padding-top: 0;
+    display: flex;
+    justify-content: space-between;
+    margin: 8px;
+    padding: 0;
 }
 
 .score-container {
     display: flex;
     justify-content: center;
-    gap: 32px;
+    gap: 8px;
 }
 
 .player-information {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
     padding: 4px 8px;
     border: 1px solid white;
     background: white;
     border-radius: 4px;
     box-shadow: 2px 2px 1px black;
-    width: 100px;
+    width: 135px;
+    justify-content: space-between;
 }
 
 .player-name {
     text-transform: capitalize;
-    font-size: 1.4rem;
-    margin-bottom: 4px;
+    font-size: 1rem;
 }
 
 .player-score {
+    font-size: 1rem;
     color: #bd2c0a;
+}
+
+.score-container {
+    display: flex;
+    flex-direction: column;
 }

@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from .models import *
 from .forms import *
 import random
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 
 # Create your views here.
@@ -22,17 +24,6 @@ def quiz_home(request):
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             quiz.rounds.set(quiz_selection_form.cleaned_data['rounds'])
             quiz.save()
-
-            # Add question functions here
-            print('Adding Questions...')
-            add_flag_questions(request)
-            # add_general_knowledge_questions(request)
-            # add_true_or_false_questions(request)
-            # add_logo_questions(request)
-            # add_jet_questions(request)
-            # add_celebrity_questions(request)
-            # add_movie_questions(request)
-            # add_location_questions(request)
             
             return redirect('active_quizzes')
         else:
@@ -52,39 +43,24 @@ def quiz_home(request):
 
 def active_quizzes(request):
     quiz = Quiz.objects.latest('date_created')
-    questions = Questions.objects.filter(quiz=quiz)
+    flags = Flags.objects.all()
+
+    round_count = quiz.rounds.count()
+
+    if len(quiz.random_numbers) < round_count * 10:
+        random_flags = random.sample(list(flags), 10)
+        quiz.random_numbers = [flag.id for flag in random_flags]
+        quiz.save()
+
+    random_flags = flags.filter(id__in=quiz.random_numbers)
 
     context = {
         'quiz': quiz,
-        'questions': questions,
+        'flags': random_flags,
     }
 
     return render(request, 'quiz_site/active_quiz.html', context)
 
-# -------------------------------------------------------------------------------
-# -------------------------- Add Question Functions -----------------------------
-# -------------------------------------------------------------------------------
-def add_flag_questions(request):
-    quiz = Quiz.objects.latest('date_created')
-    flags_round_exists = quiz.rounds.filter(question_type="Flags").exists()
-
-    if flags_round_exists:
-        # Ensure there is a Questions instance for the quiz
-        questions, created = Questions.objects.get_or_create(quiz=quiz)
-
-        # Efficiently select 10 random flag questions if the Flags model is large
-        count = Flags.objects.aggregate(count=Count('id'))['count']
-        random_indexes = sorted([random.randint(0, count - 1) for _ in range(10)])
-        flag_questions = [Flags.objects.all()[index] for index in random_indexes]
-
-        for flag_question in flag_questions:
-            questions.flags.add(flag_question)
-
-        print('Flag questions added successfully')
-    else:
-        print('No Flags round for this quiz')
-
-    return redirect('active_quizzes')
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------

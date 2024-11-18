@@ -7,7 +7,6 @@ from django.utils import timezone
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     player_score = models.IntegerField(null=True, blank=True)
-    participating = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -27,33 +26,11 @@ class Quiz(models.Model):
     quiz_name = models.CharField(max_length=100, default="Quiz")
     players = models.ManyToManyField(User)
     rounds = models.ManyToManyField(Rounds)
+    random_numbers = models.JSONField(default=list, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.quiz_name
-
-# -------------------------------------------------------------------------------
-# ----------------------------- Question Models ---------------------------------
-# -------------------------------------------------------------------------------
-class Questions(models.Model):
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
-
-    movie_release_dates = models.ManyToManyField('GeneralKnowledge', blank=True, related_name='movie_release_date_questions')
-    who_is_the_imposter = models.ManyToManyField('Celebrities', blank=True, related_name='imposter_questions')
-    who_is_the_oldest = models.ManyToManyField('Celebrities', blank=True, related_name='oldest_questions')
-    true_or_false = models.ManyToManyField('TrueOrFalse', blank=True, related_name='true_or_false_questions')
-    guess_the_age = models.ManyToManyField('Celebrities', blank=True, related_name='guess_the_age_questions')
-    movies = models.ManyToManyField('Movies', blank=True, related_name='movie_questions')
-    logos = models.ManyToManyField('Logos', blank=True, related_name='logo_questions')
-    locations = models.ManyToManyField('Locations', blank=True, related_name='location_questions')
-    fight_jets = models.ManyToManyField('Jets', blank=True, related_name='fight_jet_questions')
-    celebrities = models.ManyToManyField('Celebrities', blank=True, related_name='celebrity_questions')
-    capitals = models.ManyToManyField('Flags', blank=True, related_name='capital_questions')
-    general_knowledge = models.ManyToManyField('GeneralKnowledge', blank=True, related_name='general_knowledge_questions')
-    flags = models.ManyToManyField('Flags', blank=True, related_name='flag_questions')
-
-    def __str__(self):
-        return self.quiz.quiz_name
 
 # -------------------------------------------------------------------------------
 # ---------------------------- Question Database --------------------------------
@@ -71,7 +48,6 @@ class GeneralKnowledge(models.Model):
 
     # Question Stats
     difficulty = models.FloatField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
 
     def __str__(self):
         return self.question
@@ -84,7 +60,6 @@ class TrueOrFalse(models.Model):
 
     # Question Stats
     difficulty = models.FloatField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
 
     def __str__(self):
         return self.question
@@ -98,7 +73,6 @@ class Flags(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True, default=0.5)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         if self.country:
@@ -112,7 +86,6 @@ class Logos(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         if self.company:
@@ -127,7 +100,6 @@ class Jets(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         if self.name:
@@ -142,7 +114,6 @@ class Celebrities(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         full_name = self.first_name + " " + self.last_name
@@ -157,7 +128,6 @@ class Movies(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -170,7 +140,6 @@ class Locations(models.Model):
 
     # Question Stats
     difficulty = models.FloatField(null=True,  blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.location
