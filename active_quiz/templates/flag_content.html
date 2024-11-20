@@ -1,0 +1,19 @@
+{% if current_flag %}
+    <div class="flag-card">
+        <img class="card-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
+        <p>{{ current_flag.country }}</p>
+    </div>
+{% else %}
+    <p>No flags available.</p>
+{% endif %}
+
+<div class="navigation-buttons">
+    <form method="post" action="{% url 'previous_flag' %}">
+        {% csrf_token %}
+        <button type="submit" {% if current_flag_index == 0 %}disabled{% endif %}>Previous</button>
+    </form>
+    <form method="post" action="{% url 'next_flag' %}">
+        {% csrf_token %}
+        <button type="submit" {% if current_flag_index == total_flags|add:"-1" %}disabled{% endif %}>Next</button>
+    </form>
+</div>

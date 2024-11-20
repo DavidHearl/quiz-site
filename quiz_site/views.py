@@ -67,7 +67,7 @@ def quiz_home(request):
             quiz.random_numbers = random_numbers
             quiz.save()
 
-            return redirect('active_quizzes')
+            return redirect('active_quiz:active_quiz')
         else:
             print("Form Errors:", quiz_selection_form.errors)  # Debug
     else:
@@ -81,16 +81,6 @@ def quiz_home(request):
     }
 
     return render(request, 'quiz_site/quiz_home.html', context)
-
-
-def active_quizzes(request):
-    quiz = Quiz.objects.latest('date_created')
-
-    context = {
-        'quiz': quiz,
-    }
-
-    return render(request, 'quiz_site/active_quiz.html', context)
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------

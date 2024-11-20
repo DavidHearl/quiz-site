@@ -10,6 +10,7 @@ urlpatterns = [
     path('', quiz_home, name='quiz_home'),
     path('quiz/', include('quiz_site.urls')),
     path('accounts/', include('allauth.urls')),
+    path('active_quiz/', include('active_quiz.urls')),
 ]
 
 if settings.DEBUG:

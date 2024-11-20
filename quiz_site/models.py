@@ -76,7 +76,7 @@ class Flags(models.Model):
 
     def __str__(self):
         if self.country:
-            return self.country
+            return f"{self.country} ({self.id})"
         
 
 class Logos(models.Model):

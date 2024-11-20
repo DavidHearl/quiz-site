@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'quiz_site'
+    'quiz_site',
+    'active_quiz',
 ]
 
 MIDDLEWARE = [
