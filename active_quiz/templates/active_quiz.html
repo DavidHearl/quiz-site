@@ -8,9 +8,7 @@
     <div class="quiz-container">
         <div class="question-container">
             {% if 'Flags' in quiz.random_numbers %}
-                <div class="flag-container">
-                    {% include 'quiz_site/flag_content.html' %}
-                </div>
+                {% include 'flag_content.html' %}
             {% endif %}
         </div>
         
@@ -21,6 +19,10 @@
                     <h3 class="player-score"> {{ player.player.player_score }}</h3>
                 </div>            
             {% endfor %}
+        </div>
+        
+        <div class="question-counter">
+            <p>Current Question: {{ quiz.question_counter }}</p>
         </div>
     </div>
 {% endblock %}

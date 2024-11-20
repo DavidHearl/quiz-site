@@ -44,3 +44,13 @@
     display: flex;
     flex-direction: column;
 }
+
+.multiple-choice {
+    display: flex;
+}
+
+.multiple-choice-label {
+    width: 100%;
+    min-width: 100px;
+    padding-left: 4px;
+}

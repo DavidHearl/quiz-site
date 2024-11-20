@@ -7,6 +7,7 @@ from django.utils import timezone
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     player_score = models.IntegerField(null=True, blank=True)
+    incorrect_answers = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -27,6 +28,7 @@ class Quiz(models.Model):
     players = models.ManyToManyField(User)
     rounds = models.ManyToManyField(Rounds)
     random_numbers = models.JSONField(default=list, blank=True, null=True)
+    question_counter = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

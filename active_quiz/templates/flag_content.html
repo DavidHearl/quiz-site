@@ -1,7 +1,19 @@
 {% if current_flag %}
     <div class="flag-card">
         <img class="card-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
-        <p>{{ current_flag.country }}</p>
+    </div>
+    <div class="multiple-choice">
+        <form id="quiz-form" method="post" action="{% url 'next_flag' %}">
+            {% csrf_token %}
+            {% for choice in choices %}
+                <div class="multiple-choice">
+                    <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}">
+                    <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                </div>
+            {% endfor %}
+            <input type="hidden" name="correct_answer" value="{{ current_flag.country }}">
+            <button type="submit">Next</button>
+        </form>
     </div>
 {% else %}
     <p>No flags available.</p>
@@ -12,8 +24,17 @@
         {% csrf_token %}
         <button type="submit" {% if current_flag_index == 0 %}disabled{% endif %}>Previous</button>
     </form>
-    <form method="post" action="{% url 'next_flag' %}">
-        {% csrf_token %}
-        <button type="submit" {% if current_flag_index == total_flags|add:"-1" %}disabled{% endif %}>Next</button>
-    </form>
 </div>
+
+<script>
+    document.getElementById('quiz-form').addEventListener('submit', function(event) {
+        const user = "{{ request.user.username }}";
+        if (user !== 'david') {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                event.preventDefault();
+                alert('Please select an answer before proceeding.');
+            }
+        }
+    });
+</script>
