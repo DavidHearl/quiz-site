@@ -10,24 +10,66 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 
 
-# Create your views here.
+'''
+This view is used to create the quiz. The user can select the players, rounds and the quiz name.
+The question sets are created for the active quiz.
+'''
+import random
+
 def quiz_home(request):
+    # Import the Plays, Rounds, and Quiz models
     users = User.objects.all()
     rounds = Rounds.objects.all()
     quiz = Quiz.objects.all()
+    
+    # Database assignments
+    db_mapping = {
+        "General Knowledge": GeneralKnowledge,
+        "True or False": TrueOrFalse,
+        "Flags": Flags,
+        "Capital Cities": Flags,  # Same model as Flags
+        "Logos": Logos,
+        "Fighter Jets": Jets,
+        "Celebrities": Celebrities,
+        "Guess the Celebrity Age": Celebrities,
+        "Who is the Oldest": Celebrities,
+        "Movies": Movies,
+        "Who is the Imposter": Movies,
+        "Movie Release Dates": Movies,
+        "Locations": Locations,
+    }
+
+    # Create a form for the user to select the players, rounds, and quiz name
     quiz_selection_form = QuizSelectionForm()
 
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
+            # Create a new quiz
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
-            quiz.players.set(quiz_selection_form.cleaned_data['users'])
-            quiz.rounds.set(quiz_selection_form.cleaned_data['rounds'])
-            quiz.save()
             
+            # Add the players and rounds to the quiz
+            quiz.players.set(quiz_selection_form.cleaned_data['users'])
+            selected_rounds = quiz_selection_form.cleaned_data['rounds']
+            quiz.rounds.set(selected_rounds)
+
+            # Store random numbers for each round
+            random_numbers = {}
+            for round in selected_rounds:
+                round_name = round.question_type
+                if round_name in db_mapping:
+                    model = db_mapping[round_name]
+                    ids = list(model.objects.values_list('id', flat=True))
+                    if ids:
+                        random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
+
+            # Save the random numbers in the quiz model
+            quiz.random_numbers = random_numbers
+            quiz.save()
+
             return redirect('active_quizzes')
         else:
-            print(quiz_selection_form.errors)
+            print("Form Errors:", quiz_selection_form.errors)  # Debug
     else:
         quiz_selection_form = QuizSelectionForm()
 
@@ -43,24 +85,12 @@ def quiz_home(request):
 
 def active_quizzes(request):
     quiz = Quiz.objects.latest('date_created')
-    flags = Flags.objects.all()
-
-    round_count = quiz.rounds.count()
-
-    if len(quiz.random_numbers) < round_count * 10:
-        random_flags = random.sample(list(flags), 10)
-        quiz.random_numbers = [flag.id for flag in random_flags]
-        quiz.save()
-
-    random_flags = flags.filter(id__in=quiz.random_numbers)
 
     context = {
         'quiz': quiz,
-        'flags': random_flags,
     }
 
     return render(request, 'quiz_site/active_quiz.html', context)
-
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------

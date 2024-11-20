@@ -7,17 +7,9 @@
     <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
     <div class="quiz-container">
         <div class="question-container">
-            <div class="flag-container">
-                {% for flag in flags %}
-                    <div class="flag-slide" style="display: {% if forloop.first %}block{% else %}none{% endif %};">
-                        <img class="card-image" src="{{ flag.flag.url }}" alt="{{ flag.country }}">
-                        <div id="flag-number">Flag {{ forloop.counter }}</div>
-                    </div>
-                {% endfor %}
-                <button id="prev-flag" onclick="showPrevFlag()">Previous</button>
-                <button id="next-flag" onclick="showNextFlag()">Next</button>
-            </div>
+            
         </div>
+        
         <div class="score-container">
             {% for player in quiz.players.all %}
                 <div class="player-information">
@@ -27,32 +19,4 @@
             {% endfor %}
         </div>
     </div>
-    <script>
-        let currentFlagIndex = 0;
-        const flagSlides = document.querySelectorAll('.flag-slide');
-
-        function showFlag(index) {
-            flagSlides.forEach((slide, i) => {
-                slide.style.display = i === index ? 'block' : 'none';
-            });
-        }
-
-        function showNextFlag() {
-            if (currentFlagIndex < flagSlides.length - 1) {
-                currentFlagIndex++;
-                showFlag(currentFlagIndex);
-            }
-        }
-
-        function showPrevFlag() {
-            if (currentFlagIndex > 0) {
-                currentFlagIndex--;
-                showFlag(currentFlagIndex);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            showFlag(currentFlagIndex);
-        });
-    </script>
 {% endblock %}
