@@ -6,8 +6,8 @@ from django.utils import timezone
 # User model, used to store player names and scores
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    player_score = models.IntegerField(null=True, blank=True)
-    incorrect_answers = models.IntegerField(null=True, blank=True)
+    player_score = models.IntegerField(default=0)
+    incorrect_answers = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username

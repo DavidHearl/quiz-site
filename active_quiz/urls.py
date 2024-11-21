@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import active_quiz, next_flag, previous_flag
+from . import views
 
 urlpatterns = [
-    path('', active_quiz, name='active_quiz'),
-    path('next/', next_flag, name='next_flag'),
-    path('previous/', previous_flag, name='previous_flag'),
+    path('active_quiz/', views.active_quiz, name='active_quiz'),
+    path('next_flag/', views.next_flag, name='next_flag'),
+    path('previous_flag/', views.previous_flag, name='previous_flag'),
+    path('check_update/', views.check_update, name='check_update'),
 ]

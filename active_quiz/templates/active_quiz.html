@@ -4,6 +4,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz.css' %}">
 {% endblock %}
 {% block content %}
+    <script>
+        function checkForUpdates() {
+            fetch("{% url 'check_update' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.update) {
+                        location.reload();
+                    }
+                });
+        }
+        setInterval(checkForUpdates, 5000); // Check for updates every 5 seconds
+    </script>
     <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
     <div class="quiz-container">
         <div class="question-container">
@@ -16,13 +28,20 @@
             {% for player in quiz.players.all %}
                 <div class="player-information">
                     <h2 class="player-name">{{ player }}</h2>
-                    <h3 class="player-score"> {{ player.player.player_score }}</h3>
-                </div>            
+                    <h3 class="player-score">
+                        {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
+                    </h3>
+                </div>
             {% endfor %}
         </div>
-        
-        <div class="question-counter">
-            <p>Current Question: {{ quiz.question_counter }}</p>
-        </div>
+    </div>
+    <div class="messages">
+        {% if messages %}
+            <ul class="messagelist">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

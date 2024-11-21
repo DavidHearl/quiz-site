@@ -7,24 +7,28 @@
             {% csrf_token %}
             {% for choice in choices %}
                 <div class="multiple-choice">
-                    <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}">
+                    <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
+                           {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>
                     <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
                 </div>
             {% endfor %}
             <input type="hidden" name="correct_answer" value="{{ current_flag.country }}">
-            <button type="submit">Next</button>
+            <button type="submit" 
+                    {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>Next</button>
         </form>
     </div>
 {% else %}
     <p>No flags available.</p>
 {% endif %}
 
-<div class="navigation-buttons">
-    <form method="post" action="{% url 'previous_flag' %}">
-        {% csrf_token %}
-        <button type="submit" {% if current_flag_index == 0 %}disabled{% endif %}>Previous</button>
-    </form>
-</div>
+{% if request.user.username == 'david' %}
+    <div class="navigation-buttons">
+        <form method="post" action="{% url 'previous_flag' %}">
+            {% csrf_token %}
+            <button type="submit" {% if current_flag_index == 0 %}disabled{% endif %}>Previous</button>
+        </form>
+    </div>
+{% endif %}
 
 <script>
     document.getElementById('quiz-form').addEventListener('submit', function(event) {
