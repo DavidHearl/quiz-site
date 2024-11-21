@@ -54,7 +54,8 @@ def next_flag(request):
             messages.success(request, 'Correct answer! Your score has been updated.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
-            messages.error(request, 'Incorrect answer.')
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
 
         player.save()
 

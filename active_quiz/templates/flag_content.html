@@ -5,15 +5,23 @@
     <div class="multiple-choice">
         <form id="quiz-form" method="post" action="{% url 'next_flag' %}">
             {% csrf_token %}
-            {% for choice in choices %}
-                <div class="multiple-choice">
-                    <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
-                           {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>
-                    <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
-                </div>
-            {% endfor %}
+            {% if request.user.username != 'david' %}
+                {% for choice in choices %}
+                    <div class="multiple-choice">
+                        <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
+                               {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for choice in choices %}
+                    <div class="multiple-choice">
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+            {% endif %}
             <input type="hidden" name="correct_answer" value="{{ current_flag.country }}">
-            <button type="submit" 
+            <button type="submit" id="next-button"
                     {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>Next</button>
         </form>
     </div>
@@ -33,7 +41,20 @@
 <script>
     document.getElementById('quiz-form').addEventListener('submit', function(event) {
         const user = "{{ request.user.username }}";
-        if (user !== 'david') {
+        if (user === 'david') {
+            event.preventDefault();
+            const correctAnswer = "{{ current_flag.country }}";
+            const labels = document.querySelectorAll('.multiple-choice-label');
+            labels.forEach(label => {
+                if (label.textContent.trim() === correctAnswer) {
+                    label.classList.add('highlight-correct');
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('quiz-form').submit();
+            }, 2000);
+        } else {
             const selected = document.querySelector('input[name="answer"]:checked');
             if (!selected) {
                 event.preventDefault();
@@ -42,3 +63,10 @@
         }
     });
 </script>
+
+<style>
+.highlight-correct {
+    color: green;
+    font-weight: bold;
+}
+</style>
