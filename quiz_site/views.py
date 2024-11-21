@@ -14,20 +14,16 @@ import json
 This view is used to create the quiz. The user can select the players, rounds and the quiz name.
 The question sets are created for the active quiz.
 '''
-import random
-
 def quiz_home(request):
-    # Import the Plays, Rounds, and Quiz models
     users = User.objects.all()
     rounds = Rounds.objects.all()
     quiz = Quiz.objects.all()
-    
-    # Database assignments
+
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
         "True or False": TrueOrFalse,
         "Flags": Flags,
-        "Capital Cities": Flags,  # Same model as Flags
+        "Capital Cities": Flags,
         "Logos": Logos,
         "Fighter Jets": Jets,
         "Celebrities": Celebrities,
@@ -39,21 +35,22 @@ def quiz_home(request):
         "Locations": Locations,
     }
 
-    # Create a form for the user to select the players, rounds, and quiz name
     quiz_selection_form = QuizSelectionForm()
-
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
-            # Create a new quiz
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
-            
-            # Add the players and rounds to the quiz
+
+            # Reset player scores and incorrect answers
+            for player in Player.objects.all():
+                player.player_score = 0
+                player.incorrect_answers = 0
+                player.save()
+
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             selected_rounds = quiz_selection_form.cleaned_data['rounds']
             quiz.rounds.set(selected_rounds)
 
-            # Store random numbers for each round
             random_numbers = {}
             for round in selected_rounds:
                 round_name = round.question_type
@@ -63,13 +60,11 @@ def quiz_home(request):
                     if ids:
                         random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
 
-            # Save the random numbers in the quiz model
             quiz.random_numbers = random_numbers
             quiz.save()
-
             return redirect('active_quiz:active_quiz')
         else:
-            print("Form Errors:", quiz_selection_form.errors)  # Debug
+            print("Form Errors:", quiz_selection_form.errors)
     else:
         quiz_selection_form = QuizSelectionForm()
 
@@ -79,7 +74,6 @@ def quiz_home(request):
         'quiz_selection_form': quiz_selection_form,
         'users': users,
     }
-
     return render(request, 'quiz_site/quiz_home.html', context)
     
 # -------------------------------------------------------------------------------

@@ -68,7 +68,7 @@
         {% endif %}
 
         {% if user.is_authenticated %}
-            <a class="navigation-label" href="{% url 'active_quiz' %}">Quiz</a>
+            <a class="navigation-label" href="{% url 'active_quiz:active_quiz' %}">Quiz</a>
             <a class="navigation-label" href="{% url 'account_logout' %}">Logout</a>
         {% else %}
             <a class="navigation-label" href="{% url 'account_login' %}">Login</a>

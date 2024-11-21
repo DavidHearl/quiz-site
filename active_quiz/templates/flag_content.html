@@ -3,7 +3,7 @@
         <img class="card-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
     </div>
     <div class="multiple-choice">
-        <form id="quiz-form" method="post" action="{% url 'next_flag' %}">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_flag' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
                 {% for choice in choices %}
@@ -31,7 +31,7 @@
 
 {% if request.user.username == 'david' %}
     <div class="navigation-buttons">
-        <form method="post" action="{% url 'previous_flag' %}">
+        <form method="post" action="{% url 'active_quiz:previous_flag' %}">
             {% csrf_token %}
             <button type="submit" {% if current_flag_index == 0 %}disabled{% endif %}>Previous</button>
         </form>

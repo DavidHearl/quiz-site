@@ -69,7 +69,7 @@ def next_flag(request):
             quiz.save()
             request.session['last_question_counter'] = quiz.question_counter
 
-    return redirect('active_quiz')
+    return redirect('active_quiz:active_quiz')
 
 
 @login_required
@@ -84,4 +84,4 @@ def previous_flag(request):
         quiz.save()
         request.session['last_question_counter'] = quiz.question_counter
 
-    return redirect('active_quiz')
+    return redirect('active_quiz:active_quiz')
