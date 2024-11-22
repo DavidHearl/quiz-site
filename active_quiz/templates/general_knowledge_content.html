@@ -1,0 +1,16 @@
+{% if current_question %}
+    <h2>{{ current_question.question }}</h2>
+    <form method="post" action="{% url 'active_quiz:next_general_knowledge' %}">
+        {% csrf_token %}
+        {% for choice in gk_choices %}
+            <div>
+                <input type="radio" id="{{ choice }}" name="answer" value="{{ choice }}">
+                <label for="{{ choice }}">{{ choice }}</label>
+            </div>
+        {% endfor %}
+        <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
+        <button type="submit">Submit</button>
+    </form>
+{% else %}
+    <p>No questions available.</p>
+{% endif %}

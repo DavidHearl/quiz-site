@@ -52,7 +52,7 @@ class GeneralKnowledge(models.Model):
     difficulty = models.FloatField()
 
     def __str__(self):
-        return self.question
+        return f"({self.id}) {self.question}"
 
 
 class TrueOrFalse(models.Model):
@@ -78,7 +78,7 @@ class Flags(models.Model):
 
     def __str__(self):
         if self.country:
-            return f"{self.country} ({self.id})"
+            return f"({self.id}) {self.country}"
         
 
 class Logos(models.Model):

@@ -19,8 +19,10 @@
     <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
     <div class="quiz-container">
         <div class="question-container">
-            {% if 'Flags' in quiz.random_numbers %}
+            {% if current_flag %}
                 {% include 'flag_content.html' %}
+            {% elif current_question %}
+                {% include 'general_knowledge_content.html' %}
             {% endif %}
         </div>
         
