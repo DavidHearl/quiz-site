@@ -26,16 +26,18 @@
             {% endif %}
         </div>
         
-        <div class="score-container">
-            {% for player in quiz.players.all %}
-                <div class="player-information">
-                    <h2 class="player-name">{{ player }}</h2>
-                    <h3 class="player-score">
-                        {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
-                    </h3>
-                </div>
-            {% endfor %}
-        </div>
+        {% if user.username == 'david' %}
+            <div class="score-container">
+                {% for player in quiz.players.all %}
+                    <div class="player-information">
+                        <h2 class="player-name">{{ player }}</h2>
+                        <h3 class="player-score">
+                            {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
+                        </h3>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
     <div class="messages">
         {% if messages %}
