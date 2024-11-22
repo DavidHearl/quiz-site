@@ -3,13 +3,13 @@
         <h2>{{ current_question.question }}</h2>
     </div>
     
-    <div class="multiple-choice">
+    <div class="multiple-choice-container">
         <form id="general-knowledge-form" method="post" action="{% url 'active_quiz:next_general_knowledge' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
                 {% for choice in gk_choices %}
                     <div class="multiple-choice">
-                        <input type="radio" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
+                        <input type="radio" class="radio-button"  id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
                                {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>
                         <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
                     </div>
@@ -39,7 +39,7 @@
             const labels = document.querySelectorAll('.multiple-choice-label');
             labels.forEach(label => {
                 if (label.textContent.trim() === correctAnswer) {
-                    label.classList.add('highlight-correct');
+                    label.parentElement.classList.add('highlight-correct');
                 }
             });
 
