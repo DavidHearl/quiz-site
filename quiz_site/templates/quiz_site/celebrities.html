@@ -14,13 +14,13 @@
 
                 <!-- First Name -->
                 <div>
-                    <label for="id_first_name">First Name:</label>
+                    <label class="field-label" for="id_first_name">First Name:</label>
                     <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
                 </div>
 
                 <!-- Last Name -->
                 <div>
-                    <label for="id_last_name">Last Name:</label>
+                    <label class="field-label" for="id_last_name">Last Name:</label>
                     <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
                 </div>
                     
@@ -31,19 +31,19 @@
 
                 <!-- Photo Button -->
                 <div>
-                    <label for="id_photo">Photo:</label>
+                    <label class="field-label" for="id_photo">Photo:</label>
                     <input id="id_photo" type="file" name="photo">
                 </div>
 
                 <!-- Date of Birth -->
                 <div class="column-flex">
-                    <label for="id_date_of_birth">Birthday:</label>
+                    <label class="field-label" for="id_date_of_birth">Birthday:</label>
                     <input id="id_date_of_birth" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
-                    <label for="id_difficulty">Difficulty:</label>
+                    <label class="field-label" for="id_difficulty">Difficulty:</label>
                     <input id="id_difficulty" type="text" name="difficulty" value="{{ celebrity.difficulty }}">
                 </div>
 
@@ -58,13 +58,13 @@
 
                     <!-- First Name -->
                     <div>
-                        <label for="id_flag">First Name:</label>
+                        <label class="field-label" for="id_flag">First Name:</label>
                         <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
                     </div>
 
                     <!-- Last Name -->
                     <div>
-                        <label for="id_flag">Last Name:</label>
+                        <label class="field-label" for="id_flag">Last Name:</label>
                         <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
                     </div>
                     
@@ -77,19 +77,19 @@
 
                     <!-- Photo Button -->
                     <div>
-                        <label for="id_photo">Photo:</label>
+                        <label class="field-label" for="id_photo">Photo:</label>
                         <input id="id_photo" type="file" name="photo">
                     </div>
 
                     <!-- Date of Birth -->
                     <div class="column-flex">
-                        <label for="id_date_of_birth">Birthday:</label>
+                        <label class="field-label" for="id_date_of_birth">Birthday:</label>
                         <input id="id_date_of_birth" class="{% if celebrity.date_of_birth == None %}missing{% endif %}" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
                         <input id="id_difficulty" class="{% if celebrity.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ celebrity.difficulty }}">
                     </div>
 

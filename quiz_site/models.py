@@ -49,7 +49,7 @@ class GeneralKnowledge(models.Model):
     choice_3 = models.CharField(max_length=100, null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField()
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         return f"({self.id}) {self.question}"
@@ -61,7 +61,7 @@ class TrueOrFalse(models.Model):
     answer = models.BooleanField()
 
     # Question Stats
-    difficulty = models.FloatField()
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         return self.question
@@ -87,7 +87,7 @@ class Logos(models.Model):
     logo = models.ImageField(null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         if self.company:
@@ -101,7 +101,7 @@ class Jets(models.Model):
     photo = models.ImageField(null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         if self.name:
@@ -115,7 +115,7 @@ class Celebrities(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         full_name = self.first_name + " " + self.last_name
@@ -129,7 +129,7 @@ class Movies(models.Model):
     actors = models.ManyToManyField(Celebrities)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         return self.title
@@ -141,7 +141,7 @@ class Locations(models.Model):
     photo = models.ImageField(null=True, blank=True)
 
     # Question Stats
-    difficulty = models.FloatField(null=True,  blank=True)
+    difficulty = models.FloatField(null=True,  blank=True, default=0.5)
 
     def __str__(self):
         return self.location

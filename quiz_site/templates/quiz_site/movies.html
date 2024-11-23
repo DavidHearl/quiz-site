@@ -14,7 +14,7 @@
 
                 <!-- Title -->
                 <div>
-                    <label for="id_title">Title:</label>
+                    <label class="field-label" for="id_title">Title:</label>
                     <input id="id_title" type="text" name="title" value="{{ movie.title }}">
                 </div>
                     
@@ -25,13 +25,13 @@
 
                 <!-- Photo Button -->
                 <div>
-                    <label for="id_poster">Photo:</label>
+                    <label class="field-label" for="id_poster">Photo:</label>
                     <input id="id_poster" type="file" name="poster">
                 </div>
 
                 <!-- Actors -->
                 <div>
-                    <label for="id_actors">Actors:</label>
+                    <label class="field-label" for="id_actors">Actors:</label>
                     <div class="actor-container">
                         {% for choice in movie_form.actors.field.choices %}
                             <div class="actor">
@@ -45,13 +45,13 @@
 
                 <!-- Release Date -->
                 <div class="column-flex">
-                    <label for="id_release_date">Release:</label>
+                    <label class="field-label" for="id_release_date">Release:</label>
                     <input id="id_release_date" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
-                    <label for="id_difficulty">Difficulty:</label>
+                    <label class="field-label" for="id_difficulty">Difficulty:</label>
                     <input id="id_difficulty" type="text" name="difficulty" value="{{ movie.difficulty }}">
                 </div>
                 
@@ -66,7 +66,7 @@
 
                     <!-- Title -->
                     <div>
-                        <label for="id_title">Title:</label>
+                        <label class="field-label" for="id_title">Title:</label>
                         <input id="id_title" type="text" name="title" value="{{ movie.title }}">
                     </div>
                         
@@ -79,13 +79,13 @@
 
                     <!-- Photo Button -->
                     <div>
-                        <label for="id_poster">Photo:</label>
+                        <label class="field-label" for="id_poster">Photo:</label>
                         <input id="id_poster" type="file" name="poster">
                     </div>
 
                     <!-- Actors -->
                     <div class="actors-in-film">
-                        <label for="id_actors">Actors:</label>
+                        <label class="field-label" for="id_actors">Actors:</label>
                         <div class="actor-container">
                             {% for actor in movie.actors.all %}
                                 <div class="actor">
@@ -97,13 +97,13 @@
 
                     <!-- Release Date -->
                     <div class="column-flex">
-                        <label for="id_release_date">Release:</label>
+                        <label class="field-label" for="id_release_date">Release:</label>
                         <input id="id_release_date" class="{% if movie.release_date == None %}missing{% endif %}" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
                         <input id="id_difficulty" class="{% if movie.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ movie.difficulty }}">
                     </div>
                     

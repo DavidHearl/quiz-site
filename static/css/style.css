@@ -160,15 +160,6 @@ a:hover {
     width: 100%;
 }
 
-/* label {
-    display: flex;
-    width: 40%;
-    font-size: 0.7rem;
-    color: white;
-    margin: 2px 0;
-    padding-left: 2px;
-} */
-
 input {
     box-sizing: border-box;
     width: 100%;
@@ -248,7 +239,7 @@ input {
 
 .question-input {
     text-align: start;
-    margin-bottom: 0;
+    margin: 2px 0;
     width: 100%;
     border-radius: 8px;
     background: rgba(18,26,39,255);
@@ -393,4 +384,9 @@ background-color: #568869;
     justify-content: center;
     font-size: 1rem;
     margin-top: 8px;
+}
+
+.field-label {
+    color: rgb(200, 200, 200);
+    padding: 2px;
 }

@@ -14,37 +14,37 @@
                 <div class="question-row-gk">
                     <!-- Question -->
                     <div>
-                        <label for="id_question">Question:</label>
+                        <label class="field-label" for="id_question">Question:</label>
                         <textarea class="question-input" id="id_question" name="question" rows="2">{{ general_knowledge.question }}</textarea>
                     </div>
 
                     <!-- Answer -->
                     <div>
-                        <label for="id_answer">Answer:</label>
+                        <label class="field-label" for="id_answer">Answer:</label>
                         <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
                     </div>
 
                     <!-- Choice 1 -->
                     <div>
-                        <label for="id_choice_1">Choice 1:</label>
+                        <label class="field-label" for="id_choice_1">Choice 1:</label>
                         <input class="question-input" id="id_choice_1" type="text" name="choice_1" value="{{ general_knowledge.choice_1 }}">
                     </div>
 
                     <!-- Choice 2 -->
                     <div>
-                        <label for="id_choice_2">Choice 2:</label>
+                        <label class="field-label" for="id_choice_2">Choice 2:</label>
                         <input class="question-input" id="id_choice_2" type="text" name="choice_2" value="{{ general_knowledge.choice_2 }}">
                     </div>
 
                     <!-- Choice 3 -->
                     <div>
-                        <label for="id_choice_3">Choice 3:</label>
+                        <label class="field-label" for="id_choice_3">Choice 3:</label>
                         <input class="question-input" id="id_choice_3" type="text" name="choice_3" value="{{ general_knowledge.choice_3 }}">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
                         <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ general_knowledge.difficulty }}">
                     </div>
                     
@@ -60,37 +60,37 @@
                     <div class="question-row-gk">
                         <!-- Question -->
                         <div>
-                            <label for="id_question">Question:</label>
+                            <label class="field-label" for="id_question">Question:</label>
                             <textarea class="question-input" id="id_question" name="question" rows="2">{{ question.question }}</textarea>
                         </div>
 
                         <!-- Answer -->
                         <div>
-                            <label for="id_answer">Answer:</label>
+                            <label class="field-label" for="id_answer">Answer:</label>
                             <input class="question-input" id="id_answer" type="text" name="answer" value="{{ question.answer }}">
                         </div>
 
                         <!-- Choice 1 -->
                         <div>
-                            <label for="id_choice_1">Choice 1:</label>
+                            <label class="field-label" for="id_choice_1">Choice 1:</label>
                             <input class="question-input {% if question.choice_1 == None %}missing{% endif %}" id="id_choice_1" type="text" name="choice_1" value="{{ question.choice_1 }}">
                         </div>
 
                         <!-- Choice 2 -->
                         <div>
-                            <label for="id_choice_2">Choice 2:</label>
+                            <label class="field-label" for="id_choice_2">Choice 2:</label>
                             <input class="question-input {% if question.choice_2 == None %}missing{% endif %}" id="id_choice_2" type="text" name="choice_2" value="{{ question.choice_2 }}">
                         </div>
 
                         <!-- Choice 3 -->
                         <div>
-                            <label for="id_choice_3">Choice 3:</label>
+                            <label class="field-label" for="id_choice_3">Choice 3:</label>
                             <input class="question-input {% if question.choice_3 == None %}missing{% endif %}" id="id_choice_3" type="text" name="choice_3" value="{{ question.choice_3 }}">
                         </div>
 
                         <!-- Difficulty -->
                         <div class="column-flex">
-                            <label for="id_difficulty">Difficulty:</label>
+                            <label class="field-label" for="id_difficulty">Difficulty:</label>
                             <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
                         </div>
                         

@@ -375,6 +375,9 @@ def movies(request):
     movies = Movies.objects.all()
     movie_form = MovieForm()
 
+    # Sort the actor choices alphabetically
+    movie_form.fields['actors'].choices = sorted(movie_form.fields['actors'].choices, key=lambda choice: choice[1])
+
     if request.method == 'POST':
         movie_form = MovieForm(request.POST, request.FILES)
         print(movie_form.errors)
