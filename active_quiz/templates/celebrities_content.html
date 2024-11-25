@@ -18,7 +18,9 @@
             </div>
             <input type="hidden" name="correct_first_name" value="{{ current_celebrity.first_name }}">
             <input type="hidden" name="correct_last_name" value="{{ current_celebrity.last_name }}">
-            <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+            {% if request.user.username == 'david' %}
+                <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+            {% endif %}
             <button type="submit">Next</button>
         </form>
     </div>

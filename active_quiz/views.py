@@ -4,17 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from quiz_site.models import *
 import random
+import Levenshtein
 
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from quiz_site.models import *
-import random
 
 @login_required
 def active_quiz(request):
+    users = User.objects.all()
     quiz = Quiz.objects.latest('date_created')
     rounds = quiz.rounds.all()
     question_counter = quiz.question_counter
@@ -88,6 +83,7 @@ def active_quiz(request):
         'gk_choices': gk_choices,
         'current_celebrity': current_celebrity,
         'current_round': current_round,
+        'users': users,
     }
     return render(request, 'active_quiz.html', context)
 
@@ -138,9 +134,18 @@ def next_celebrity(request):
 
         player = request.user.player
 
-        if selected_first_name == correct_first_name and selected_last_name == correct_last_name:
+        def is_acceptable(answer, correct_answer):
+            return Levenshtein.distance(answer, correct_answer) <= 2
+
+        first_name_correct = is_acceptable(selected_first_name, correct_first_name)
+        last_name_correct = is_acceptable(selected_last_name, correct_last_name)
+
+        if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
             messages.success(request, 'Correct answer! Your score has been updated.')
+        elif first_name_correct or last_name_correct:
+            player.player_score = (player.player_score or 0) + 0.5
+            messages.success(request, 'Partially correct answer! You have earned half a point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             if request.user.username != 'david':
