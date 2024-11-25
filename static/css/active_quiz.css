@@ -69,14 +69,16 @@
     gap: 4px;
 }
 
-.flag-card {
+.flag-card,
+.celebrity-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.flag-image {
+.flag-image,
+.celebrity-image {
     border: 1px solid black;
     border-radius: 2px;
     box-sizing: border-box;
@@ -126,4 +128,8 @@
 
 .quiz-question {
     margin: 4px 4px 8px 4px;
+}
+
+.celebrity-name {
+    margin-bottom: 12px;
 }

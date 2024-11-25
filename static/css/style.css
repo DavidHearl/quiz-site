@@ -395,6 +395,10 @@ background-color: #568869;
     padding: 2px;
 }
 
+.disabled {
+    opacity: 0.3;
+}
+
 @media (max-width: 600px) {
     .auth-with-fields {
         width: 80%;

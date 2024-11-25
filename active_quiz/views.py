@@ -6,29 +6,32 @@ from quiz_site.models import *
 import random
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from quiz_site.models import *
+import random
+
+@login_required
 def active_quiz(request):
     quiz = Quiz.objects.latest('date_created')
-    # Get the total number of questions in each round
-    total_flags = len(quiz.random_numbers.get("Flags", []))
-    total_gk = len(quiz.random_numbers.get("General Knowledge", []))
-    total_capitals = len(quiz.random_numbers.get("Capital Cities", []))
-    
+    rounds = quiz.rounds.all()
+    question_counter = quiz.question_counter
+    current_round = None
+    current_index = 0
+
     # Determine the current round based on the question counter
-    if quiz.question_counter < total_flags:
-        current_round = "Flags"
-    elif quiz.question_counter < total_flags + total_gk:
-        current_round = "General Knowledge"
-        if request.session.get('last_round') != "General Knowledge":
-            request.session['gk_answered'] = False
-    elif quiz.question_counter < total_flags + total_gk + total_capitals:
-        current_round = "Capital Cities"
-    else:
-        current_round = None
-    
-    request.session['last_round'] = current_round
-    
+    for round in rounds:
+        round_name = round.question_type
+        total_questions = len(quiz.random_numbers.get(round_name, []))
+        if question_counter < total_questions:
+            current_round = round_name
+            break
+        question_counter -= total_questions
+
     if current_round == "Flags":
-        current_index = quiz.question_counter % total_flags
+        current_index = question_counter
         flag_ids = quiz.random_numbers.get("Flags", [])
         current_flag = Flags.objects.get(id=flag_ids[current_index])
         random.seed(f"{quiz.id}-{current_index}")
@@ -37,22 +40,33 @@ def active_quiz(request):
         random.shuffle(choices)
         current_question = None
         gk_choices = []
+        current_celebrity = None
     elif current_round == "General Knowledge":
-        current_index = (quiz.question_counter - total_flags) % total_gk
+        current_index = question_counter
         question_ids = quiz.random_numbers.get("General Knowledge", [])
         current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
         gk_choices = [current_question.answer, current_question.choice_1, current_question.choice_2, current_question.choice_3]
         random.shuffle(gk_choices)
         current_flag = None
         choices = []
+        current_celebrity = None
     elif current_round == "Capital Cities":
-        current_index = (quiz.question_counter - total_flags - total_gk) % total_capitals
+        current_index = question_counter
         flag_ids = quiz.random_numbers.get("Capital Cities", [])
         current_flag = Flags.objects.get(id=flag_ids[current_index])
         random.seed(f"{quiz.id}-{current_index}")
-        all_capitals = Flags.objects.exclude(id=current_flag.id).values_list('capital', flat=True)
-        choices = random.sample(list(all_capitals), 5) + [current_flag.capital]
+        all_flags = Flags.objects.exclude(id=current_flag.id).values_list('capital', flat=True)
+        choices = random.sample(list(all_flags), 5) + [current_flag.capital]
         random.shuffle(choices)
+        current_question = None
+        gk_choices = []
+        current_celebrity = None
+    elif current_round == "Celebrities":
+        current_index = question_counter
+        celebrity_ids = quiz.random_numbers.get("Celebrities", [])
+        current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
+        current_flag = None
+        choices = []
         current_question = None
         gk_choices = []
     else:
@@ -60,17 +74,20 @@ def active_quiz(request):
         choices = []
         current_question = None
         gk_choices = []
-    
+        current_celebrity = None
+
     context = {
         'quiz': quiz,
         'current_flag': current_flag,
         'current_flag_index': current_index if current_round in ["Flags", "Capital Cities"] else None,
-        'total_flags': total_flags,
+        'total_flags': len(quiz.random_numbers.get("Flags", [])),
         'choices': choices,
         'current_question': current_question,
         'current_question_index': current_index if current_round == "General Knowledge" else None,
-        'total_questions': total_gk,
+        'total_questions': len(quiz.random_numbers.get("General Knowledge", [])),
         'gk_choices': gk_choices,
+        'current_celebrity': current_celebrity,
+        'current_round': current_round,
     }
     return render(request, 'active_quiz.html', context)
 
@@ -107,5 +124,35 @@ def next_question(request):
             quiz.question_counter += 1
             quiz.save()
             request.session['last_question_counter'] = quiz.question_counter
+
+    return redirect('active_quiz:active_quiz')
+
+
+@login_required
+def next_celebrity(request):
+    if request.method == 'POST':
+        selected_first_name = request.POST.get('first_name', '').strip().lower()
+        selected_last_name = request.POST.get('last_name', '').strip().lower()
+        correct_first_name = request.POST.get('correct_first_name', '').strip().lower()
+        correct_last_name = request.POST.get('correct_last_name', '').strip().lower()
+
+        player = request.user.player
+
+        if selected_first_name == correct_first_name and selected_last_name == correct_last_name:
+            player.player_score = (player.player_score or 0) + 1
+            messages.success(request, 'Correct answer! Your score has been updated.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
+
+        player.save()
+
+        if request.user.username == 'david':
+            quiz = Quiz.objects.latest('date_created')
+            quiz.question_counter += 1
+            quiz.save()
+
+        return redirect('active_quiz:active_quiz')
 
     return redirect('active_quiz:active_quiz')

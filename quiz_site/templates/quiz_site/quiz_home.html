@@ -50,7 +50,7 @@
                 <p class="instructions">What question sets do you want ?</p>
                 <div class="select-questions">
                     {% for round in quiz_selection_form.rounds.field.queryset %}
-                        <div class="question">
+                        <div class="question {% if round.disabled %}disabled{% endif %}">
                             <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.rounds.html_name }}" value="{{ round.id }}">
                             <h2 class="question-title">{{ round.question_type }}</h2>
                         </div>

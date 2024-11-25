@@ -17,6 +17,7 @@ class Player(models.Model):
 class Rounds(models.Model):
     question_type = models.CharField(max_length=100)
     selected = models.BooleanField(default=False)
+    disabled = models.BooleanField(default=False)
 
     def __str__(self):
         return self.question_type

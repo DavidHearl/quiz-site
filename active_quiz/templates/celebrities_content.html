@@ -1,0 +1,41 @@
+{% if current_celebrity %}
+    <div class="celebrity-card">
+        <img class="celebrity-image" src="{{ current_celebrity.photo.url }}" alt="Celebrity Image">
+        <h2 class="celebrity-name" id="celebrity-name">
+            <!-- The obfuscated name will be inserted here by JavaScript -->
+        </h2>
+    </div>
+    <div class="multiple-choice-container">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_celebrity' %}">
+            {% csrf_token %}
+            <div class="multiple-choice">
+                <label class="multiple-choice-label" for="first_name">First Name:</label>
+                <input type="text" class="text-input" id="first_name" name="first_name">
+            </div>
+            <div class="multiple-choice">
+                <label class="multiple-choice-label" for="last_name">Last Name:</label>
+                <input type="text" class="text-input" id="last_name" name="last_name">
+            </div>
+            <input type="hidden" name="correct_first_name" value="{{ current_celebrity.first_name }}">
+            <input type="hidden" name="correct_last_name" value="{{ current_celebrity.last_name }}">
+            <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+            <button type="submit">Next</button>
+        </form>
+    </div>
+{% endif %}
+<script>
+    const firstName = "{{ current_celebrity.first_name }}";
+    const lastName = "{{ current_celebrity.last_name }}";
+
+    function obfuscateName(firstName, lastName) {
+        const obfuscatedFirstName = "*".repeat(firstName.length);
+        const obfuscatedLastName = "*".repeat(lastName.length);
+        return `${obfuscatedFirstName} ${obfuscatedLastName}`;
+    }
+
+    function revealName() {
+        document.getElementById('celebrity-name').textContent = `${firstName} ${lastName}`;
+    }
+
+    document.getElementById('celebrity-name').textContent = obfuscateName(firstName, lastName);
+</script>
