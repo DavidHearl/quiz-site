@@ -126,6 +126,10 @@ a:hover {
     padding-bottom: 44px;
 }
 
+.data-card-search {
+    padding-bottom: 0;
+}
+
 .card-image {
     width: auto;
     border: 1px solid black;
@@ -389,4 +393,10 @@ background-color: #568869;
 .field-label {
     color: rgb(200, 200, 200);
     padding: 2px;
+}
+
+@media (max-width: 600px) {
+    .auth-with-fields {
+        width: 80%;
+    }
 }

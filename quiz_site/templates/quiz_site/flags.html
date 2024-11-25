@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block content %}
+    <button id="go-to-missing">Go to Missing</button>
+
     <!-- Add new item -->
     <div class="database-container">
         <div class="data-card">
@@ -15,7 +17,7 @@
 
                 <!-- Country -->
                 <div>
-                    <label for="id_country">Country:</label>
+                    <label class="field-label"  for="id_country">Country:</label>
                     <input id="id_country" type="text" name="country" value="{{ flag.country }}">
                 </div>
 
@@ -26,19 +28,19 @@
 
                 <!-- Flag Image -->
                 <div>
-                    <label for="id_flag">Flag:</label>
+                    <label class="field-label"  for="id_flag">Flag:</label>
                     <input id="id_flag" type="file" name="flag">
                 </div>
 
                 <!-- Capital -->
                 <div class="column-flex">
-                    <label for="id_capital">Capital:</label>
+                    <label class="field-label"  for="id_capital">Capital:</label>
                     <input id="id_capital"" type="text" name="capital" value="{{ flag.capital }}">
                 </div>
 
                 <!-- Difficulty -->
                 <div class="column-flex">
-                    <label for="id_difficulty">Difficulty:</label>
+                    <label class="field-label"  for="id_difficulty">Difficulty:</label>
                     <input id="id_difficulty" type="text" name="difficulty" value="{{ flag.difficulty }}">
                 </div>
                 
@@ -53,7 +55,7 @@
 
                     <!-- Country -->
                     <div>
-                        <label for="id_country">Country:</label>
+                        <label class="field-label" for="id_country">Country:</label>
                         <input id="id_country" type="text" name="country" value="{{ flag.country }}">
                     </div>
 
@@ -66,20 +68,20 @@
 
                     <!-- Flag -->
                     <div>
-                        <label for="id_flag">Flag:</label>
+                        <label class="field-label" for="id_flag">Flag:</label>
                         <input id="id_flag" type="file" name="flag">
                     </div>
 
                     <!-- Capital -->
                     <div class="column-flex">
-                        <label for="id_capital">Capital:</label>
-                        <input id="id_capital" class="{% if flag.capital == None %}missing{% endif %} type="text" name="capital" value="{{ flag.capital }}">
+                        <label class="field-label" for="id_capital">Capital:</label>
+                        <input id="id_capital" class="{% if not flag.capital %}missing{% endif %}" type="text" name="capital" value="{{ flag.capital }}">
                     </div>
 
                     <!-- Difficulty -->
                     <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if flag.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ flag.difficulty }}">
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" class="{% if not flag.difficulty %}missing{% endif %}" type="text" name="difficulty" value="{{ flag.difficulty }}">
                     </div>
 
                     <button class="submit" type="submit">Save</button>
@@ -88,4 +90,15 @@
         {% endfor %}
     </div>
     
+    <script>
+        document.getElementById('go-to-missing').addEventListener('click', function() {
+            const missingElement = document.querySelector('.missing');
+            if (missingElement) {
+                missingElement.scrollIntoView({ behavior: 'auto' });
+            } else {
+                alert('No missing elements found.');
+            }
+        });
+    </script>
+
 {% endblock %}

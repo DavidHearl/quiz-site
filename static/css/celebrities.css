@@ -3,7 +3,7 @@
 }
 
 .scrollable-list {
-    max-height: 290px;
+    max-height: 330px;
     width: 100%;
     overflow-y: auto;
     margin-top: 8px;

@@ -1,10 +1,11 @@
 {% if current_flag %}
     <div class="flag-card">
+        <h2>{{ current_flag.country }}</h2>
         <img class="flag-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
     </div>
 
     <div class="multiple-choice-container">
-        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_flag' %}">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_question' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
                 {% for choice in choices %}

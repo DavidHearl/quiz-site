@@ -1,41 +1,41 @@
-{% if current_question %}
-    <div class="question-card">
-        <h2 class="quiz-question">{{ current_question.question }}</h2>
+{% if current_flag %}
+    <div class="flag-card">
+        <img class="flag-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
     </div>
-    
+
     <div class="multiple-choice-container">
-        <form id="general-knowledge-form" method="post" action="{% url 'active_quiz:next_general_knowledge' %}">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_question' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
-                {% for choice in gk_choices %}
+                {% for choice in choices %}
                     <div class="multiple-choice">
-                        <input type="radio" class="radio-button"  id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
+                        <input type="radio" class="radio-button" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}" 
                                {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>
                         <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
                     </div>
                 {% endfor %}
             {% else %}
-                {% for choice in gk_choices %}
+                {% for choice in choices %}
                     <div class="multiple-choice">
                         <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
                     </div>
                 {% endfor %}
             {% endif %}
-            <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
+            <input type="hidden" name="correct_answer" value="{{ current_flag.capital }}">
             <button type="submit" id="next-button"
                     {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>Next</button>
         </form>
     </div>
 {% else %}
-    <p>No questions available.</p>
+    <p>No capital cities available.</p>
 {% endif %}
 
 <script>
-    document.getElementById('general-knowledge-form').addEventListener('submit', function(event) {
+    document.getElementById('quiz-form').addEventListener('submit', function(event) {
         const user = "{{ request.user.username }}";
         if (user === 'david') {
             event.preventDefault();
-            const correctAnswer = "{{ current_question.answer }}";
+            const correctAnswer = "{{ current_flag.capital }}";
             const labels = document.querySelectorAll('.multiple-choice-label');
             labels.forEach(label => {
                 if (label.textContent.trim() === correctAnswer) {
@@ -44,7 +44,7 @@
             });
 
             setTimeout(() => {
-                document.getElementById('general-knowledge-form').submit();
+                document.getElementById('quiz-form').submit();
             }, 2000);
         } else {
             const selected = document.querySelector('input[name="answer"]:checked');
