@@ -8,6 +8,20 @@
 
 {% block content %}
     <div class="database-container">
+
+        <div class="data-card">
+            <label class="field-label" for="id_celebrity_search">Search Celebrities:</label>
+            <input type="text" id="celebrity_search" onkeyup="filterCelebrities()" placeholder="Search for names..">
+        
+            <div id="celebrity_list" class="scrollable-list">
+                {% for celebrity in celebrities %}
+                    <div class="celebrity-card">
+                        <p class="celebrity-search-item">{{ celebrity.first_name }} {{ celebrity.last_name }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
         <div class="data-card">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -98,4 +112,22 @@
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        function filterCelebrities() {
+            var input, filter, cards, cardContainer, p, i;
+            input = document.getElementById("celebrity_search");
+            filter = input.value.toUpperCase();
+            cardContainer = document.getElementById("celebrity_list");
+            cards = cardContainer.getElementsByClassName("celebrity-card");
+            for (i = 0; i < cards.length; i++) {
+                p = cards[i].getElementsByTagName("p")[0];
+                if (p.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 {% endblock %}

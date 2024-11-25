@@ -109,7 +109,7 @@ a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 12px;
+    margin: 16px 0;
     gap: 8px;
 }
 

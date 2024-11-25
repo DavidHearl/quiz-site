@@ -1,0 +1,14 @@
+.celebrity-search-item {
+    color: gray;
+}
+
+.scrollable-list {
+    max-height: 290px;
+    width: 100%;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.celebrity-card {
+    padding: 2px;
+}
