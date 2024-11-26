@@ -3,27 +3,32 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general/home.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="title-block">
+    <div class="container">
         <h1 class="title">Quiz Home</h1>
-        <p class="instructions large-spacing">Welcome to the Quiz Home page.</p>
-        {% if not user.is_authenticated %}
-            <hr>
-            <p class="instructions small-spacing">If you already have an account you can <a class="authentication-label" href="{% url 'account_login' %}">Login</a> using the credentials below</p>
-            <p class="instructions">Username: <span class="bold">yourname</span> (all lower case)</p>
-            <p class="instructions small-spacing">Password: <span class="bold">quizparticipant**</span></p>
-            <p class="instructions small-spacing">If you do not have an account you can <a class="authentication-label" href="{% url 'account_signup' %}">Register</a>. Use the password above.</p>
-            <hr>
-            <p class="instructions">Not Sure? If you are not on this list please <a class="authentication-label" href="{% url 'account_signup' %}">Register</a></p>
+        <p class="instructions">Welcome to the Quiz Home page.</p>
 
-            {% for user in users %}
-                <div class="question">
-                    <h2 class="user-title">{{ user.username }}</h2>
-                </div>
-            {% endfor %}
+        {% if not user.is_authenticated %}
+            <p class="instructions">Let's get you logged in. If you already have an account you can <a class="authentication-label" href="{% url 'account_login' %}">Login</a> using the credentials below</p>
+            <hr>
+        
+            <p class="instructions">Username: <span class="bold">yourname</span></p>
+            <p class="instructions">Password: <span class="bold">quizparticipant**</span></p>
+            <hr>
+            <p class="instructions">If you do not have an account you can <a class="authentication-label" href="{% url 'account_signup' %}">Register</a>. Use the password above.</p>
+            <p class="instructions">Not Sure? If you are not on this you are not registered.</p>
+
+            <div class="select-users">
+                {% for user in users %}
+                    <div class="question">
+                        <h2 class="user-title">{{ user.username }}</h2>
+                    </div>
+                {% endfor %}
+            </div>
+
         {% else %}
             <form method="post">
                 {% csrf_token %}

@@ -1,6 +1,11 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/capital_cities.css' %}">
+{% endblock %}
+
 {% if current_flag %}
     <div class="flag-card">
-        <h2>{{ current_flag.country }}</h2>
+        <h2 class="quiz-question">What is the Capital City of {{ current_flag.country }}?</h2>
         <img class="flag-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
     </div>
 

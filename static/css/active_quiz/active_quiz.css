@@ -1,14 +1,14 @@
 .quiz-title {
-    margin: 8px;
     color: white;
     font-size: 1rem;
     text-shadow: 1px 1px black;
+    margin-bottom: 12px;
 }
 
 .quiz-container {
     display: flex;
     justify-content: space-between;
-    margin: 8px;
+    flex-direction: column;
     padding: 0;
 }
 
@@ -20,21 +20,22 @@
 }
 
 .score-container {
+    margin-top: 32px;
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
     justify-content: center;
-    justify-content: start;
-    gap: 8px;
 }
 
 .player-information {
     display: flex;
     align-items: center;
-    padding: 4px 8px;
+    padding: 8px 12px;
     border: 1px solid white;
     background: white;
     border-radius: 4px;
-    box-shadow: 2px 2px 1px black;
-    width: 135px;
+    box-shadow: 1px 1px 1px black;
+    width: 160px;
     justify-content: space-between;
 }
 
@@ -48,11 +49,6 @@
     color: #bd2c0a;
 }
 
-.score-container {
-    display: flex;
-    flex-direction: column;
-}
-
 .multiple-choice-container {
     display: flex;
     flex-direction: column;
@@ -62,11 +58,11 @@
     display: flex;
     text-align: center;
     align-items: center;
-    padding: 4px 12px;
+    padding: 8px 12px;
     background: white;
     border-radius: 4px;
-    margin: 0 4px 4px 4px;
-    gap: 4px;
+    margin: 8px 0;
+    border: 1px solid darkgray;
 }
 
 .flag-card,
@@ -88,9 +84,13 @@
 }
 
 #next-button {
-    margin-top: 4px;
-    margin-left: 4px;
-    padding: 4px 8px;
+    margin-top: 8px;
+    background: linear-gradient(to right, rgb(182, 244, 146), rgb(51, 139, 147));
+    color: Black;
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid white;
 }
 
 .radio-button {
@@ -127,9 +127,17 @@
 }
 
 .quiz-question {
-    margin: 4px 4px 8px 4px;
+    font-size: 1.25rem;
+    margin-bottom: 4px;
+    text-align: center;
 }
 
 .celebrity-name {
     margin-bottom: 12px;
+}
+
+@media (max-width: 600px) {
+    .player-information {
+        width: 40%;
+    }
 }

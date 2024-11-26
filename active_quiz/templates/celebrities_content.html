@@ -1,3 +1,8 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/celebrities.css' %}">
+{% endblock %}
+
 {% if current_celebrity %}
     <div class="celebrity-card">
         <img class="celebrity-image" src="{{ current_celebrity.photo.url }}" alt="Celebrity Image">
@@ -5,15 +10,15 @@
             <!-- The obfuscated name will be inserted here by JavaScript -->
         </h2>
     </div>
-    <div class="multiple-choice-container">
+    <div class="text-container">
         <form id="quiz-form" method="post" action="{% url 'active_quiz:next_celebrity' %}">
             {% csrf_token %}
-            <div class="multiple-choice">
-                <label class="multiple-choice-label" for="first_name">First Name:</label>
+            <div class="text-answer">
+                <label class="text-answer-label" for="first_name">First Name:</label>
                 <input type="text" class="text-input" id="first_name" name="first_name">
             </div>
-            <div class="multiple-choice">
-                <label class="multiple-choice-label" for="last_name">Last Name:</label>
+            <div class="text-answer">
+                <label class="text-answer-label" for="last_name">Last Name:</label>
                 <input type="text" class="text-input" id="last_name" name="last_name">
             </div>
             <input type="hidden" name="correct_first_name" value="{{ current_celebrity.first_name }}">
@@ -21,7 +26,7 @@
             {% if request.user.username == 'david' %}
                 <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
             {% endif %}
-            <button type="submit">Next</button>
+            <button id="submit" type="submit">Next</button>
         </form>
     </div>
 {% endif %}

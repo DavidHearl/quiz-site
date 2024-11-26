@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/active_quiz.css' %}">
 {% endblock %}
+
 {% block content %}
     <script>
         function checkForUpdates() {
@@ -17,32 +18,35 @@
         }
         setInterval(checkForUpdates, 5000); // Check for updates every 5 seconds
     </script>
-    <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
-    <div class="quiz-container">
-        <div class="question-container">
-            {% if current_flag and current_round == "Flags" %}
-                {% include 'flag_content.html' %}
-            {% elif current_question and current_round == "General Knowledge" %}
-                {% include 'general_knowledge_content.html' %}
-            {% elif current_flag and current_round == "Capital Cities" %}
-                {% include 'capital_cities_content.html' %}
-            {% elif current_celebrity and current_round == "Celebrities" %}
-                {% include 'celebrities_content.html' %}
+
+    <div class="container">
+        <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
+        <div class="quiz-container">
+            <div class="question-container">
+                {% if current_flag and current_round == "Flags" %}
+                    {% include 'flag_content.html' %}
+                {% elif current_question and current_round == "General Knowledge" %}
+                    {% include 'general_knowledge_content.html' %}
+                {% elif current_flag and current_round == "Capital Cities" %}
+                    {% include 'capital_cities_content.html' %}
+                {% elif current_celebrity and current_round == "Celebrities" %}
+                    {% include 'celebrities_content.html' %}
+                {% endif %}
+            </div>
+            
+            {% if user.username == 'david' %}
+                <div class="score-container">
+                    {% for player in quiz.players.all %}
+                        <div class="player-information">
+                            <h2 class="player-name">{{ player }}</h2>
+                            <h3 class="player-score">
+                                {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
+                            </h3>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
-        
-        {% if user.username == 'david' %}
-            <div class="score-container">
-                {% for player in quiz.players.all %}
-                    <div class="player-information">
-                        <h2 class="player-name">{{ player }}</h2>
-                        <h3 class="player-score">
-                            {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
-                        </h3>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
     <div class="messages">
         {% if messages %}

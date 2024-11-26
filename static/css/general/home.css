@@ -1,18 +1,8 @@
-.title-block {
-    margin: 16px 24px;
-}
-
 .title {
     color: white;
-    margin-bottom: 8px;
-    font-size: 2.5rem;
-    text-shadow: 1px 1px black;
-}
-
-.sub-title {
-    color: white;
     margin-bottom: 4px;
-    font-size: 1.3rem;
+    font-size: 2rem;
+    text-shadow: 1px 1px black;
 }
 
 .instructions {
@@ -25,14 +15,6 @@
     color: #eff27e;
     font-weight: 700;
     text-decoration: underline;
-}
-
-.small-spacing {
-    margin-bottom: 16px;
-}
-
-.large-spacing {
-    margin-bottom: 20px;
 }
 
 .bold {
@@ -70,13 +52,16 @@
     box-shadow: 1px 1px 2px;
 }
 
+.user-block {
+    display: flex
+}
+
 .user {
     display: flex;
     align-items: center;
     border: 1px solid black;
     background: white;  
     border-radius: 4px;
-    width: 175px;
     padding: 8px;
     max-height: 24px;
     margin-bottom: 4px;
@@ -103,15 +88,16 @@
 
 .user-title {
     text-transform: capitalize;
+    margin: 0 12px;
 }
 
 hr {
     color: white;
-    margin: 16px 0px;
+    margin: 12px 0px;
 }
 
 #id_quiz_name {
-    max-width: 300px;
+    width: 300px;
     padding: 8px;
     background: white;
     color: black;
@@ -124,8 +110,7 @@ hr {
 }
 
 .quiz-submit {
-    margin-top: 16px;
-    max-width: 250px;
+    margin: 12px 0 16px 0;
     padding: 8px;
     font-size: 1.1rem;
     box-shadow: 1px 1px 2px;
@@ -133,4 +118,14 @@ hr {
     cursor: pointer;
     color: black;
     border: 1px solid black;
+}
+
+@media (max-width: 600px) {
+    #id_quiz_name {
+        width: 100%;
+    }
+
+    .question {
+        width: 100%;
+    }
 }

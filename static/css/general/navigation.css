@@ -1,0 +1,42 @@
+.fa-bars {
+    color: black;
+    font-size: 1.5rem;
+}
+
+#navigation {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin: 12px;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.horizontal-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.navigation-label {
+    color: black;
+    font-weight: 600;
+    margin: 0 8px;
+}
+
+.navigation-sub-label {
+    color: black;
+    padding: 4px;
+}
+
+#nav-menu {
+    flex-direction: column;
+}
+
+.category-heading {
+    margin-top: 12px;
+    padding: 4px;
+    color: #868686;
+    font-size: 0.8rem;
+}

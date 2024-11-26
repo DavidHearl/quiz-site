@@ -18,13 +18,14 @@
     {% block core_css %}
         <!-- Fonts -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <!-- Styles -->
-        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/general/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/general/navigation.css' %}">
     {% endblock %}
 
     {% block extra_css %}
@@ -40,8 +41,41 @@
 
 <body>
     <!-- Navigation -->
-    <nav>
-        {% if not user.is_authenticated %}
+    <nav id="navigation">
+        <div class="horizontal-nav">
+            <i class="fa-solid fa-bars" id="toggle-nav"></i>
+            <a class="navigation-label" href="{% url 'active_quiz:active_quiz' %}">Go to Quiz</a>
+        </div>
+
+        <div id="nav-menu" style="display: none;">
+            <h3 class="category-heading">Page Navigation</h3>
+            <a class="navigation-sub-label" href="{% url 'quiz_home' %}">Home</a>
+
+            {% if user.is_superuser %}
+                <h3 class="category-heading">Question Databases</h3>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'general_knowledge' %}{% endif %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'true_or_false' %}{% endif %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'flags' %}{% endif %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'logos' %}{% endif %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'jets' %}{% endif %}">Fighter Jets <span class="finished">({{jets_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'celebrities' %}{% endif %}">Celebrities <span class="to-finish">({{celebrities_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'movies' %}{% endif %}">Movies <span class="to-finish">({{movies_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'locations' %}{% endif %}">Locations <span class="to-finish">({{locations_count}})</span></a>
+            {% endif %}
+
+            <h3 class="category-heading">Profile</h3>
+            {% if user.is_superuser %}
+                <a class="navigation-sub-label" href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <a class="navigation-sub-label" href="{% url 'account_logout' %}">Logout</a>
+            {% else %}
+                <a class="navigation-sub-label" href="{% url 'account_login' %}">Login</a>
+                <a class="navigation-sub-label" href="{% url 'account_signup' %}">Register</a>
+            {% endif %}
+        </div>
+
+        <!-- {% if not user.is_authenticated %}
             <h3 class="welcome-user">Guest</h3>
         {% else %}
             <h3 class="welcome-user"><span>{{ user.username }}</span></h3>
@@ -68,12 +102,12 @@
         {% endif %}
 
         {% if user.is_authenticated %}
-            <a class="navigation-label" href="{% url 'active_quiz:active_quiz' %}">Quiz</a>
+            
             <a class="navigation-label" href="{% url 'account_logout' %}">Logout</a>
         {% else %}
             <a class="navigation-label" href="{% url 'account_login' %}">Login</a>
             <a class="navigation-label" href="{% url 'account_signup' %}">Register</a>
-        {% endif %}
+        {% endif %} -->
     </nav>
 
     <div id="main">
@@ -81,6 +115,19 @@
             
         {% endblock %}
     </div>
-    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleNav = document.getElementById('toggle-nav');
+            const navMenu = document.getElementById('nav-menu');
+            toggleNav.addEventListener('click', function() {
+                if (navMenu.style.display === 'none') {
+                    navMenu.style.display = 'flex';
+                } else {
+                    navMenu.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

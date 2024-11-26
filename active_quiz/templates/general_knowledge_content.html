@@ -1,3 +1,8 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/general_knowledge.css' %}">
+{% endblock %}
+
 {% if current_question %}
     <div class="question-card">
         <h2 class="quiz-question">{{ current_question.question }}</h2>

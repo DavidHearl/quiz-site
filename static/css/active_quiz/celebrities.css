@@ -1,0 +1,10 @@
+.text-answer-label {
+    margin: 0 4px;
+}
+
+#reveal-name-button,
+#submit {
+    width: 40%;
+    padding: 8px;
+    margin-top: 8px;
+}

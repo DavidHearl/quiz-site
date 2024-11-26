@@ -1,3 +1,8 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/flags.css' %}">
+{% endblock %}
+
 {% if current_flag %}
     <div class="flag-card">
         <img class="flag-image" src="{{ current_flag.flag.url }}" alt="{{ current_flag.country }}">
