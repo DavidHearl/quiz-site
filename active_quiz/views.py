@@ -13,81 +13,51 @@ def active_quiz(request):
     quiz = Quiz.objects.latest('date_created')
     rounds = quiz.rounds.all()
     question_counter = quiz.question_counter
+
     current_round = None
     current_index = 0
 
-    # Determine the current round based on the question counter
     for round in rounds:
         round_name = round.question_type
         total_questions = len(quiz.random_numbers.get(round_name, []))
         if question_counter < total_questions:
             current_round = round_name
+            current_index = question_counter
             break
         question_counter -= total_questions
 
-    if current_round == "Flags":
-        current_index = question_counter
-        flag_ids = quiz.random_numbers.get("Flags", [])
-        current_flag = Flags.objects.get(id=flag_ids[current_index])
-        random.seed(f"{quiz.id}-{current_index}")
-        all_flags = Flags.objects.exclude(id=current_flag.id).values_list('country', flat=True)
-        choices = random.sample(list(all_flags), 5) + [current_flag.country]
-        random.shuffle(choices)
-        current_question = None
-        gk_choices = []
-        current_celebrity = None
-    elif current_round == "General Knowledge":
-        current_index = question_counter
-        question_ids = quiz.random_numbers.get("General Knowledge", [])
-        current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
-        gk_choices = [current_question.answer, current_question.choice_1, current_question.choice_2, current_question.choice_3]
-        random.shuffle(gk_choices)
-        current_flag = None
-        choices = []
-        current_celebrity = None
-    elif current_round == "Capital Cities":
-        current_index = question_counter
-        flag_ids = quiz.random_numbers.get("Capital Cities", [])
-        current_flag = Flags.objects.get(id=flag_ids[current_index])
-        random.seed(f"{quiz.id}-{current_index}")
-        all_flags = Flags.objects.exclude(id=current_flag.id).values_list('capital', flat=True)
-        choices = random.sample(list(all_flags), 5) + [current_flag.capital]
-        random.shuffle(choices)
-        current_question = None
-        gk_choices = []
-        current_celebrity = None
-    elif current_round == "Celebrities":
-        current_index = question_counter
-        celebrity_ids = quiz.random_numbers.get("Celebrities", [])
-        current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
-        current_flag = None
-        choices = []
-        current_question = None
-        gk_choices = []
-    else:
-        current_flag = None
-        choices = []
-        current_question = None
-        gk_choices = []
-        current_celebrity = None
+    if current_round is None:
+        print(request, "No current round found.")
+        return redirect('quiz_home')
+
+    round_handlers = {
+        "Flags": handle_flags_round,
+        "General Knowledge": handle_general_knowledge_round,
+        "Capital Cities": handle_capital_cities_round,
+        "Celebrities": handle_celebrities_round,
+    }
 
     context = {
         'quiz': quiz,
-        'current_flag': current_flag,
-        'current_flag_index': current_index if current_round in ["Flags", "Capital Cities"] else None,
-        'total_flags': len(quiz.random_numbers.get("Flags", [])),
-        'choices': choices,
-        'current_question': current_question,
-        'current_question_index': current_index if current_round == "General Knowledge" else None,
-        'total_questions': len(quiz.random_numbers.get("General Knowledge", [])),
-        'gk_choices': gk_choices,
-        'current_celebrity': current_celebrity,
         'current_round': current_round,
-        'users': users,
+        'current_index': current_index,
+        'current_flag': None,
+        'current_question': None,
+        'gk_choices': [],
+        'current_celebrity': None, 
+        'choices': [],
     }
+
+    if current_round in round_handlers:
+        round_context = round_handlers[current_round](quiz, current_index)
+        context.update(round_context)
+
     return render(request, 'active_quiz.html', context)
 
 
+'''
+Function to update the page for a user when the quiz master has moved on to the next question.
+'''
 @login_required
 def check_update(request):
     quiz = Quiz.objects.latest('date_created')
@@ -98,6 +68,14 @@ def check_update(request):
     return JsonResponse({'update': False})
 
 
+# --------------------------------------------------------------------- #
+# ---------------------- Next Question Functions ---------------------- #
+# --------------------------------------------------------------------- #
+
+'''
+Function to move on to the next question in the quiz.
+This function is designed for multiple choice questions.
+'''
 @login_required
 def next_question(request):
     if request.method == 'POST':
@@ -124,6 +102,10 @@ def next_question(request):
     return redirect('active_quiz:active_quiz')
 
 
+'''
+Function to move on to the next question in the quiz.
+This function is designed for the celebrities round which has two text inputs which require validation
+'''
 @login_required
 def next_celebrity(request):
     if request.method == 'POST':
@@ -161,3 +143,48 @@ def next_celebrity(request):
         return redirect('active_quiz:active_quiz')
 
     return redirect('active_quiz:active_quiz')
+
+# --------------------------------------------------------------------- #
+# ---------------------- Round Handling Functions ---------------------- #
+# --------------------------------------------------------------------- #
+
+def handle_flags_round(quiz, current_index):
+    flag_ids = quiz.random_numbers.get("Flags", [])
+    current_flag = Flags.objects.get(id=flag_ids[current_index])
+    random.seed(f"{quiz.id}-{current_index}")
+    all_flags = Flags.objects.exclude(id=current_flag.id).values_list('country', flat=True)
+    choices = random.sample(list(all_flags), 5) + [current_flag.country]
+    random.shuffle(choices)
+    return {
+        'current_flag': current_flag,
+        'choices': choices,
+    }
+
+def handle_general_knowledge_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("General Knowledge", [])
+    current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
+    gk_choices = [current_question.answer, current_question.choice_1, current_question.choice_2, current_question.choice_3]
+    random.shuffle(gk_choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': gk_choices,
+    }
+
+def handle_capital_cities_round(quiz, current_index):
+    flag_ids = quiz.random_numbers.get("Capital Cities", [])
+    current_flag = Flags.objects.get(id=flag_ids[current_index])
+    random.seed(f"{quiz.id}-{current_index}")
+    all_flags = Flags.objects.exclude(id=current_flag.id).values_list('capital', flat=True)
+    choices = random.sample(list(all_flags), 5) + [current_flag.capital]
+    random.shuffle(choices)
+    return {
+        'current_flag': current_flag,
+        'choices': choices,
+    }
+
+def handle_celebrities_round(quiz, current_index):
+    celebrity_ids = quiz.random_numbers.get("Celebrities", [])
+    current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
+    return {
+        'current_celebrity': current_celebrity,
+    }
