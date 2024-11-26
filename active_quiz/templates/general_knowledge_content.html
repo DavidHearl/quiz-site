@@ -4,7 +4,7 @@
     </div>
     
     <div class="multiple-choice-container">
-        <form id="general-knowledge-form" method="post" action="{% url 'active_quiz:next_general_knowledge' %}">
+        <form id="general-knowledge-form" method="post" action="{% url 'active_quiz:next_question' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
                 {% for choice in gk_choices %}
