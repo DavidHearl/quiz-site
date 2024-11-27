@@ -31,7 +31,7 @@
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    border: 1px solid white;
+    border: 1px solid darkgrey;
     background: white;
     border-radius: 4px;
     box-shadow: 1px 1px 1px black;
@@ -98,27 +98,24 @@
     margin: 0;
 }
 
-.success {
-    display: flex;
-    text-align: center;
-    background: green;
-    margin: 8px;
-    padding: 4px;
-    border: 1px solid white;
-    color: white;
-    border-radius: 8px;
-}
-
+.success,
 .error {
     display: flex;
     text-align: center;
-    background: red;
-    margin: 8px;
-    padding: 4px;
+    margin: 16px;
+    padding: 32px 16px;
     border: 1px solid white;
     color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     justify-content: center;
+}
+
+.success {
+    background: green;
+}
+
+.error {
+    background: red;
 }
 
 .highlight-correct {
@@ -134,6 +131,25 @@
 
 .celebrity-name {
     margin-bottom: 12px;
+}
+
+.correct {
+    background-color: green;
+    color: white;
+}
+
+.incorrect {
+    background-color: red;
+    color: white;
+}
+
+.correct > .player-score {
+    color: white;
+}
+
+.incorrect > .player-score {
+    background-color: red;
+    color: white;
 }
 
 @media (max-width: 600px) {

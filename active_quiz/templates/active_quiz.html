@@ -14,9 +14,11 @@
                     if (data.update) {
                         location.reload();
                     }
-                });
+                })
+                .catch(error => console.error('Error:', error));
         }
-        setInterval(checkForUpdates, 5000); // Check for updates every 5 seconds
+        console.log("Update Checked")
+        setInterval(checkForUpdates, 2000);
     </script>
 
     <div class="container">
@@ -37,10 +39,10 @@
             {% if user.username == 'david' %}
                 <div class="score-container">
                     {% for player in quiz.players.all %}
-                        <div class="player-information">
+                        <div class="player-information {% if player.player.question_answered == 1 %}correct{% elif player.player.question_answered == 2 %}incorrect{% endif %}">
                             <h2 class="player-name">{{ player }}</h2>
                             <h3 class="player-score">
-                                {{ player.player.player_score }}/{{ player.player.player_score|add:player.player.incorrect_answers }}
+                                {{ player.player.player_score }} / {{ player.player.player_score|add:player.player.incorrect_answers }}
                             </h3>
                         </div>
                     {% endfor %}

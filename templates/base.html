@@ -44,6 +44,7 @@
     <nav id="navigation">
         <div class="horizontal-nav">
             <i class="fa-solid fa-bars" id="toggle-nav"></i>
+            <p class="username">{{ request.user.username }}</p>
             <a class="navigation-label" href="{% url 'active_quiz:active_quiz' %}">Go to Quiz</a>
         </div>
 

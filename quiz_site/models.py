@@ -8,6 +8,13 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     player_score = models.FloatField(default=0.0)
     incorrect_answers = models.IntegerField(default=0)
+    page_updates = models.IntegerField(default=0)
+    QUESTION_STATUS_CHOICES = [
+        (0, 'Not Answered'),
+        (1, 'Correct'),
+        (2, 'Incorrect'),
+    ]
+    question_answered = models.IntegerField(choices=QUESTION_STATUS_CHOICES, default=0)
 
     def __str__(self):
         return self.user.username

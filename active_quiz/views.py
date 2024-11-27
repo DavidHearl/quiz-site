@@ -61,12 +61,23 @@ Function to update the page for a user when the quiz master has moved on to the 
 @login_required
 def check_update(request):
     quiz = Quiz.objects.latest('date_created')
+    players = quiz.players.all()
+
     last_question_counter = request.session.get('last_question_counter', -1)
     if quiz.question_counter != last_question_counter:
         request.session['last_question_counter'] = quiz.question_counter
         return JsonResponse({'update': True})
-    return JsonResponse({'update': False})
 
+    for user in players:
+        player = Player.objects.get(user=user)
+        update_checker = player.page_updates - quiz.question_counter
+        if update_checker != 1:
+            if player.question_answered != 0:
+                player.page_updates += 1
+                player.save()
+                return JsonResponse({'update': True})
+
+    return JsonResponse({'update': False})    
 
 # --------------------------------------------------------------------- #
 # ---------------------- Next Question Functions ---------------------- #
@@ -82,23 +93,25 @@ def next_question(request):
         selected_answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         player = request.user.player
-
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
             messages.success(request, 'Correct answer! Your score has been updated.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
-
         player.save()
-
         if request.user.username == 'david':
             quiz = Quiz.objects.latest('date_created')
             quiz.question_counter += 1
             quiz.save()
             request.session['last_question_counter'] = quiz.question_counter
-
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
     return redirect('active_quiz:active_quiz')
 
 
@@ -113,7 +126,6 @@ def next_celebrity(request):
         selected_last_name = request.POST.get('last_name', '').strip().lower()
         correct_first_name = request.POST.get('correct_first_name', '').strip().lower()
         correct_last_name = request.POST.get('correct_last_name', '').strip().lower()
-
         player = request.user.player
 
         def is_acceptable(answer, correct_answer):
@@ -124,24 +136,26 @@ def next_celebrity(request):
 
         if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
             messages.success(request, 'Correct answer! Your score has been updated.')
         elif first_name_correct or last_name_correct:
             player.player_score = (player.player_score or 0) + 0.5
+            player.question_answered = 1  # Partially correct
             messages.success(request, 'Partially correct answer! You have earned half a point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
-
         player.save()
-
         if request.user.username == 'david':
             quiz = Quiz.objects.latest('date_created')
             quiz.question_counter += 1
             quiz.save()
-
-        return redirect('active_quiz:active_quiz')
-
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
     return redirect('active_quiz:active_quiz')
 
 # --------------------------------------------------------------------- #

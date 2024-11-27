@@ -45,6 +45,7 @@ def quiz_home(request):
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
+                player.page_updates = 0
                 player.save()
 
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
