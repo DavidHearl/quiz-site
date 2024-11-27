@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="database-container">
-        <div class="data-card-medium create-input">
+        <div class="data-card data-card-medium create-input">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="question-row-gk">
@@ -54,7 +54,7 @@
         </div>
 
         {% for question in general_knowledge %}
-            <div class="data-card-medium">
+            <div class="data-card data-card-medium">
                 <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
                     {% csrf_token %}
                     <div class="question-row-gk">

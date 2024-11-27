@@ -22,7 +22,7 @@
     </script>
 
     <div class="container">
-        <h1 class="quiz-title">{{ quiz.quiz_name }}</h1>
+        <h1 class="quiz-title">{{ quiz.quiz_name }} ({{ current_round }})</h1>
         <div class="quiz-container">
             <div class="question-container">
                 {% if current_flag and current_round == "Flags" %}

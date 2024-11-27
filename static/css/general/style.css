@@ -88,11 +88,35 @@ a:hover {
     display: flex;
     align-items: center;
     flex-direction: column;
-    border: 1px solid black;
     padding: 8px;
     width: 220px;
     border-radius: 16px;
-    background: rgba(20,28,44,255);
+    background: white;
+    position: relative;
+    padding-bottom: 44px;
+    color: black;
+    box-shadow: 1px 1px 4px bla
+}
+
+/* Wide Database */
+.data-card-wide {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 6px;
+    width: 100%;
+    border-radius: 16px;
+    margin: 0px 16px;
+}
+
+.data-card-medium {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 8px;
+    width: 275px;
+    border-radius: 16px;
     position: relative;
     padding-bottom: 44px;
 }
@@ -170,35 +194,6 @@ input {
     color: #fff;
 }
 
-/* Wide Database */
-.data-card-wide {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid black;
-    padding: 6px;
-    width: 100%;
-    border-radius: 16px;
-    background: rgba(20,28,44,255);
-    margin: 0px 16px;
-}
-
-.data-card-medium {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    border: 1px solid black;
-    padding: 8px;
-    width: 275px;
-    border-radius: 16px;
-    background: rgba(20,28,44,255);
-    position: relative;
-    padding-bottom: 44px;
-}
-
-.create-input {
-    background: rgba(40,48,64,255);
-}
-
 .question-row {
     display: flex;
     gap: 12px;
@@ -215,9 +210,8 @@ input {
     margin: 2px 0;
     width: 100%;
     border-radius: 8px;
-    background: rgba(18,26,39,255);
+    background: rgba(219, 219, 219);
     border: 1px solid rgb(95, 99, 108);
-    color: white;
     padding: 4px;
     box-sizing: border-box;
     font-size: 0.85rem;
@@ -357,11 +351,6 @@ background-color: #568869;
     justify-content: center;
     font-size: 1rem;
     margin-top: 8px;
-}
-
-.field-label {
-    color: rgb(200, 200, 200);
-    padding: 2px;
 }
 
 .disabled {
