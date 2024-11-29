@@ -33,6 +33,8 @@
                     {% include 'capital_cities_content.html' %}
                 {% elif current_celebrity and current_round == "Celebrities" %}
                     {% include 'celebrities_content.html' %}
+                {% elif current_logo and current_round == "Logos" %}
+                    {% include 'logo_content.html' %}
                 {% endif %}
             </div>
             

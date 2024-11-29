@@ -7,6 +7,9 @@ import random
 import Levenshtein
 
 
+'''
+Main function that controls the active quiz page.
+'''
 @login_required
 def active_quiz(request):
     users = User.objects.all()
@@ -35,6 +38,7 @@ def active_quiz(request):
         "General Knowledge": handle_general_knowledge_round,
         "Capital Cities": handle_capital_cities_round,
         "Celebrities": handle_celebrities_round,
+        "Logos": handle_logos_round,
     }
 
     context = {
@@ -78,6 +82,7 @@ def check_update(request):
                 return JsonResponse({'update': True})
 
     return JsonResponse({'update': False})    
+  
 
 # --------------------------------------------------------------------- #
 # ---------------------- Next Question Functions ---------------------- #
@@ -158,6 +163,41 @@ def next_celebrity(request):
                 p.save()
     return redirect('active_quiz:active_quiz')
 
+
+@login_required
+def next_logo(request):
+    if request.method == 'POST':
+        selected_company = request.POST.get('company', '').strip()
+        correct_company = request.POST.get('correct_company', '').strip()
+        player = request.user.player
+
+        if request.user.username != 'david':
+            if not selected_company or not correct_company:
+                messages.error(request, 'Both the selected and correct company names must be provided.')
+                return redirect('active_quiz:active_quiz')
+
+            if selected_company.lower() == correct_company.lower():
+                player.player_score = (player.player_score or 0) + 1
+                player.question_answered = 1  # Correct
+                messages.success(request, 'Correct answer! Your score has been updated.')
+            else:
+                player.incorrect_answers = (player.incorrect_answers or 0) + 1
+                player.question_answered = 2  # Incorrect
+                messages.error(request, 'Incorrect answer.')
+        else:
+            player.question_answered = 1  # Correct for 'david'
+
+        player.save()
+        if request.user.username == 'david':
+            quiz = Quiz.objects.latest('date_created')
+            quiz.question_counter += 1
+            quiz.save()
+            request.session['last_question_counter'] = quiz.question_counter
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
+    return redirect('active_quiz:active_quiz')
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -201,4 +241,13 @@ def handle_celebrities_round(quiz, current_index):
     current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
     return {
         'current_celebrity': current_celebrity,
+    }
+
+def handle_logos_round(quiz, current_index):
+    logo_ids = quiz.random_numbers.get("Logos", [])
+    current_logo = Logos.objects.get(id=logo_ids[current_index])
+    obfuscated_name = "*" * len(current_logo.company)
+    return {
+        'current_logo': current_logo,
+        'obfuscated_name': obfuscated_name,
     }

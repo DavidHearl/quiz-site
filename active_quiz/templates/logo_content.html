@@ -1,0 +1,41 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/logos.css' %}">
+{% endblock %}
+
+{% if current_logo %}
+    <div class="logo-card">
+        <h2>Which company does this logo belong to ?</h2>
+        <img class="logo-image" src="{{ current_logo.logo.url }}" alt="Logo Image">
+        <h2 class="celebrity-name" id="obfuscated-name">
+            <!-- The obfuscated name will be inserted here by JavaScript -->
+        </h2>
+    </div>
+    <div class="text-container">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_logo' %}">
+            {% csrf_token %}
+            <div class="text-answer">
+                <label class="text-answer-label" for="company">Company:</label>
+            {% if request.user.username != 'david' %}
+                <input type="text" class="text-input" id="company" name="company">
+            {% endif %}
+                <input type="hidden" name="correct_company" value="{{ current_logo.company }}">
+            </div>
+            {% if request.user.username == 'david' %}
+                <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+            {% endif %}
+            <button id="submit" type="submit" class="submit-button">Submit</button>
+        </form>
+        <div id="obfuscated-name"></div>
+    </div>
+{% endif %}
+<script>
+    const companyName = "{{ current_logo.company }}";
+    function obfuscateName(name) {
+        return "*".repeat(name.length);
+    }
+    function revealName() {
+        document.getElementById('obfuscated-name').innerText = companyName;
+    }
+    document.getElementById('obfuscated-name').innerText = obfuscateName(companyName);
+</script>
