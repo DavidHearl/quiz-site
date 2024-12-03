@@ -9,6 +9,7 @@ class Player(models.Model):
     player_score = models.FloatField(default=0.0)
     incorrect_answers = models.IntegerField(default=0)
     page_updates = models.IntegerField(default=0)
+    player_photo = models.ImageField(upload_to='player_photos', blank=True, null=True)
     QUESTION_STATUS_CHOICES = [
         (0, 'Not Answered'),
         (1, 'Correct'),

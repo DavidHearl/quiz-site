@@ -31,8 +31,7 @@ def active_quiz(request):
         question_counter -= total_questions
 
     if current_round is None:
-        print(request, "No current round found.")
-        return redirect('quiz_home')
+        return redirect('active_quiz:quiz_results')
 
     round_handlers = {
         "Flags": handle_flags_round,
@@ -86,6 +85,19 @@ def check_update(request):
 
     return JsonResponse({'update': False})    
   
+
+@login_required
+def quiz_results(request):
+    quiz = Quiz.objects.latest('date_created')
+    players = Player.objects.filter(player_score__gt=0).order_by('-player_score')
+    winner = players.first() if players else None
+    context = {
+        'quiz': quiz,
+        'players': players,
+        'winner': winner,
+    }
+    return render(request, 'results.html', context)
+
 
 # --------------------------------------------------------------------- #
 # ---------------------- Next Question Functions ---------------------- #

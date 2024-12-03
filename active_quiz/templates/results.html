@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/results.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="quiz-title">Quiz Results</h1>
+        <div class="podium">
+            {% for player in players|slice:":3" %}
+                <div class="podium-place">
+                    {% if player.player_photo %}
+                        <img src="{{ player.player_photo.url }}" alt="{{ player.user.username }}" class="profile-image">
+                    {% else %}
+                        <div class="placeholder"></div>
+                    {% endif %}
+                    <div class="{% if forloop.counter == 1 %}first-place-podium{% elif forloop.counter == 2 %}second-place-podium{% else %}third-place-podium{% endif %}">
+                        <p>{{ forloop.counter }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="results-container">
+            {% for player in players %}
+                <div class="player-result {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
+                    <p class="player-name">{{ player.user.username }}</p>
+                    <p class="player-score">{{ player.player_score }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- <a href="{% url 'quiz_home' %}" class="button">Back to Home</a> -->
+    </div>
+{% endblock %}
