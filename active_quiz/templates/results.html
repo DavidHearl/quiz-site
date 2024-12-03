@@ -4,6 +4,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/results.css' %}">
 {% endblock %}
 {% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
     <div class="container">
         <h1 class="quiz-title">Quiz Results</h1>
         <div class="podium">
@@ -30,4 +32,20 @@
         </div>
         <!-- <a href="{% url 'quiz_home' %}" class="button">Back to Home</a> -->
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = document.querySelectorAll('.placeholder, .profile-image');
+
+            images.forEach(image => {
+                setInterval(() => {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }, 5000); // 5000 milliseconds = 5 seconds
+            });
+        });
+    </script>
 {% endblock %}

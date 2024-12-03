@@ -1,0 +1,35 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/movie_release_dates.css' %}">
+{% endblock %}
+{% if current_movie %}
+    <div class="movie-card">
+        <img class="movie-poster" src="{{ current_movie.poster.url }}" alt="Movie Poster">
+    </div>
+    <div class="year-options-container">
+        <form id="year-form" method="post" action="{% url 'active_quiz:next_movie_release_date' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_year" value="{{ correct_year }}">
+            {% for year in year_options %}
+                <button type="submit" name="year" value="{{ year }}" class="year-button">{{ year }}</button>
+            {% endfor %}
+            {% if request.user.username == 'david' %}
+                <button type="button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+<script>
+    function highlightCorrectAnswer() {
+        const correctYear = "{{ correct_year }}";
+        const buttons = document.querySelectorAll('.year-button');
+        buttons.forEach(button => {
+            if (button.value === correctYear) {
+                button.classList.add('highlight-correct');
+            }
+        });
+        setTimeout(() => {
+            document.getElementById('year-form').submit();
+        }, 2000);
+    }
+</script>

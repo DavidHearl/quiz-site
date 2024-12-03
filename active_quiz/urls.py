@@ -13,4 +13,5 @@ urlpatterns = [
     path('next_logo/', views.next_logo, name='next_logo'),
     path('next_true_or_false/', views.next_true_or_false, name='next_true_or_false'),
     path('next_celebrity_age/', views.next_celebrity_age, name='next_celebrity_age'),
+    path('next_movie_release_date/', views.next_movie_release_date, name='next_movie_release_date'),
 ]

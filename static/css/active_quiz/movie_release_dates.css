@@ -1,0 +1,32 @@
+#age-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.movie-poster {
+    max-width: 250px;
+}
+
+.movie-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.year-options-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.next-button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}

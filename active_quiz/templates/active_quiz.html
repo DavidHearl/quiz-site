@@ -39,6 +39,8 @@
                     {% include 'true_or_false_content.html' %}
                 {% elif current_celebrity and current_round == "Guess the Celebrity Age" %}
                     {% include 'celebrity_age_content.html' %}
+                {% elif current_movie and current_round == "Movie Release Dates" %}
+                    {% include 'movie_release_dates_content.html' %}
                 {% endif %}
             </div>
             

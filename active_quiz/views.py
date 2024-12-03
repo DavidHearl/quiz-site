@@ -41,6 +41,7 @@ def active_quiz(request):
         "Logos": handle_logos_round,
         "True or False": handle_true_or_false_round,
         "Guess the Celebrity Age": handle_celebrity_age_round,
+        "Movie Release Dates": handle_movie_release_dates_round,
     }
 
     context = {
@@ -281,6 +282,43 @@ def next_celebrity_age(request):
                 
     return redirect('active_quiz:active_quiz')
 
+@login_required
+def next_movie_release_date(request):
+    if request.method == 'POST':
+        selected_year = request.POST.get('year')
+        correct_year = request.POST.get('correct_year')
+        
+        if request.user.username != 'david' and (selected_year is None or correct_year is None):
+            messages.error(request, 'Both the selected and correct years must be provided.')
+            return redirect('active_quiz:active_quiz')
+        
+        if selected_year is not None:
+            selected_year = int(selected_year)
+        correct_year = int(correct_year)
+        
+        player = request.user.player
+        if selected_year == correct_year:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            messages.success(request, 'Correct answer! Your score has been updated.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
+        player.save()
+        
+        if request.user.username == 'david' or 'next' in request.POST:
+            quiz = Quiz.objects.latest('date_created')
+            quiz.question_counter += 1
+            quiz.save()
+            request.session['last_question_counter'] = quiz.question_counter
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
+                
+    return redirect('active_quiz:active_quiz')
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -373,4 +411,37 @@ def handle_celebrity_age_round(quiz, current_index):
         'current_celebrity': current_celebrity,
         'correct_age': correct_age,
         'age_options': age_options,
+    }
+
+def handle_movie_release_dates_round(quiz, current_index):
+    movie_ids = quiz.random_numbers.get("Movie Release Dates", [])
+    current_movie = Movies.objects.get(id=movie_ids[current_index])
+    release_year = current_movie.release_date.year
+    current_year = datetime.now().year
+    
+    # Use a seed to ensure the same answer set for each user
+    random.seed(f"{quiz.id}-{current_index}")
+    
+    # Decide a position for the correct release year (e.g., random position within 7 options)
+    correct_position = random.randint(0, 6)
+    
+    # Determine the year interval based on the release year
+    year_interval = 2 if release_year > 2000 else 3
+    
+    # Generate year options with the specified interval
+    year_options = []
+    for i in range(7):
+        year = release_year + year_interval * (i - correct_position)
+        if year > current_year:
+            year = current_year - (year - current_year)
+        year_options.append(year)
+    
+    # Ensure the correct release year is included in the options
+    if release_year not in year_options:
+        year_options[correct_position] = release_year
+    
+    return {
+        'current_movie': current_movie,
+        'correct_year': release_year,
+        'year_options': year_options,
     }
