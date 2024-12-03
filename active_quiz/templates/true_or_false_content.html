@@ -1,0 +1,34 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/true_or_false.css' %}">
+{% endblock %}
+{% if current_question %}
+    <div class="question-card">
+        <h2 class="quiz-question">{{ current_question.question }}</h2>
+    </div>
+    <div class="true-false-container">
+        <form id="true-false-form" method="post" action="{% url 'active_quiz:next_true_or_false' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
+            <button type="submit" name="answer" value="True" class="true-button">True</button>
+            <button type="submit" name="answer" value="False" class="false-button">False</button>
+            {% if request.user.username == 'david' %}
+                <button type="button" id="next-button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+<script>
+    function highlightCorrectAnswer() {
+        const correctAnswer = "{{ current_question.answer }}";
+        const buttons = document.querySelectorAll('.true-button, .false-button');
+        buttons.forEach(button => {
+            if (button.value === correctAnswer) {
+                button.classList.add('highlight-correct');
+            }
+        });
+        setTimeout(() => {
+            document.getElementById('true-false-form').submit();
+        }, 2000);
+    }
+</script>

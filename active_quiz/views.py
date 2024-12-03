@@ -39,6 +39,7 @@ def active_quiz(request):
         "Capital Cities": handle_capital_cities_round,
         "Celebrities": handle_celebrities_round,
         "Logos": handle_logos_round,
+        "True or False": handle_true_or_false_round,
     }
 
     context = {
@@ -198,6 +199,35 @@ def next_logo(request):
                 p.question_answered = 0
                 p.save()
     return redirect('active_quiz:active_quiz')
+
+
+@login_required
+def next_true_or_false(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            messages.success(request, 'Correct answer! Your score has been updated.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
+        player.save()
+        if request.user.username == 'david':
+            quiz = Quiz.objects.latest('date_created')
+            quiz.question_counter += 1
+            quiz.save()
+            request.session['last_question_counter'] = quiz.question_counter
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
+    return redirect('active_quiz:active_quiz')
+
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -250,4 +280,11 @@ def handle_logos_round(quiz, current_index):
     return {
         'current_logo': current_logo,
         'obfuscated_name': obfuscated_name,
+    }
+
+def handle_true_or_false_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("True or False", [])
+    current_question = TrueOrFalse.objects.get(id=question_ids[current_index])
+    return {
+        'current_question': current_question,
     }

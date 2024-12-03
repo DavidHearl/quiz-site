@@ -5,18 +5,26 @@
 
 {% if current_logo %}
     <div class="logo-card">
-        <h2>Which company does this logo belong to ?</h2>
+        <h2 class="logo-question">Which company does this logo belong to ?</h2>
         <img class="logo-image" src="{{ current_logo.logo.url }}" alt="Logo Image">
-        <h2 class="celebrity-name" id="obfuscated-name">
+        <h2 class="company-name" id="obfuscated-name">
             <!-- The obfuscated name will be inserted here by JavaScript -->
         </h2>
     </div>
     <div class="text-container">
+        {% if request.user.username != 'david' %}
+            <style>
+                #quiz-form {
+                    flex-direction: column;
+                }
+            </style>
+        {% endif %}
+
         <form id="quiz-form" method="post" action="{% url 'active_quiz:next_logo' %}">
             {% csrf_token %}
             <div class="text-answer">
-                <label class="text-answer-label" for="company">Company:</label>
             {% if request.user.username != 'david' %}
+                <label class="text-answer-label" for="company">Company:</label>
                 <input type="text" class="text-input" id="company" name="company">
             {% endif %}
                 <input type="hidden" name="correct_company" value="{{ current_logo.company }}">
@@ -32,10 +40,17 @@
 <script>
     const companyName = "{{ current_logo.company }}";
     function obfuscateName(name) {
-        return "*".repeat(name.length);
+        return name.split('').map(char => char === ' ' ? ' ' : '*').join('');
     }
     function revealName() {
         document.getElementById('obfuscated-name').innerText = companyName;
     }
     document.getElementById('obfuscated-name').innerText = obfuscateName(companyName);
+
+    function highlightCorrectAnswer() {
+        document.getElementById('company').value = companyName;
+        setTimeout(() => {
+            document.getElementById('quiz-form').submit();
+        }, 2000);
+    }
 </script>

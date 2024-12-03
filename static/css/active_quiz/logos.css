@@ -2,9 +2,35 @@
     margin: 0 4px;
 }
 
+#quiz-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
 #reveal-name-button,
 #submit {
     width: 40%;
-    padding: 8px;
+    padding: 12px;
     margin-top: 8px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+#reveal-name-button:hover,
+#submit:hover {
+        background: darkslategray;
+        color: white;
+    }
+
+.company-name {
+    margin: 0;
+}
+
+.logo-question {
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1.3rem;
 }

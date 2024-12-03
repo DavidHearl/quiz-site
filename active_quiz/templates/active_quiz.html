@@ -35,6 +35,8 @@
                     {% include 'celebrities_content.html' %}
                 {% elif current_logo and current_round == "Logos" %}
                     {% include 'logo_content.html' %}
+                {% elif current_question and current_round == "True or False" %}
+                    {% include 'true_or_false_content.html' %}
                 {% endif %}
             </div>
             
