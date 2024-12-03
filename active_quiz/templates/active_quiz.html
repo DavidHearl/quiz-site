@@ -37,6 +37,8 @@
                     {% include 'logo_content.html' %}
                 {% elif current_question and current_round == "True or False" %}
                     {% include 'true_or_false_content.html' %}
+                {% elif current_celebrity and current_round == "Guess the Celebrity Age" %}
+                    {% include 'celebrity_age_content.html' %}
                 {% endif %}
             </div>
             

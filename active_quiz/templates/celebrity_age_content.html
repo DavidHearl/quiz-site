@@ -1,0 +1,38 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/celebrity_age.css' %}">
+{% endblock %}
+
+{% if current_celebrity %}
+    <div class="celebrity-card">
+        <img class="celebrity-image" src="{{ current_celebrity.photo.url }}" alt="Celebrity Image">
+        <h2 class="celebrity-name">{{ current_celebrity.first_name }} {{ current_celebrity.last_name }}</h2>
+    </div>
+    <div class="age-options-container">
+        <form id="age-form" method="post" action="{% url 'active_quiz:next_celebrity_age' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_age" value="{{ correct_age }}">
+            {% for age in age_options %}
+                <button type="submit" name="age" value="{{ age }}" class="age-button">{{ age }}</button>
+            {% endfor %}
+            {% if request.user.username == 'david' %}
+                <button type="button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<script>
+    function highlightCorrectAnswer() {
+        const correctAge = "{{ correct_age }}";
+        const buttons = document.querySelectorAll('.age-button');
+        buttons.forEach(button => {
+            if (button.value === correctAge) {
+                button.classList.add('highlight-correct');
+            }
+        });
+        setTimeout(() => {
+            document.getElementById('age-form').submit();
+        }, 2000);
+    }
+</script>

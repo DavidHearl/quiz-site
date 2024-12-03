@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from quiz_site.models import *
 import random
+from datetime import datetime
 import Levenshtein
 
 
@@ -40,6 +41,7 @@ def active_quiz(request):
         "Celebrities": handle_celebrities_round,
         "Logos": handle_logos_round,
         "True or False": handle_true_or_false_round,
+        "Guess the Celebrity Age": handle_celebrity_age_round,
     }
 
     context = {
@@ -228,6 +230,45 @@ def next_true_or_false(request):
                 p.save()
     return redirect('active_quiz:active_quiz')
 
+
+@login_required
+def next_celebrity_age(request):
+    if request.method == 'POST':
+        selected_age = request.POST.get('age')
+        correct_age = request.POST.get('correct_age')
+        
+        if request.user.username != 'david' and (selected_age is None or correct_age is None):
+            messages.error(request, 'Both the selected and correct ages must be provided.')
+            return redirect('active_quiz:active_quiz')
+        
+        if selected_age is not None:
+            selected_age = int(selected_age)
+        correct_age = int(correct_age)
+        
+        player = request.user.player
+        if selected_age == correct_age:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            messages.success(request, 'Correct answer! Your score has been updated.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
+        player.save()
+        
+        if request.user.username == 'david' or 'next' in request.POST:
+            quiz = Quiz.objects.latest('date_created')
+            quiz.question_counter += 1
+            quiz.save()
+            request.session['last_question_counter'] = quiz.question_counter
+            # Reset all players' question_answered to 0 (Not Answered)
+            for p in Player.objects.all():
+                p.question_answered = 0
+                p.save()
+                
+    return redirect('active_quiz:active_quiz')
+
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -287,4 +328,37 @@ def handle_true_or_false_round(quiz, current_index):
     current_question = TrueOrFalse.objects.get(id=question_ids[current_index])
     return {
         'current_question': current_question,
+    }
+
+def handle_celebrity_age_round(quiz, current_index):
+    celebrity_ids = quiz.random_numbers.get("Guess the Celebrity Age", [])
+    current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
+    birth_year = current_celebrity.date_of_birth.year
+    current_year = datetime.now().year
+    correct_age = current_year - birth_year
+    
+    # Ensure the correct age is within the range of 20 to 100
+    correct_age = max(20, min(correct_age, 100))
+    
+    # Use a seed to ensure the same answer set for each user
+    random.seed(f"{quiz.id}-{current_index}")
+    
+    # Decide a position for the correct age (e.g., random position within 7 options)
+    correct_position = random.randint(0, 6)
+    
+    # Generate age options with 3 years apart
+    age_options = []
+    for i in range(7):
+        age = correct_age + 3 * (i - correct_position)
+        age = max(20, min(age, 100))  # Ensure age is within the range of 20 to 100
+        age_options.append(age)
+    
+    # Ensure the correct age is included in the options
+    if correct_age not in age_options:
+        age_options[correct_position] = correct_age
+    
+    return {
+        'current_celebrity': current_celebrity,
+        'correct_age': correct_age,
+        'age_options': age_options,
     }

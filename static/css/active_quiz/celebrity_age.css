@@ -1,0 +1,30 @@
+#age-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.age-button {
+    padding: 8px;
+    min-width: 60px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+.next-button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.next-button:hover {
+    background: darkslategray;
+    color: white;
+}
