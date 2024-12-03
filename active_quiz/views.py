@@ -246,7 +246,7 @@ def handle_celebrities_round(quiz, current_index):
 def handle_logos_round(quiz, current_index):
     logo_ids = quiz.random_numbers.get("Logos", [])
     current_logo = Logos.objects.get(id=logo_ids[current_index])
-    obfuscated_name = "*" * len(current_logo.company)
+    obfuscated_name = ''.join('*' if char != ' ' else ' ' for char in current_logo.company)
     return {
         'current_logo': current_logo,
         'obfuscated_name': obfuscated_name,

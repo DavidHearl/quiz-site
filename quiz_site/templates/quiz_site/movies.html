@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block extra_css %}
@@ -8,7 +7,21 @@
 
 {% block content %}
     <div class="database-container">
-        <div class="data-card">
+
+        <div class="data-card data-card-search">
+            <label class="field-label" for="id_movie_search">Search Movies:</label>
+            <input type="text" id="movie_search" onkeyup="filterMovies()" placeholder="Search for titles..">
+        
+            <div id="movie_list" class="scrollable-list">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <p class="movie-search-item">{{ movie.title }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="data-card">            
             <form class="form-containe" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -112,4 +125,21 @@
             </div>
         {% endfor %}
     </div>
+    <script>
+        function filterMovies() {
+            var input, filter, cards, cardContainer, p, i;
+            input = document.getElementById("movie_search");
+            filter = input.value.toUpperCase();
+            cardContainer = document.getElementById("movie_list");
+            cards = cardContainer.getElementsByClassName("movie-card");
+            for (i = 0; i < cards.length; i++) {
+                p = cards[i].getElementsByTagName("p")[0];
+                if (p.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 {% endblock %}
