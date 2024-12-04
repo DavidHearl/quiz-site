@@ -1,4 +1,4 @@
-#age-form {
+#year-form {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -9,15 +9,30 @@
     max-width: 250px;
 }
 
+.year-button {
+    padding: 8px;
+    min-width: 60px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+.year-button:hover {
+    background: lightblue;
+    color: white;
+}
+
 .movie-card {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-
 .year-options-container {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     margin-top: 16px;
 }
@@ -29,4 +44,9 @@
     border-radius: 4px;
     border: none;
     cursor: pointer;
+}
+
+.next-button:hover {
+    background: darkslategray;
+    color: white;
 }

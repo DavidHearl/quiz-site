@@ -1,0 +1,2 @@
+- Keep the answers to the end of the round
+- Keep the scores till the end of the round
