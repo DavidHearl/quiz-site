@@ -82,9 +82,25 @@ def check_update(request):
             if player.question_answered != 0:
                 player.page_updates += 1
                 player.save()
-                return JsonResponse({'update': True})
+                if user.username == 'david':
+                    return JsonResponse({'update': True})
 
-    return JsonResponse({'update': False})    
+    return JsonResponse({'update': False})
+
+
+@login_required
+def print_player_data(request):
+    players = Player.objects.all()
+    player_data = []
+    for player in players:
+        player_data.append({
+            'username': player.user.username,
+            'score': player.player_score,
+            'incorrect_answers': player.incorrect_answers,
+            'page_updates': player.page_updates,
+            'question_answered': player.question_answered,
+        })
+    return JsonResponse({'players': player_data})
   
 
 @login_required

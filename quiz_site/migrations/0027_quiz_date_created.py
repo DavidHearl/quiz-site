@@ -2,8 +2,7 @@
 
 import datetime
 from django.db import migrations, models
-from django.utils.timezone import utc
-
+from django.utils import timezone
 
 class Migration(migrations.Migration):
 
@@ -15,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quiz',
             name='date_created',
-            field=models.DateTimeField(default=datetime.datetime(2024, 6, 20, 10, 6, 51, 139485, tzinfo=utc)),
+            field=models.DateTimeField(default=timezone.now),
         ),
     ]

@@ -7,6 +7,8 @@
 
 {% block content %}
     <script>
+        let playerDataCache = [];
+
         function checkForUpdates() {
             fetch("{% url 'active_quiz:check_update' %}")
                 .then(response => response.json())
@@ -17,8 +19,40 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-        console.log("Update Checked")
         setInterval(checkForUpdates, 2000);
+
+        function pollPlayerData() {
+            fetch("{% url 'active_quiz:print_player_data' %}")
+                .then(response => response.json())
+                .then(data => {
+                    playerDataCache = data.players;
+                    console.log('Player data:', playerDataCache);
+                    updatePlayerElements(playerDataCache);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        setInterval(pollPlayerData, 2000);
+
+        function updatePlayerElements(players) {
+            players.forEach(player => {
+                const playerElement = document.getElementById(player.username);
+                if (playerElement) {
+                    const scoreElement = playerElement.querySelector('.player-score');
+                    if (scoreElement) {
+                        scoreElement.textContent = `${player.score} / ${player.score + player.incorrect_answers}`;
+                    }
+                    if (player.question_answered === 1) {
+                        playerElement.classList.add('correct');
+                        playerElement.classList.remove('incorrect');
+                    } else if (player.question_answered === 2) {
+                        playerElement.classList.add('incorrect');
+                        playerElement.classList.remove('correct');
+                    } else {
+                        playerElement.classList.remove('correct', 'incorrect');
+                    }
+                }
+            });
+        }
     </script>
 
     <div class="container">
@@ -47,7 +81,7 @@
             {% if user.username == 'david' %}
                 <div class="score-container">
                     {% for player in quiz.players.all %}
-                        <div class="player-information {% if player.player.question_answered == 1 %}correct{% elif player.player.question_answered == 2 %}incorrect{% endif %}">
+                        <div class="player-information" id="{{ player }}">
                             <h2 class="player-name">{{ player }}</h2>
                             <h3 class="player-score">
                                 {{ player.player.player_score }} / {{ player.player.player_score|add:player.player.incorrect_answers }}
