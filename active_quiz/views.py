@@ -75,16 +75,6 @@ def check_update(request):
         request.session['last_question_counter'] = quiz.question_counter
         return JsonResponse({'update': True})
 
-    for user in players:
-        player = Player.objects.get(user=user)
-        update_checker = player.page_updates - quiz.question_counter
-        if update_checker != 1:
-            if player.question_answered != 0:
-                player.page_updates += 1
-                player.save()
-                if user.username == 'david':
-                    return JsonResponse({'update': True})
-
     return JsonResponse({'update': False})
 
 
@@ -97,7 +87,6 @@ def print_player_data(request):
             'username': player.user.username,
             'score': player.player_score,
             'incorrect_answers': player.incorrect_answers,
-            'page_updates': player.page_updates,
             'question_answered': player.question_answered,
         })
     return JsonResponse({'players': player_data})
@@ -115,6 +104,19 @@ def quiz_results(request):
     }
     return render(request, 'results.html', context)
 
+# --------------------------------------------------------------------- #
+# ------------------------- Utility Functions ------------------------- #
+# --------------------------------------------------------------------- #
+
+def iterate_next_question(request):
+    if request.user.username == 'david':
+        quiz = Quiz.objects.latest('date_created')
+        quiz.question_counter += 1
+        quiz.save()
+        # Reset all players' question_answered to 0 (Not Answered)
+        for p in Player.objects.all():
+            p.question_answered = 0
+            p.save()
 
 # --------------------------------------------------------------------- #
 # ---------------------- Next Question Functions ---------------------- #
@@ -139,16 +141,15 @@ def next_question(request):
             player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
+        
+        # Record the answer
+        round_name = "General Knowledge"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_answer
         player.save()
-        if request.user.username == 'david':
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            request.session['last_question_counter'] = quiz.question_counter
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
+        
+        iterate_next_question(request)
+
     return redirect('active_quiz:active_quiz')
 
 
@@ -164,13 +165,10 @@ def next_celebrity(request):
         correct_first_name = request.POST.get('correct_first_name', '').strip().lower()
         correct_last_name = request.POST.get('correct_last_name', '').strip().lower()
         player = request.user.player
-
         def is_acceptable(answer, correct_answer):
             return Levenshtein.distance(answer, correct_answer) <= 2
-
         first_name_correct = is_acceptable(selected_first_name, correct_first_name)
         last_name_correct = is_acceptable(selected_last_name, correct_last_name)
-
         if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
@@ -184,15 +182,14 @@ def next_celebrity(request):
             player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
+        
+        # Record the answer
+        round_name = "Celebrities"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = f"{selected_first_name} {selected_last_name}"
         player.save()
-        if request.user.username == 'david':
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
+        
+        iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
 
 
@@ -202,12 +199,10 @@ def next_logo(request):
         selected_company = request.POST.get('company', '').strip()
         correct_company = request.POST.get('correct_company', '').strip()
         player = request.user.player
-
         if request.user.username != 'david':
             if not selected_company or not correct_company:
                 messages.error(request, 'Both the selected and correct company names must be provided.')
                 return redirect('active_quiz:active_quiz')
-
             if selected_company.lower() == correct_company.lower():
                 player.player_score = (player.player_score or 0) + 1
                 player.question_answered = 1  # Correct
@@ -218,17 +213,15 @@ def next_logo(request):
                 messages.error(request, 'Incorrect answer.')
         else:
             player.question_answered = 1  # Correct for 'david'
-
+        
+        # Record the answer
+        round_name = "Logos"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_company
         player.save()
-        if request.user.username == 'david':
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            request.session['last_question_counter'] = quiz.question_counter
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
+        
+        iterate_next_question(request)
+
     return redirect('active_quiz:active_quiz')
 
 
@@ -247,16 +240,14 @@ def next_true_or_false(request):
             player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
+        
+        # Record the answer
+        round_name = "True or False"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_answer
         player.save()
-        if request.user.username == 'david':
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            request.session['last_question_counter'] = quiz.question_counter
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
+        
+        iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
 
 
@@ -284,19 +275,16 @@ def next_celebrity_age(request):
             player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
+        
+        # Record the answer
+        round_name = "Celebrity Age"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_age
         player.save()
         
-        if request.user.username == 'david' or 'next' in request.POST:
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            request.session['last_question_counter'] = quiz.question_counter
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
-                
+        iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
+
 
 @login_required
 def next_movie_release_date(request):
@@ -322,19 +310,16 @@ def next_movie_release_date(request):
             player.question_answered = 2  # Incorrect
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
+        
+        # Record the answer
+        round_name = "Movie Release Dates"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_year
         player.save()
         
-        if request.user.username == 'david' or 'next' in request.POST:
-            quiz = Quiz.objects.latest('date_created')
-            quiz.question_counter += 1
-            quiz.save()
-            request.session['last_question_counter'] = quiz.question_counter
-            # Reset all players' question_answered to 0 (Not Answered)
-            for p in Player.objects.all():
-                p.question_answered = 0
-                p.save()
-                
+        iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
+
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #

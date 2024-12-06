@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.postgres.fields import JSONField
 
 
 # User model, used to store player names and scores
@@ -8,7 +9,7 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     player_score = models.FloatField(default=0.0)
     incorrect_answers = models.IntegerField(default=0)
-    page_updates = models.IntegerField(default=0)
+    number_of_questions = models.IntegerField(default=0)
     player_photo = models.ImageField(upload_to='player_photos', blank=True, null=True)
     QUESTION_STATUS_CHOICES = [
         (0, 'Not Answered'),
@@ -16,6 +17,7 @@ class Player(models.Model):
         (2, 'Incorrect'),
     ]
     question_answered = models.IntegerField(choices=QUESTION_STATUS_CHOICES, default=0)
+    answers = models.JSONField(default=dict)  # Add this line to store answers
 
     def __str__(self):
         return self.user.username

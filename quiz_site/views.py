@@ -18,7 +18,6 @@ def quiz_home(request):
     users = User.objects.all()
     rounds = Rounds.objects.all()
     quiz = Quiz.objects.all()
-
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
         "True or False": TrueOrFalse,
@@ -34,24 +33,21 @@ def quiz_home(request):
         "Movie Release Dates": Movies,
         "Locations": Locations,
     }
-
     quiz_selection_form = QuizSelectionForm()
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
-
-            # Reset player scores and incorrect answers
+            # Reset player scores, incorrect answers, page updates, and answers
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
                 player.page_updates = 0
+                player.answers = {}  # Reset the answers field
                 player.save()
-
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             selected_rounds = quiz_selection_form.cleaned_data['rounds']
             quiz.rounds.set(selected_rounds)
-
             random_numbers = {}
             for round in selected_rounds:
                 round_name = round.question_type
@@ -60,7 +56,6 @@ def quiz_home(request):
                     ids = list(model.objects.values_list('id', flat=True))
                     if ids:
                         random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
-
             quiz.random_numbers = random_numbers
             quiz.save()
             return redirect('active_quiz:active_quiz')
@@ -68,7 +63,6 @@ def quiz_home(request):
             print("Form Errors:", quiz_selection_form.errors)
     else:
         quiz_selection_form = QuizSelectionForm()
-
     context = {
         'rounds': rounds,
         'quiz': quiz,
