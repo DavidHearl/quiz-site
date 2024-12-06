@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/round_results.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="quiz-title">Round Results - {{ current_round }}</h1>
+        <div class="results-container">
+            {% for player in players %}
+                <div class="player-result">
+                    <h2>{{ player.user.username }}</h2>
+                    <p>Score: {{ player.player_score }}</p>
+                    <h3>Answers:</h3>
+                </div>
+            {% endfor %}
+        </div>
+        {% if is_end_of_quiz %}
+            <a href="{% url 'active_quiz:quiz_results' %}" class="button">View Quiz Results</a>
+        {% else %}
+            <a href="{% url 'active_quiz:active_quiz' %}" class="button">Next Round</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -5,22 +5,45 @@
 {% endblock %}
 {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-
     <div class="container">
         <h1 class="quiz-title">Quiz Results</h1>
         <div class="podium">
-            {% for player in players|slice:":3" %}
+            {% if players|length >= 2 %}
                 <div class="podium-place">
-                    {% if player.player_photo %}
-                        <img src="{{ player.player_photo.url }}" alt="{{ player.user.username }}" class="profile-image">
+                    {% if players.1.player_photo %}
+                        <img src="{{ players.1.player_photo.url }}" alt="{{ players.1.user.username }}" class="profile-image">
                     {% else %}
                         <div class="placeholder"></div>
                     {% endif %}
-                    <div class="{% if forloop.counter == 1 %}first-place-podium{% elif forloop.counter == 2 %}second-place-podium{% else %}third-place-podium{% endif %}">
-                        <p>{{ forloop.counter }}</p>
+                    <div class="second-place-podium">
+                        <p>2</p>
                     </div>
                 </div>
-            {% endfor %}
+            {% endif %}
+            {% if players|length >= 1 %}
+                <div class="podium-place">
+                    {% if players.0.player_photo %}
+                        <img src="{{ players.0.player_photo.url }}" alt="{{ players.0.user.username }}" class="profile-image">
+                    {% else %}
+                        <div class="placeholder"></div>
+                    {% endif %}
+                    <div class="first-place-podium">
+                        <p>1</p>
+                    </div>
+                </div>
+            {% endif %}
+            {% if players|length >= 3 %}
+                <div class="podium-place">
+                    {% if players.2.player_photo %}
+                        <img src="{{ players.2.player_photo.url }}" alt="{{ players.2.user.username }}" class="profile-image">
+                    {% else %}
+                        <div class="placeholder"></div>
+                    {% endif %}
+                    <div class="third-place-podium">
+                        <p>3</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="results-container">
             {% for player in players %}
@@ -30,6 +53,5 @@
                 </div>
             {% endfor %}
         </div>
-        <!-- <a href="{% url 'quiz_home' %}" class="button">Back to Home</a> -->
     </div>
 {% endblock %}

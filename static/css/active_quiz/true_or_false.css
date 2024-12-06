@@ -1,0 +1,17 @@
+.true-or-false-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.true-button,
+.false-button {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    margin: 12px;
+    width: 30%;
+    max-width: 200px;
+    border: 1px solid black;
+    cursor: pointer;
+}

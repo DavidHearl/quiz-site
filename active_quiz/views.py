@@ -90,7 +90,29 @@ def print_player_data(request):
             'question_answered': player.question_answered,
         })
     return JsonResponse({'players': player_data})
-  
+
+
+@login_required
+def round_results(request):
+    quiz = Quiz.objects.latest('date_created')
+    players = quiz.players.all()
+    current_round = request.session.get('current_round', None)
+    round_answers = {}
+
+    # Check if it is the end of the quiz
+    question_counter = quiz.question_counter
+    total_questions = sum(len(quiz.random_numbers.get(round.question_type, [])) for round in quiz.rounds.all())
+    is_end_of_quiz = question_counter >= total_questions
+
+    context = {
+        'quiz': quiz,
+        'players': players,
+        'current_round': current_round,
+        'round_answers': round_answers,
+        'is_end_of_quiz': is_end_of_quiz,
+    }
+    return render(request, 'round_results.html', context)
+
 
 @login_required
 def quiz_results(request):
@@ -113,6 +135,29 @@ def iterate_next_question(request):
         quiz = Quiz.objects.latest('date_created')
         quiz.question_counter += 1
         quiz.save()
+
+        # Determine the current round and total questions
+        rounds = quiz.rounds.all()
+        question_counter = quiz.question_counter
+        current_round = None
+        total_questions = 0
+
+        for round in rounds:
+            round_name = round.question_type
+            total_questions += len(quiz.random_numbers.get(round_name, []))
+            if question_counter <= total_questions:
+                current_round = round_name
+                break
+
+        # Check if the current round has ended (every 10 questions)
+        if current_round and question_counter % 10 == 0:
+            request.session['current_round'] = current_round
+            return redirect('active_quiz:round_results')
+
+        # Check if the quiz has ended
+        if question_counter >= total_questions:
+            return redirect('active_quiz:quiz_results')
+
         # Reset all players' question_answered to 0 (Not Answered)
         for p in Player.objects.all():
             p.question_answered = 0
@@ -131,7 +176,7 @@ def next_question(request):
     if request.method == 'POST':
         selected_answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
-        player = request.user.player
+        player = request.user.player  # Ensure you are accessing the Player object
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
@@ -388,20 +433,23 @@ def handle_celebrity_age_round(quiz, current_index):
     current_year = datetime.now().year
     correct_age = current_year - birth_year
     
-    # Ensure the correct age is within the range of 20 to 100
-    correct_age = max(20, min(correct_age, 100))
+    # Ensure the correct age is within the range of 18 to 100
+    correct_age = max(18, min(correct_age, 100))
     
     # Use a seed to ensure the same answer set for each user
     random.seed(f"{quiz.id}-{current_index}")
     
-    # Decide a position for the correct age (e.g., random position within 7 options)
-    correct_position = random.randint(0, 6)
+    # Decide a position for the correct age (e.g., random position within 6 options)
+    correct_position = random.randint(0, 5)
     
-    # Generate age options with 3 years apart
+    # Determine the age interval based on the correct age
+    age_interval = 2 if correct_age < 30 else 3
+    
+    # Generate age options with the specified interval
     age_options = []
-    for i in range(7):
-        age = correct_age + 3 * (i - correct_position)
-        age = max(20, min(age, 100))  # Ensure age is within the range of 20 to 100
+    for i in range(6):
+        age = correct_age + age_interval * (i - correct_position)
+        age = max(18, min(age, 100))  # Ensure age is within the range of 18 to 100
         age_options.append(age)
     
     # Ensure the correct age is included in the options
