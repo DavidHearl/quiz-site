@@ -1,6 +1,8 @@
 .player-name {
     text-transform: capitalize;
     text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
 }
 
 .results-container {
@@ -30,6 +32,12 @@
     width: 150px;
 }
 
+.update-score-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
 .quiz-title {
     text-align: center;
 }
@@ -40,4 +48,10 @@
 
 .incorrect {
     background: lightcoral;
+}
+
+.score-input {
+    padding: 4px 8px;
+    margin: 0;
+    border-radius: 4px;
 }

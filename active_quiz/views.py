@@ -166,13 +166,14 @@ def iterate_next_question(request):
 
         for round in rounds:
             round_name = round.question_type
-            total_questions += len(quiz.random_numbers.get(round_name, []))
+            round_questions = len(quiz.random_numbers.get(round_name, []))
+            total_questions += round_questions
             if question_counter <= total_questions:
                 current_round = round_name
                 break
 
-        # Check if the current round has ended (every 10 questions)
-        if current_round and question_counter % 10 == 0:
+        # Check if the current round has ended
+        if current_round and question_counter % round_questions == 0:
             request.session['current_round'] = current_round
             return redirect('active_quiz:round_results')
 

@@ -22,23 +22,24 @@
 
         {% for player in quiz.players.all %}
             <div class="player-result">
-                <h2 class="player-name">{{ player }}</h2>
-                <p class="player-score">Score: {{ player.player.player_score }}</p>
+                <h2 class="player-name">{{ player }} ({{ player.player.player_score }})</h2>
+                {% for round, answers in player.player.answers.items %}
+                    <ul class="answer-list" data-round="{{ round }}">
+                        {% for question, answer in answers.items %}
+                            <li class="player-answer" data-question="{{ question }}">{{ answer }}</li>  
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
                 <form method="post" action="{% url 'active_quiz:update_score' %}">
                     {% csrf_token %}
                     <input type="hidden" name="player_id" value="{{ player.id }}">
-                    <div class="score-controls">
-                        <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                    <div class="update-score-container">
+                        <div class="score-controls">
+                            <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                        </div>
+                        <button type="submit">Submit</button>
                     </div>
-                    <button type="submit">Submit</button>
                 </form>
-                {% for round, answers in player.player.answers.items %}
-                <ul class="answer-list" data-round="{{ round }}">
-                    {% for question, answer in answers.items %}
-                        <li class="player-answer" data-question="{{ question }}">{{ answer }}</li>  
-                    {% endfor %}
-                </ul>
-                {% endfor %}
             </div>
         {% endfor %}
     </div>
