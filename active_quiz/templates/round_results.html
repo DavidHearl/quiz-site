@@ -13,18 +13,24 @@
                 <div class="player-result">
                     <h2 class="player-name">{{ player }}</h2>
                     {% for round, answers in player.player.answers.items %}
-                        <h3>{{ round }}</h3>
-                        <ul>
-                            {% for question, answer in answers.items %}
-                                <li>
-                                    Question {{ question }}: {{ answer }}
-                                    <br>
-                                    Correct Answer: {{ correct_answers[round][question] }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endfor %}
+                    <ul>
+                        {% for question, answer in answers.items %}
+                            <li>
+                                {{ question }}: {{ answer }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
                 </div>
+            {% endfor %}
+            
+            {% for round, answers in quiz.correct_answers.items %}
+                <h3>Answers</h3>
+                <ul>
+                    {% for answer in answers %}
+                        <li>{{ answer }}</li>
+                    {% endfor %}
+                </ul>
             {% endfor %}
         </div>
     </div>

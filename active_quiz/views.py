@@ -91,6 +91,7 @@ def print_player_data(request):
         })
     return JsonResponse({'players': player_data})
 
+
 @login_required
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
