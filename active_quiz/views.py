@@ -91,25 +91,28 @@ def print_player_data(request):
         })
     return JsonResponse({'players': player_data})
 
-
 @login_required
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     players = quiz.players.all()
     current_round = request.session.get('current_round', None)
-    round_answers = {}
 
-    # Check if it is the end of the quiz
-    question_counter = quiz.question_counter
-    total_questions = sum(len(quiz.random_numbers.get(round.question_type, [])) for round in quiz.rounds.all())
-    is_end_of_quiz = question_counter >= total_questions
+    # Fetch correct answers for each round
+    correct_answers = {}
+    for round_name, question_ids in quiz.random_numbers.items():
+        if round_name == "General Knowledge":
+            questions = GeneralKnowledge.objects.filter(id__in=question_ids)
+            correct_answers[round_name] = {str(q.id): q.answer for q in questions}
+        elif round_name == "Guess the Celebrity Age":
+            questions = Celebrities.objects.filter(id__in=question_ids)
+            correct_answers[round_name] = {str(q.id): q.date_of_birth.year for q in questions}
+        # Add more rounds as needed
 
     context = {
         'quiz': quiz,
         'players': players,
         'current_round': current_round,
-        'round_answers': round_answers,
-        'is_end_of_quiz': is_end_of_quiz,
+        'correct_answers': correct_answers,
     }
     return render(request, 'round_results.html', context)
 
@@ -177,6 +180,8 @@ def next_question(request):
         selected_answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         player = request.user.player  # Ensure you are accessing the Player object
+        quiz = Quiz.objects.latest('date_created')
+        
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
@@ -192,6 +197,11 @@ def next_question(request):
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_answer
         player.save()
+        
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
         
         iterate_next_question(request)
 
@@ -210,10 +220,14 @@ def next_celebrity(request):
         correct_first_name = request.POST.get('correct_first_name', '').strip().lower()
         correct_last_name = request.POST.get('correct_last_name', '').strip().lower()
         player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+        
         def is_acceptable(answer, correct_answer):
             return Levenshtein.distance(answer, correct_answer) <= 2
+        
         first_name_correct = is_acceptable(selected_first_name, correct_first_name)
         last_name_correct = is_acceptable(selected_last_name, correct_last_name)
+        
         if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
@@ -234,36 +248,44 @@ def next_celebrity(request):
         player.answers.setdefault(round_name, {})[question_index] = f"{selected_first_name} {selected_last_name}"
         player.save()
         
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(f"{correct_first_name} {correct_last_name}")
+            quiz.save()
+        
         iterate_next_question(request)
+
     return redirect('active_quiz:active_quiz')
 
 
 @login_required
 def next_logo(request):
     if request.method == 'POST':
-        selected_company = request.POST.get('company', '').strip()
-        correct_company = request.POST.get('correct_company', '').strip()
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
         player = request.user.player
-        if request.user.username != 'david':
-            if not selected_company or not correct_company:
-                messages.error(request, 'Both the selected and correct company names must be provided.')
-                return redirect('active_quiz:active_quiz')
-            if selected_company.lower() == correct_company.lower():
-                player.player_score = (player.player_score or 0) + 1
-                player.question_answered = 1  # Correct
-                messages.success(request, 'Correct answer! Your score has been updated.')
-            else:
-                player.incorrect_answers = (player.incorrect_answers or 0) + 1
-                player.question_answered = 2  # Incorrect
-                messages.error(request, 'Incorrect answer.')
+        quiz = Quiz.objects.latest('date_created')
+        
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            messages.success(request, 'Correct answer! Your score has been updated.')
         else:
-            player.question_answered = 1  # Correct for 'david'
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer.')
         
         # Record the answer
         round_name = "Logos"
         question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_company
+        player.answers.setdefault(round_name, {})[question_index] = selected_answer
         player.save()
+        
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
         
         iterate_next_question(request)
 
@@ -276,6 +298,8 @@ def next_true_or_false(request):
         selected_answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+        
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
@@ -292,7 +316,13 @@ def next_true_or_false(request):
         player.answers.setdefault(round_name, {})[question_index] = selected_answer
         player.save()
         
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+        
         iterate_next_question(request)
+
     return redirect('active_quiz:active_quiz')
 
 
@@ -326,6 +356,11 @@ def next_celebrity_age(request):
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_age
         player.save()
+
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_age)
+            quiz.save()
         
         iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
@@ -361,8 +396,14 @@ def next_movie_release_date(request):
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_year
         player.save()
+
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_date)
+            quiz.save()
         
         iterate_next_question(request)
+
     return redirect('active_quiz:active_quiz')
 
 # --------------------------------------------------------------------- #

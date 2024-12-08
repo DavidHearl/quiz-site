@@ -41,6 +41,7 @@ class Quiz(models.Model):
     random_numbers = models.JSONField(default=list, blank=True, null=True)
     question_counter = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
+    correct_answers = models.JSONField(default=dict)
 
     def __str__(self):
         return self.quiz_name
