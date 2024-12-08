@@ -6,32 +6,67 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="quiz-title">{{ quiz.quiz_name }} - Round Results</h1>
-        <div class="results-container">
-            {% for player in quiz.players.all %}
-                <div class="player-result">
-                    <h2 class="player-name">{{ player }}</h2>
-                    {% for round, answers in player.player.answers.items %}
-                    <ul>
-                        {% for question, answer in answers.items %}
-                            <li>
-                                {{ question }}: {{ answer }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
-                </div>
-            {% endfor %}
-            
+<div class="container">
+    <h1 class="quiz-title">{{ quiz.quiz_name }} - Round Results</h1>
+    <div class="results-container">
+        <div class="player-result">
+            <h2 class="player-name">Answers</h2>
             {% for round, answers in quiz.correct_answers.items %}
-                <h3>Answers</h3>
-                <ul>
+                <ul class="answer-list" data-round="{{ round }}">
                     {% for answer in answers %}
-                        <li>{{ answer }}</li>
+                        <li class="correct-answer" data-question="{{ forloop.counter0 }}">{{ answer }}</li>
                     {% endfor %}
                 </ul>
             {% endfor %}
         </div>
+
+        {% for player in quiz.players.all %}
+            <div class="player-result">
+                <h2 class="player-name">{{ player }}</h2>
+                <p class="player-score">Score: {{ player.player.player_score }}</p>
+                <form method="post" action="{% url 'active_quiz:update_score' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="player_id" value="{{ player.id }}">
+                    <div class="score-controls">
+                        <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+                {% for round, answers in player.player.answers.items %}
+                <ul class="answer-list" data-round="{{ round }}">
+                    {% for question, answer in answers.items %}
+                        <li class="player-answer" data-question="{{ question }}">{{ answer }}</li>  
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const correctAnswers = document.querySelectorAll('.correct-answer');
+        correctAnswers.forEach(correctAnswer => {
+            const round = correctAnswer.closest('.answer-list').dataset.round;
+            const question = correctAnswer.dataset.question;
+            const playerAnswers = document.querySelectorAll(`.player-answer[data-question="${question}"]`);
+            playerAnswers.forEach(playerAnswer => {
+                if (playerAnswer.closest('.answer-list').dataset.round === round) {
+                    if (playerAnswer.textContent.trim() === correctAnswer.textContent.trim()) {
+                        playerAnswer.classList.add('correct');
+                    } else {
+                        playerAnswer.classList.add('incorrect');
+                    }
+                }
+            });
+        });
+    });
+
+    function changeScore(button, delta) {
+        const scoreInput = button.parentElement.querySelector('.score-input');
+        scoreInput.value = parseInt(scoreInput.value) + delta;
+    }
+</script>
+
 {% endblock %}

@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from quiz_site.models import *
 import random
 from datetime import datetime
@@ -129,6 +130,23 @@ def quiz_results(request):
         'winner': winner,
     }
     return render(request, 'results.html', context)
+
+
+def update_score(request):
+    player_id = request.POST.get('player_id')
+    score_change = request.POST.get('score_change')
+    
+    try:
+        score_change = float(score_change)
+    except ValueError:
+        # Handle the error appropriately
+        return redirect('active_quiz:round_results')
+
+    player = get_object_or_404(Player, id=player_id)
+    player.player_score += score_change
+    player.save()
+    
+    return redirect('active_quiz:round_results')
 
 # --------------------------------------------------------------------- #
 # ------------------------- Utility Functions ------------------------- #

@@ -1,3 +1,43 @@
 .player-name {
     text-transform: capitalize;
+    text-align: center;
+}
+
+.results-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    gap: 16px;
+}
+
+.answer-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.answer-list li {
+    margin-top: 4px;
+    padding: 4px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.player-result {
+    padding: 8px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid black;
+    width: 150px;
+}
+
+.quiz-title {
+    text-align: center;
+}
+
+.correct {
+    background: lightgreen;
+}
+
+.incorrect {
+    background: lightcoral;
 }

@@ -9,6 +9,7 @@ urlpatterns = [
     path('print_player_data/', views.print_player_data, name='print_player_data'),
     path('quiz_results/', views.quiz_results, name='quiz_results'),
     path('round_results/', views.round_results, name='round_results'),
+    path('update_score/', views.update_score, name='update_score'),
     path('next_question/', views.next_question, name='next_question'),
     path('next_celebrity/', views.next_celebrity, name='next_celebrity'),
     path('next_logo/', views.next_logo, name='next_logo'),
