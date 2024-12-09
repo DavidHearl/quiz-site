@@ -36,6 +36,7 @@
         </form>
     </div>
 {% endif %}
+
 <script>
     function moveUp(button) {
         var li = button.closest('li');
@@ -53,7 +54,7 @@
         }
     }
 
-    document.getElementById('oldest-form').addEventListener('submit', function() {
+    document.getElementById('oldest-form').addEventListener('submit', function(event) {
         var order = [];
         document.querySelectorAll('#celebrity-list .celebrity-item').forEach(function(item) {
             order.push(item.getAttribute('data-id'));

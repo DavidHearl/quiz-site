@@ -613,6 +613,9 @@ def handle_who_is_the_oldest_round(quiz, current_index):
     # Get the list of celebrity IDs for the "Who is the Oldest" round
     celebrity_ids = quiz.random_numbers.get("Who is the Oldest", [])
 
+    # Use a seed to ensure the same set of celebrities for each user
+    random.seed(f"{quiz.id}-{current_index}")
+
     # Select a random subset of celebrities
     selected_celebrity_ids = random.sample(celebrity_ids, min(num_celebrities, len(celebrity_ids)))
 
