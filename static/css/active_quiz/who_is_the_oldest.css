@@ -1,0 +1,53 @@
+.celebrities-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#celebrity-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.celebrity-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    text-align: center;
+}
+.celebrity-content {
+    display: flex;
+    align-items: center;
+}
+.celebrity-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.celebrity-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.celebrity-name {
+    margin: 5px 0;
+}
+.move-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+.move-buttons button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.submit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

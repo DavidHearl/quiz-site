@@ -45,7 +45,7 @@
     border: 1px solid black;
     background: white;  
     border-radius: 4px;
-    width: 250px;
+    /* width: 250px; */
     padding: 8px;
     max-height: 24px;
     margin-bottom: 4px;

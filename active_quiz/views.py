@@ -43,6 +43,7 @@ def active_quiz(request):
         "True or False": handle_true_or_false_round,
         "Guess the Celebrity Age": handle_celebrity_age_round,
         "Movie Release Dates": handle_movie_release_dates_round,
+        "Who is the Oldest": handle_who_is_the_oldest_round,
     }
 
     context = {
@@ -173,7 +174,7 @@ def iterate_next_question(request):
                 break
 
         # Check if the current round has ended
-        if current_round and question_counter % round_questions == 0:
+        if current_round and question_counter % 10 == 0:
             request.session['current_round'] = current_round
             return redirect('active_quiz:round_results')
 
@@ -426,6 +427,47 @@ def next_movie_release_date(request):
 
     return redirect('active_quiz:active_quiz')
 
+
+@login_required
+def next_who_is_the_oldest(request):
+    if request.method == 'POST':
+        selected_order = request.POST.getlist('celebrity_order')
+        correct_order = request.POST.getlist('correct_order')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        # Calculate the score based on the number of correct positions
+        correct_positions = sum(1 for i in range(len(selected_order)) if selected_order[i] == correct_order[i])
+        if correct_positions == 1:
+            score = 0.2
+        elif correct_positions == 2:
+            score = 0.5
+        elif correct_positions == 3:
+            score = 1
+        elif correct_positions == 5:
+            score = 2
+        else:
+            score = 0
+
+        player.player_score = (player.player_score or 0) + score
+        player.question_answered = 1 if score > 0 else 2  # Correct if score > 0, otherwise Incorrect
+        messages.success(request, f'You got {correct_positions} correct positions! Your score has been updated.')
+
+        # Record the answer
+        round_name = "Who is the Oldest"
+        question_index = request.session.get('last_question_counter', 0)
+        player.answers.setdefault(round_name, {})[question_index] = selected_order
+        player.save()
+
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_order)
+            quiz.save()
+
+        iterate_next_question(request)
+    return redirect('active_quiz:active_quiz')
+
+
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -442,6 +484,7 @@ def handle_flags_round(quiz, current_index):
         'choices': choices,
     }
 
+
 def handle_general_knowledge_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("General Knowledge", [])
     current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
@@ -451,6 +494,7 @@ def handle_general_knowledge_round(quiz, current_index):
         'current_question': current_question,
         'gk_choices': gk_choices,
     }
+
 
 def handle_capital_cities_round(quiz, current_index):
     flag_ids = quiz.random_numbers.get("Capital Cities", [])
@@ -464,12 +508,14 @@ def handle_capital_cities_round(quiz, current_index):
         'choices': choices,
     }
 
+
 def handle_celebrities_round(quiz, current_index):
     celebrity_ids = quiz.random_numbers.get("Celebrities", [])
     current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
     return {
         'current_celebrity': current_celebrity,
     }
+
 
 def handle_logos_round(quiz, current_index):
     logo_ids = quiz.random_numbers.get("Logos", [])
@@ -480,12 +526,14 @@ def handle_logos_round(quiz, current_index):
         'obfuscated_name': obfuscated_name,
     }
 
+
 def handle_true_or_false_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("True or False", [])
     current_question = TrueOrFalse.objects.get(id=question_ids[current_index])
     return {
         'current_question': current_question,
     }
+
 
 def handle_celebrity_age_round(quiz, current_index):
     celebrity_ids = quiz.random_numbers.get("Guess the Celebrity Age", [])
@@ -523,6 +571,7 @@ def handle_celebrity_age_round(quiz, current_index):
         'age_options': age_options,
     }
 
+
 def handle_movie_release_dates_round(quiz, current_index):
     movie_ids = quiz.random_numbers.get("Movie Release Dates", [])
     current_movie = Movies.objects.get(id=movie_ids[current_index])
@@ -554,4 +603,26 @@ def handle_movie_release_dates_round(quiz, current_index):
         'current_movie': current_movie,
         'correct_year': release_year,
         'year_options': year_options,
+    }
+
+
+def handle_who_is_the_oldest_round(quiz, current_index):
+    # Define the number of celebrities to be included in the question
+    num_celebrities = 5
+
+    # Get the list of celebrity IDs for the "Who is the Oldest" round
+    celebrity_ids = quiz.random_numbers.get("Who is the Oldest", [])
+
+    # Select a random subset of celebrities
+    selected_celebrity_ids = random.sample(celebrity_ids, min(num_celebrities, len(celebrity_ids)))
+
+    # Fetch the selected celebrities from the database
+    celebrities = Celebrities.objects.filter(id__in=selected_celebrity_ids)
+
+    # Sort celebrities by date of birth (oldest first)
+    sorted_celebrities = sorted(celebrities, key=lambda c: c.date_of_birth)
+
+    return {
+        'celebrities': celebrities,
+        'sorted_celebrities': sorted_celebrities,
     }

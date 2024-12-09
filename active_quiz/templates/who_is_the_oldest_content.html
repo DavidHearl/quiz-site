@@ -1,0 +1,54 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/who_is_the_oldest.css' %}">
+{% endblock %}
+{% if celebrities %}
+    <div class="celebrities-container">
+        <form id="oldest-form" method="post" action="{% url 'active_quiz:next_who_is_the_oldest' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_order" value="{{ sorted_celebrities|join:',' }}">
+            <ul id="celebrity-list">
+                {% for celebrity in celebrities %}
+                    <li class="celebrity-item" data-id="{{ celebrity.id }}">
+                        <div class="celebrity-content">
+                            <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
+                            <div class="celebrity-info">
+                                <h2 class="celebrity-name">{{ celebrity.first_name }} {{ celebrity.last_name }}</h2>
+                                <div class="move-buttons">
+                                    <button type="button" class="move-up" onclick="moveUp(this)">↑</button>
+                                    <button type="button" class="move-down" onclick="moveDown(this)">↓</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="celebrity_order" id="celebrity_order">
+            <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </div>
+{% endif %}
+<script>
+    function moveUp(button) {
+        var li = button.closest('li');
+        var prev = li.previousElementSibling;
+        if (prev) {
+            li.parentNode.insertBefore(li, prev);
+        }
+    }
+
+    function moveDown(button) {
+        var li = button.closest('li');
+        var next = li.nextElementSibling;
+        if (next) {
+            li.parentNode.insertBefore(next, li);
+        }
+    }
+
+    document.getElementById('oldest-form').addEventListener('submit', function() {
+        var order = Array.from(document.querySelectorAll('#celebrity-list .celebrity-item')).map(function(item) {
+            return item.getAttribute('data-id');
+        });
+        document.getElementById('celebrity_order').value = order.join(',');
+    });
+</script>
