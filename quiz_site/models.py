@@ -131,7 +131,7 @@ class Celebrities(models.Model):
 
     def __str__(self):
         full_name = self.first_name + " " + self.last_name
-        return full_name
+        return f"({self.id}) {full_name}"
 
 
 class Movies(models.Model):

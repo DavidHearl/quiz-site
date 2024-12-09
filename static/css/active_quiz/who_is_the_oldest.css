@@ -12,42 +12,119 @@
 .celebrity-item {
     display: flex;
     align-items: center;
-    margin: 10px 0;
+    margin: 8px 0;
     text-align: center;
 }
 .celebrity-content {
     display: flex;
     align-items: center;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 8px;
+    min-width: 400px;
+    background: white;
 }
 .celebrity-image {
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
+    border-radius: 8px;
+    margin: 0 12px 0 0;
+    border: none;
 }
 .celebrity-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
 }
 .celebrity-name {
-    margin: 5px 0;
+    margin: 4px 0;
+    font-size: 1.2rem;
 }
 .move-buttons {
     display: flex;
     justify-content: center;
-    margin-top: 5px;
+    margin-left: auto;
 }
 .move-buttons button {
-    margin: 0 5px;
-    padding: 5px 10px;
+    height: 100px;
+    padding: 4px 16px;
     font-size: 16px;
     cursor: pointer;
+    border: none;
 }
 .submit-button {
-    margin-top: 20px;
-    padding: 10px 20px;
+    width: 100%;
+    padding: 8px 16px;
     font-size: 16px;
     cursor: pointer;
+    background-color: rgb(48, 182, 215);
+    border-radius: 4px;
+    border: 1px solid white;
+    margin-top: 12px;
+}
+
+.move-up {
+    background: rgb(46, 191, 46);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-right: 1px solid black !important;
+    border-left: 1px solid black !important;
+}
+
+.move-down {
+    background: rgb(255, 129, 129);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.order-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 20px;
+    margin-right: 20px;
+}
+.label-oldest, .label-youngest {
+    font-size: 1.2rem;
+    margin: 0 10px;
+}
+.arrow {
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%);
+    position: relative;
+}
+.arrow::before, .arrow::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 10px solid transparent;
+}
+.arrow::before {
+    top: 0;
+    border-bottom-color: black;
+}
+.arrow::after {
+    bottom: 0;
+    border-top-color: black;
+}
+
+.question-view {
+    display: flex;
+}
+
+.label-oldest ,
+.label-youngest {
+    transform: rotate(-90deg);
+}
+
+.label-oldest {
+    margin: 28px 0 20px 0;
+}
+
+.label-youngest {
+    margin: 36px 0;
 }

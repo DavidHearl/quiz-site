@@ -7,22 +7,30 @@
         <form id="oldest-form" method="post" action="{% url 'active_quiz:next_who_is_the_oldest' %}">
             {% csrf_token %}
             <input type="hidden" name="correct_order" value="{{ sorted_celebrities|join:',' }}">
-            <ul id="celebrity-list">
-                {% for celebrity in celebrities %}
-                    <li class="celebrity-item" data-id="{{ celebrity.id }}">
-                        <div class="celebrity-content">
-                            <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
-                            <div class="celebrity-info">
-                                <h2 class="celebrity-name">{{ celebrity.first_name }} {{ celebrity.last_name }}</h2>
+            <div class="question-view">
+                <div class="order-indicator">
+                    <span class="label-oldest">Oldest</span>
+                    <div class="arrow"></div>
+                    <span class="label-youngest">Youngest</span>
+                </div>
+                <ul id="celebrity-list">
+                    {% for celebrity in celebrities %}
+                        <li class="celebrity-item" data-id="{{ celebrity.id }}">
+                            <div class="celebrity-content">
+                                <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
+                                <div class="celebrity-info">
+                                    <h2 class="celebrity-name">{{ celebrity.first_name }}</h2>
+                                    <h2 class="celebrity-name">{{ celebrity.last_name }}</h2>
+                                </div>
                                 <div class="move-buttons">
                                     <button type="button" class="move-up" onclick="moveUp(this)">↑</button>
                                     <button type="button" class="move-down" onclick="moveDown(this)">↓</button>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
             <input type="hidden" name="celebrity_order" id="celebrity_order">
             <button type="submit" class="submit-button">Submit</button>
         </form>
@@ -46,8 +54,9 @@
     }
 
     document.getElementById('oldest-form').addEventListener('submit', function() {
-        var order = Array.from(document.querySelectorAll('#celebrity-list .celebrity-item')).map(function(item) {
-            return item.getAttribute('data-id');
+        var order = [];
+        document.querySelectorAll('#celebrity-list .celebrity-item').forEach(function(item) {
+            order.push(item.getAttribute('data-id'));
         });
         document.getElementById('celebrity_order').value = order.join(',');
     });
