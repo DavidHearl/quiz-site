@@ -428,11 +428,20 @@ def next_movie_release_date(request):
     return redirect('active_quiz:active_quiz')
 
 
-@login_required
 def next_who_is_the_oldest(request):
     if request.method == 'POST':
-        selected_order = request.POST.getlist('celebrity_order')
-        correct_order = request.POST.getlist('correct_order')
+        selected_order = [item for item in request.POST.getlist('celebrity_order') if item]
+        correct_order = request.POST.get('correct_order').split(',')
+
+        # Debugging: Print the lists to check their contents
+        print("Selected Order:", selected_order)
+        print("Correct Order:", correct_order)
+
+        # Ensure both lists have the same length
+        if len(selected_order) != len(correct_order):
+            messages.error(request, 'There was an error processing your answer. Please try again.')
+            return redirect('active_quiz:active_quiz')
+
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
@@ -607,17 +616,15 @@ def handle_movie_release_dates_round(quiz, current_index):
 
 
 def handle_who_is_the_oldest_round(quiz, current_index):
-    # Define the number of celebrities to be included in the question
-    num_celebrities = 5
+    # Get the list of celebrity ID groups for the "Who is the Oldest" round
+    celebrity_id_groups = quiz.random_numbers.get("Who is the Oldest", [])
 
-    # Get the list of celebrity IDs for the "Who is the Oldest" round
-    celebrity_ids = quiz.random_numbers.get("Who is the Oldest", [])
+    # Ensure there are enough celebrity ID groups
+    if current_index >= len(celebrity_id_groups):
+        raise ValueError(f"Not enough celebrity ID groups to select from")
 
-    # Use a seed to ensure the same set of celebrities for each user
-    random.seed(f"{quiz.id}-{current_index}")
-
-    # Select a random subset of celebrities
-    selected_celebrity_ids = random.sample(celebrity_ids, min(num_celebrities, len(celebrity_ids)))
+    # Select the current group of celebrity IDs
+    selected_celebrity_ids = celebrity_id_groups[current_index]
 
     # Fetch the selected celebrities from the database
     celebrities = Celebrities.objects.filter(id__in=selected_celebrity_ids)
@@ -627,5 +634,5 @@ def handle_who_is_the_oldest_round(quiz, current_index):
 
     return {
         'celebrities': celebrities,
-        'sorted_celebrities': sorted_celebrities,
+        'sorted_celebrities': [c.id for c in sorted_celebrities],
     }

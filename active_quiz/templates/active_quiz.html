@@ -85,9 +85,6 @@
                     {% for player in quiz.players.all %}
                         <div class="player-information" id="{{ player }}">
                             <h2 class="player-name">{{ player }}</h2>
-                            <h3 class="player-score">
-                                {{ player.player.player_score }} / {{ player.player.player_score|add:player.player.incorrect_answers }}
-                            </h3>
                         </div>
                     {% endfor %}
                 </div>

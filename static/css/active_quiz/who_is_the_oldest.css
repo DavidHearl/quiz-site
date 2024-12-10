@@ -53,7 +53,9 @@
     cursor: pointer;
     border: none;
 }
-.submit-button {
+
+.submit-button,
+.reveal-order-button {
     width: 100%;
     padding: 8px 16px;
     font-size: 16px;
@@ -127,4 +129,9 @@
 
 .label-youngest {
     margin: 36px 0;
+}
+
+.buttons-div {
+    display: flex;
+    gap: 12px;
 }

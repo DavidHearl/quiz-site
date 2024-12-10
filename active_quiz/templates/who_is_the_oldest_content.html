@@ -7,58 +7,66 @@
         <form id="oldest-form" method="post" action="{% url 'active_quiz:next_who_is_the_oldest' %}">
             {% csrf_token %}
             <input type="hidden" name="correct_order" value="{{ sorted_celebrities|join:',' }}">
-            <div class="question-view">
-                <div class="order-indicator">
-                    <span class="label-oldest">Oldest</span>
-                    <div class="arrow"></div>
-                    <span class="label-youngest">Youngest</span>
-                </div>
-                <ul id="celebrity-list">
-                    {% for celebrity in celebrities %}
-                        <li class="celebrity-item" data-id="{{ celebrity.id }}">
-                            <div class="celebrity-content">
-                                <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
-                                <div class="celebrity-info">
-                                    <h2 class="celebrity-name">{{ celebrity.first_name }}</h2>
-                                    <h2 class="celebrity-name">{{ celebrity.last_name }}</h2>
-                                </div>
-                                <div class="move-buttons">
-                                    <button type="button" class="move-up" onclick="moveUp(this)">↑</button>
-                                    <button type="button" class="move-down" onclick="moveDown(this)">↓</button>
-                                </div>
+            <ul id="celebrity-list">
+                {% for celebrity in celebrities %}
+                    <li class="celebrity-item" data-id="{{ celebrity.id }}">
+                        <div class="celebrity-content">
+                            <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
+                            <input type="hidden" name="celebrity_order" value="{{ celebrity.id }}">
+                            <div class="celebrity-info">
+                                <h2 class="celebrity-name">{{ celebrity.first_name }} {{ celebrity.last_name }}</h2>
                             </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+                            <div class="move-buttons">
+                                <button type="button" class="move-up" onclick="moveUp(this)">↑</button>
+                                <button type="button" class="move-down" onclick="moveDown(this)">↓</button>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="buttons-div">
+                <button type="submit" class="submit-button">Submit</button>
+                {% if request.user.username == 'david' %}
+                    <button type="button" class="reveal-order-button" onclick="revealCorrectOrder()">Reveal Correct Order</button>
+                {% endif %}
             </div>
-            <input type="hidden" name="celebrity_order" id="celebrity_order">
-            <button type="submit" class="submit-button">Submit</button>
+
         </form>
     </div>
 {% endif %}
 
 <script>
     function moveUp(button) {
-        var li = button.closest('li');
-        var prev = li.previousElementSibling;
-        if (prev) {
-            li.parentNode.insertBefore(li, prev);
+        const item = button.closest('.celebrity-item');
+        const prevItem = item.previousElementSibling;
+        if (prevItem) {
+            item.parentNode.insertBefore(item, prevItem);
         }
     }
 
     function moveDown(button) {
-        var li = button.closest('li');
-        var next = li.nextElementSibling;
-        if (next) {
-            li.parentNode.insertBefore(next, li);
+        const item = button.closest('.celebrity-item');
+        const nextItem = item.nextElementSibling;
+        if (nextItem) {
+            item.parentNode.insertBefore(nextItem, item);
         }
     }
 
+    function revealCorrectOrder() {
+        const correctOrder = "{{ sorted_celebrities|join:',' }}".split(',');
+        const items = Array.from(document.querySelectorAll('.celebrity-item'));
+        const sortedItems = correctOrder.map(id => items.find(item => item.dataset.id === id));
+        
+        const list = document.getElementById('celebrity-list');
+        list.innerHTML = '';
+        sortedItems.forEach(item => list.appendChild(item));
+    }
+
     document.getElementById('oldest-form').addEventListener('submit', function(event) {
-        var order = [];
-        document.querySelectorAll('#celebrity-list .celebrity-item').forEach(function(item) {
-            order.push(item.getAttribute('data-id'));
+        const celebrityItems = document.querySelectorAll('.celebrity-item');
+        const orderInput = document.querySelectorAll('input[name="celebrity_order"]');
+        celebrityItems.forEach((item, index) => {
+            orderInput[index].value = item.dataset.id;
         });
-        document.getElementById('celebrity_order').value = order.join(',');
     });
 </script>

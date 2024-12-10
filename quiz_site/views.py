@@ -42,8 +42,9 @@ def quiz_home(request):
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
+                player.question_answered = 0
                 player.page_updates = 0
-                player.answers = {}  # Reset the answers field
+                player.answers = {}
                 player.save()
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             selected_rounds = quiz_selection_form.cleaned_data['rounds']
@@ -55,7 +56,10 @@ def quiz_home(request):
                     model = db_mapping[round_name]
                     ids = list(model.objects.values_list('id', flat=True))
                     if ids:
-                        random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
+                        if round_name == "Who is the Oldest":
+                            random_numbers[round_name] = [random.sample(ids, 5) for _ in range(min(10, len(ids) // 5))]
+                        else:
+                            random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
             quiz.random_numbers = random_numbers
             quiz.save()
             return redirect('active_quiz:active_quiz')
