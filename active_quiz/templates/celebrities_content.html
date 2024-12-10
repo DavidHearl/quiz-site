@@ -13,20 +13,25 @@
     <div class="text-container">
         <form id="quiz-form" method="post" action="{% url 'active_quiz:next_celebrity' %}">
             {% csrf_token %}
-            <div class="text-answer">
-                <label class="text-answer-label" for="first_name">First Name:</label>
-                <input type="text" class="text-input" id="first_name" name="first_name">
-            </div>
-            <div class="text-answer">
-                <label class="text-answer-label" for="last_name">Last Name:</label>
-                <input type="text" class="text-input" id="last_name" name="last_name">
-            </div>
+            {% if request.user.username != 'david' %}
+                <div class="text-answer">
+                    <label class="text-answer-label" for="first_name">First Name:</label>
+                    <input type="text" class="text-input" id="first_name" name="first_name">
+                </div>
+                <div class="text-answer">
+                    <label class="text-answer-label" for="last_name">Last Name:</label>
+                    <input type="text" class="text-input" id="last_name" name="last_name">
+                </div>
+            {% endif %}
             <input type="hidden" name="correct_first_name" value="{{ current_celebrity.first_name }}">
             <input type="hidden" name="correct_last_name" value="{{ current_celebrity.last_name }}">
             {% if request.user.username == 'david' %}
-                <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+                <button class="next-button" type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+                <button class="submit-button" id="submit" type="submit">Next</button>
+            {% else %}
+                <button class="submit-button" id="submit" type="submit">Submit</button>
             {% endif %}
-            <button id="submit" type="submit">Next</button>
+            
         </form>
     </div>
 {% endif %}

@@ -34,3 +34,10 @@
     text-align: center;
     font-size: 1.3rem;
 }
+
+.company-name {
+    border-radius: 4px;
+    margin-bottom: 4px;
+    background: white;
+    padding: 4px 8px;
+}

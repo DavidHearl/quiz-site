@@ -2,6 +2,13 @@
     margin: 0 4px;
 }
 
+#celebrity-name {
+    border-radius: 4px;
+    margin-bottom: 4px;
+    background: white;
+    padding: 4px 8px;
+}
+
 #reveal-name-button,
 #submit {
     width: 100%;
@@ -19,13 +26,4 @@
 
 .text-answer {
     width: 100%;
-}
-
-#reveal-name-button,
-#submit {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
 }

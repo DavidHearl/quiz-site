@@ -54,4 +54,26 @@
     padding: 4px 8px;
     margin: 0;
     border-radius: 4px;
+    width: 100%;
+}
+
+.submit-button,
+.next-button {
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: rgb(48, 182, 215);
+    border-radius: 4px;
+    border: 1px solid white;
+}
+
+.next-button {
+    margin-top: 16px;
+    padding: 8px 16px;
+}
+
+.next-button:hover,
+.submit-button:hover {
+    background: darkslategray;
+    color: white;
 }

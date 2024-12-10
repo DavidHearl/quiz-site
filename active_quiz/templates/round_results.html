@@ -34,16 +34,17 @@
                         <div class="score-controls">
                             <input type="number" name="score_change" value="0" class="score-input" step="0.5">
                         </div>
-                        <button type="submit">Submit</button>
+                        <button class="submit-button" type="submit">Submit</button>
                     </div>
                 </form>
             </div>
         {% endfor %}
     </div>
+
     {% if request.user.username == 'david' %}
         <form method="post" action="{% url 'active_quiz:next_round' %}">
             {% csrf_token %}
-            <button type="submit" class="next-round-button">Next Round</button>
+            <button type="submit" class="next-button">Next Round</button>
         </form>
     {% endif %}
 </div>

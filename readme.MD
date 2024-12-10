@@ -1,3 +1,8 @@
+## Issues
+- The round_results is not deploying properly
+- The logo round is submitting null values
+- The celebrity round does not show half points in the round results
+
 ## Notes
 
 When the user submits the form the database will update.

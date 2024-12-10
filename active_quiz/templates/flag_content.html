@@ -27,7 +27,7 @@
                 {% endfor %}
             {% endif %}
             <input type="hidden" name="correct_answer" value="{{ current_flag.country }}">
-            <button type="submit" id="next-button"
+            <button class="next-button" type="submit" id="next-button"
                     {% if request.user.username != 'david' and request.user.player.incorrect_answers|add:request.user.player.player_score != quiz.question_counter %}disabled{% endif %}>Next</button>
         </form>
     </div>
