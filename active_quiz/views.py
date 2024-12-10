@@ -34,6 +34,11 @@ def active_quiz(request):
     if current_round is None:
         return redirect('active_quiz:quiz_results')
 
+    # Check if the current round has ended
+    if question_counter % 10 == 0:
+        request.session['current_round'] = current_round
+        return redirect('active_quiz:round_results')
+
     round_handlers = {
         "Flags": handle_flags_round,
         "General Knowledge": handle_general_knowledge_round,
@@ -41,7 +46,7 @@ def active_quiz(request):
         "Celebrities": handle_celebrities_round,
         "Logos": handle_logos_round,
         "True or False": handle_true_or_false_round,
-        "Guess the Celebrity Age": handle_celebrity_age_round,
+        "Celebrity Age": handle_celebrity_age_round,
         "Movie Release Dates": handle_movie_release_dates_round,
         "Who is the Oldest": handle_who_is_the_oldest_round,
     }
@@ -106,10 +111,9 @@ def round_results(request):
         if round_name == "General Knowledge":
             questions = GeneralKnowledge.objects.filter(id__in=question_ids)
             correct_answers[round_name] = {str(q.id): q.answer for q in questions}
-        elif round_name == "Guess the Celebrity Age":
+        elif round_name == "Celebrity Age":
             questions = Celebrities.objects.filter(id__in=question_ids)
             correct_answers[round_name] = {str(q.id): q.date_of_birth.year for q in questions}
-        # Add more rounds as needed
 
     context = {
         'quiz': quiz,
@@ -133,6 +137,14 @@ def quiz_results(request):
     return render(request, 'results.html', context)
 
 
+@login_required
+def next_round(request):
+    if request.user.username == 'david':
+        iterate_next_question(request)
+    return redirect('active_quiz:active_quiz')
+
+
+@login_required
 def update_score(request):
     player_id = request.POST.get('player_id')
     score_change = request.POST.get('score_change')
@@ -172,11 +184,6 @@ def iterate_next_question(request):
             if question_counter <= total_questions:
                 current_round = round_name
                 break
-
-        # Check if the current round has ended
-        if current_round and question_counter % 10 == 0:
-            request.session['current_round'] = current_round
-            return redirect('active_quiz:round_results')
 
         # Check if the quiz has ended
         if question_counter >= total_questions:
@@ -350,39 +357,50 @@ def next_true_or_false(request):
 @login_required
 def next_celebrity_age(request):
     if request.method == 'POST':
+        quiz = Quiz.objects.latest('date_created')
         selected_age = request.POST.get('age')
         correct_age = request.POST.get('correct_age')
-        
         if request.user.username != 'david' and (selected_age is None or correct_age is None):
             messages.error(request, 'Both the selected and correct ages must be provided.')
             return redirect('active_quiz:active_quiz')
-        
         if selected_age is not None:
             selected_age = int(selected_age)
         correct_age = int(correct_age)
-        
         player = request.user.player
-        if selected_age == correct_age:
-            player.player_score = (player.player_score or 0) + 1
-            player.question_answered = 1  # Correct
-            messages.success(request, 'Correct answer! Your score has been updated.')
+        age_difference = abs(selected_age - correct_age)
+        # Award points based on how close the user was to the correct age
+        if age_difference == 0:
+            score = 2
+        elif age_difference <= 1:
+            score = 1.5
+        elif age_difference <= 2:
+            score = 1.2
+        elif age_difference <= 4:
+            score = 0.7
+        elif age_difference <= 6:
+            score = 0.3
+        elif age_difference <= 8:
+            score = 0.1
         else:
-            player.incorrect_answers = (player.incorrect_answers or 0) + 1
-            player.question_answered = 2  # Incorrect
-            if request.user.username != 'david':
-                messages.error(request, 'Incorrect answer.')
+            score = 0
+        
+        if request.user.username != 'david':
+            player.player_score = (player.player_score or 0) + score
+            player.question_answered = 1 if score > 0 else 2  # Correct if score > 0, otherwise Incorrect
+            if score > 0:
+                messages.success(request, f'You were {age_difference} years off! You have earned {score} points.')
+            else:
+                messages.error(request, f'You were {age_difference} years off. No points earned.')
         
         # Record the answer
         round_name = "Celebrity Age"
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_age
         player.save()
-
         # Save the correct answer to quiz.correct_answers if not already saved
         if question_index >= len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_age)
             quiz.save()
-        
         iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
 
@@ -428,51 +446,52 @@ def next_movie_release_date(request):
     return redirect('active_quiz:active_quiz')
 
 
+@login_required
 def next_who_is_the_oldest(request):
     if request.method == 'POST':
         selected_order = [item for item in request.POST.getlist('celebrity_order') if item]
         correct_order = request.POST.get('correct_order').split(',')
-
-        # Debugging: Print the lists to check their contents
-        print("Selected Order:", selected_order)
-        print("Correct Order:", correct_order)
-
+        
         # Ensure both lists have the same length
         if len(selected_order) != len(correct_order):
             messages.error(request, 'There was an error processing your answer. Please try again.')
             return redirect('active_quiz:active_quiz')
-
+        
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
-
+        
         # Calculate the score based on the number of correct positions
         correct_positions = sum(1 for i in range(len(selected_order)) if selected_order[i] == correct_order[i])
         if correct_positions == 1:
-            score = 0.2
+            score = 0.3
         elif correct_positions == 2:
-            score = 0.5
+            score = 0.7
         elif correct_positions == 3:
-            score = 1
+            score = 1.3
         elif correct_positions == 5:
             score = 2
         else:
             score = 0
-
-        player.player_score = (player.player_score or 0) + score
-        player.question_answered = 1 if score > 0 else 2  # Correct if score > 0, otherwise Incorrect
-        messages.success(request, f'You got {correct_positions} correct positions! Your score has been updated.')
-
+        
+        if request.user.username != 'david':
+            player.player_score = round((player.player_score or 0) + score, 1)
+            player.question_answered = 1 if score > 0 else 2
+            if score > 0:
+                messages.success(request, f'You got {correct_positions} correct positions! You have earned {score} points.')
+            else:
+                messages.error(request, f'You got {correct_positions} correct positions. No points earned.')
+        
         # Record the answer
         round_name = "Who is the Oldest"
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_order
         player.save()
-
+        
         # Save the correct answer to quiz.correct_answers if not already saved
         if question_index >= len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_order)
             quiz.save()
-
+        
         iterate_next_question(request)
     return redirect('active_quiz:active_quiz')
 
@@ -545,7 +564,7 @@ def handle_true_or_false_round(quiz, current_index):
 
 
 def handle_celebrity_age_round(quiz, current_index):
-    celebrity_ids = quiz.random_numbers.get("Guess the Celebrity Age", [])
+    celebrity_ids = quiz.random_numbers.get("Celebrity Age", [])
     current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
     birth_year = current_celebrity.date_of_birth.year
     current_year = datetime.now().year

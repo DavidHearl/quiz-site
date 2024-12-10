@@ -55,7 +55,7 @@
 }
 
 .submit-button,
-.reveal-order-button {
+.next-button {
     width: 100%;
     padding: 8px 16px;
     font-size: 16px;
@@ -63,7 +63,6 @@
     background-color: rgb(48, 182, 215);
     border-radius: 4px;
     border: 1px solid white;
-    margin-top: 12px;
 }
 
 .move-up {
@@ -134,4 +133,5 @@
 .buttons-div {
     display: flex;
     gap: 12px;
+    margin-top: 12px;
 }

@@ -28,3 +28,20 @@
     background: darkslategray;
     color: white;
 }
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#age-slider {
+    width: 80%;
+    margin: 10px 0;
+}
+
+#age-display {
+    font-size: 1.5rem;
+    font-weight: bold;
+}

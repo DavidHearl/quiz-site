@@ -26,7 +26,7 @@ def quiz_home(request):
         "Logos": Logos,
         "Fighter Jets": Jets,
         "Celebrities": Celebrities,
-        "Guess the Celebrity Age": Celebrities,
+        "Celebrity Age": Celebrities,
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
         "Who is the Imposter": Movies,

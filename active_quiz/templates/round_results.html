@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/round_results.css' %}">
 {% endblock %}
-
 {% block content %}
 <div class="container">
     <h1 class="quiz-title">{{ quiz.quiz_name }} - Round Results</h1>
@@ -19,30 +17,25 @@
                 </ul>
             {% endfor %}
         </div>
-
         {% for player in quiz.players.all %}
             <div class="player-result">
                 <h2 class="player-name">{{ player }} ({{ player.player.player_score }})</h2>
                 {% for round, answers in player.player.answers.items %}
                     <ul class="answer-list" data-round="{{ round }}">
-                        {% for question, answer in answers.items %}
-                            <li class="player-answer" data-question="{{ question }}">{{ answer }}</li>  
+                        {% for answer in answers %}
+                            <li class="player-answer" data-question="{{ forloop.counter0 }}">{{ answer }}</li>
                         {% endfor %}
                     </ul>
                 {% endfor %}
-                <form method="post" action="{% url 'active_quiz:update_score' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="player_id" value="{{ player.id }}">
-                    <div class="update-score-container">
-                        <div class="score-controls">
-                            <input type="number" name="score_change" value="0" class="score-input" step="0.5">
-                        </div>
-                        <button type="submit">Submit</button>
-                    </div>
-                </form>
             </div>
         {% endfor %}
     </div>
+    {% if request.user.username == 'david' %}
+        <form method="post" action="{% url 'active_quiz:next_round' %}">
+            {% csrf_token %}
+            <button type="submit" class="next-round-button">Next Round</button>
+        </form>
+    {% endif %}
 </div>
 
 <script>
