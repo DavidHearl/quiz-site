@@ -15,20 +15,6 @@
     border: none;
 }
 
-.next-button {
-    width: 100%;
-    padding: 8px;
-    margin-top: 16px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-}
-
-.next-button:hover {
-    background: darkslategray;
-    color: white;
-}
-
 .slider-container {
     display: flex;
     flex-direction: column;

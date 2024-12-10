@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    <h1 class="quiz-title">{{ quiz.quiz_name }} - Round Results</h1>
+    <h1 class="quiz-title">{{ current_round }} - Round Results</h1>
     <div class="results-container">
         <div class="player-result">
             <h2 class="player-name">Answers</h2>
@@ -27,6 +27,16 @@
                         {% endfor %}
                     </ul>
                 {% endfor %}
+                <form method="post" action="{% url 'active_quiz:update_score' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="player_id" value="{{ player.id }}">
+                    <div class="update-score-container">
+                        <div class="score-controls">
+                            <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                        </div>
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
             </div>
         {% endfor %}
     </div>

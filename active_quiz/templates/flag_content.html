@@ -9,7 +9,7 @@
     </div>
 
     <div class="multiple-choice-container">
-        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_question' %}">
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_flag' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
                 {% for choice in choices %}

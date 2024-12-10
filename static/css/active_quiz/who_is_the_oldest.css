@@ -54,17 +54,6 @@
     border: none;
 }
 
-.submit-button,
-.next-button {
-    width: 100%;
-    padding: 8px 16px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: rgb(48, 182, 215);
-    border-radius: 4px;
-    border: 1px solid white;
-}
-
 .move-up {
     background: rgb(46, 191, 46);
     border-top-left-radius: 8px;
