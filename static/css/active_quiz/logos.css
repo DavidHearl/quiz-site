@@ -35,6 +35,12 @@
     font-size: 1.3rem;
 }
 
+.logo-image {
+    padding: 16px;
+    border-radius: 4px;
+    background: white;
+}
+
 .company-name {
     border-radius: 4px;
     margin-bottom: 4px;

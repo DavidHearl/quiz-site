@@ -1,6 +1,7 @@
 ## Issues
 - The round_results is not deploying properly
-- The logo round is submitting null values
+- The results page needs to be styled when a user does not submit a value
+- Round results does not show how many points were scored in each question.
 - The celebrity round does not show half points in the round results
 
 ## Notes

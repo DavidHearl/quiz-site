@@ -7,6 +7,7 @@ from quiz_site.models import *
 import random
 from datetime import datetime
 import Levenshtein
+from Levenshtein import distance as levenshtein_distance
 
 
 '''
@@ -357,16 +358,16 @@ def next_celebrity(request):
 @login_required
 def next_logo(request):
     if request.method == 'POST':
-        selected_answer = request.POST.get('answer')
-        correct_answer = request.POST.get('correct_answer')
+        selected_answer = request.POST.get('company')
+        correct_answer = request.POST.get('correct_company')
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
         if request.user.username != 'david':
-            if selected_answer == correct_answer:
+            if levenshtein_distance(selected_answer.lower(), correct_answer.lower()) <= 1:
                 player.player_score = (player.player_score or 0) + 1
                 player.question_answered = 1  # Correct
-                messages.success(request, 'Correct answer! Your earned 1 point.')
+                messages.success(request, 'Correct answer! You earned 1 point.')
             else:
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
                 player.question_answered = 2  # Incorrect
@@ -374,13 +375,19 @@ def next_logo(request):
 
         # Record the answer
         round_name = "Logos"
-        question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_answer
+        if round_name not in player.answers:
+            player.answers[round_name] = []
+        if not isinstance(player.answers[round_name], list):
+            player.answers[round_name] = []
+        if selected_answer:  # Ensure selected_answer is not None or empty
+            player.answers[round_name].append(selected_answer)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
-        if question_index >= len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            if round_name not in quiz.correct_answers:
+                quiz.correct_answers[round_name] = []
+            quiz.correct_answers[round_name].append(correct_answer)
             quiz.save()
 
         iterate_next_question(request)
