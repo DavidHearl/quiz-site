@@ -32,11 +32,6 @@ def active_quiz(request):
         question_counter -= total_questions
 
     if current_round is None:
-        return redirect('active_quiz:quiz_results')
-
-    # Check if the current round has ended
-    if question_counter % 10 == 0 and question_counter != 0:
-        request.session['current_round'] = current_round
         return redirect('active_quiz:round_results')
 
     round_handlers = {
@@ -105,6 +100,9 @@ def round_results(request):
     players = quiz.players.all()
     current_round = request.session.get('current_round', None)
     question_counter = quiz.question_counter
+    rounds = quiz.rounds.all()
+
+    total_questions = len(rounds) * 10
 
     # Determine the start and end indices for the last 10 questions
     start_index = max(0, question_counter - 10)
@@ -128,6 +126,7 @@ def round_results(request):
         'current_round': current_round,
         'correct_answers': correct_answers,
     }
+
     return render(request, 'round_results.html', context)
 
 
@@ -146,8 +145,17 @@ def quiz_results(request):
 
 @login_required
 def next_round(request):
+    quiz = Quiz.objects.latest('date_created')
+    rounds = quiz.rounds.all()
+
+    total_questions = len(rounds) * 10
+    question_counter = quiz.question_counter
+
     if request.user.username == 'david':
-        iterate_next_question(request)
+        # Check if the quiz has ended
+        if question_counter >= total_questions:
+            return redirect('active_quiz:quiz_results') 
+
     return redirect('active_quiz:active_quiz')
 
 
@@ -182,8 +190,9 @@ def iterate_next_question(request):
         rounds = quiz.rounds.all()
         question_counter = quiz.question_counter
         current_round = None
-        total_questions = 0
         
+        total_questions = len(rounds) * 10
+
         for round in rounds:
             round_name = round.question_type
             round_questions = len(quiz.random_numbers.get(round_name, []))
@@ -192,19 +201,21 @@ def iterate_next_question(request):
                 current_round = round_name
                 break
         
-        # Check if the current round has ended
-        if question_counter % 10 == 0 or question_counter == total_questions:
-            request.session['current_round'] = current_round
-            return redirect('active_quiz:round_results')
-        
-        # Check if the quiz has ended
-        if question_counter >= total_questions:
-            return redirect('active_quiz:quiz_results')
-        
         # Reset all players' question_answered to 0 (Not Answered)
         for player in Player.objects.all():
             player.question_answered = 0
             player.save()
+        
+        # Check if the current round has ended
+        if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
+            request.session['current_round'] = current_round
+            return redirect('active_quiz:round_results')
+        else:
+            return redirect('active_quiz:active_quiz')
+    
+    # Default return if the user is not 'david'
+    return redirect('active_quiz:active_quiz')
+        
         
 
 # --------------------------------------------------------------------- #
@@ -239,10 +250,7 @@ def next_flag(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
-    
+    return iterate_next_question(request)
 
 
 @login_required
