@@ -23,7 +23,18 @@
                 {% for round, answers in player.player.answers.items %}
                     <ul class="answer-list" data-round="{{ round }}">
                         {% for answer in answers %}
-                            <li class="player-answer" data-question="{{ forloop.counter0 }}">{{ answer }}</li>
+                            <li class="player-answer" data-question="{{ forloop.counter0 }}">
+                                {{ answer }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+                {% for round, points in player.player.points.items %}
+                    <ul class="answer-list" data-round="{{ round }}">
+                        {% for point in points %}
+                            <li class="player-answer" data-question="{{ forloop.counter0 }}">
+                                {{ point }}
+                            </li>
                         {% endfor %}
                     </ul>
                 {% endfor %}
@@ -67,11 +78,9 @@
             });
         });
     });
-
     function changeScore(button, delta) {
         const scoreInput = button.parentElement.querySelector('.score-input');
         scoreInput.value = parseInt(scoreInput.value) + delta;
     }
 </script>
-
 {% endblock %}

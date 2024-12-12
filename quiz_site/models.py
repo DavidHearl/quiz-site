@@ -17,7 +17,8 @@ class Player(models.Model):
         (2, 'Incorrect'),
     ]
     question_answered = models.IntegerField(choices=QUESTION_STATUS_CHOICES, default=0)
-    answers = models.JSONField(default=dict)  # Add this line to store answers
+    answers = models.JSONField(default=dict)
+    points = models.JSONField(default=dict)
 
     def __str__(self):
         return self.user.username

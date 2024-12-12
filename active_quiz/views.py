@@ -233,16 +233,19 @@ def next_flag(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! You have earned 1 point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer. No points earned.')
 
-        # Record the answer
+        # Record the answer and score
         round_name = "Flags"
         player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -264,16 +267,19 @@ def next_general_knowledge(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! You have earned 1 point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer. No points earned.')
 
-        # Record the answer
+        # Record the answer and score
         round_name = "General Knowledge"
         player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -281,9 +287,7 @@ def next_general_knowledge(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 @login_required
@@ -297,16 +301,19 @@ def next_capital_city(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! You have earned 1 point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer. No points earned.')
 
-        # Record the answer
+        # Record the answer and score
         round_name = "Capital Cities"
         player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -314,9 +321,7 @@ def next_capital_city(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 def next_celebrity(request):
@@ -337,20 +342,24 @@ def next_celebrity(request):
         if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! You have earned 1 point.')
         elif first_name_correct or last_name_correct:
             player.player_score = (player.player_score or 0) + 0.5
             player.question_answered = 1  # Partially correct
+            score = 0.5
             messages.success(request, 'Partially correct answer! You have earned 0.5 points.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
 
-        # Record the answer
+        # Record the answer and score
         round_name = "Celebrities"
         player.answers.setdefault(round_name, []).append(f"{selected_first_name} {selected_last_name}")
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -358,9 +367,7 @@ def next_celebrity(request):
             quiz.correct_answers.setdefault(round_name, []).append(f"{correct_first_name} {correct_last_name}")
             quiz.save()
 
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 @login_required
@@ -375,32 +382,26 @@ def next_logo(request):
             if levenshtein_distance(selected_answer.lower(), correct_answer.lower()) <= 1:
                 player.player_score = (player.player_score or 0) + 1
                 player.question_answered = 1  # Correct
+                score = 1
                 messages.success(request, 'Correct answer! You earned 1 point.')
             else:
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
                 player.question_answered = 2  # Incorrect
+                score = 0
                 messages.error(request, 'Incorrect answer. No points earned.')
 
-        # Record the answer
+        # Record the answer and score
         round_name = "Logos"
-        if round_name not in player.answers:
-            player.answers[round_name] = []
-        if not isinstance(player.answers[round_name], list):
-            player.answers[round_name] = []
-        if selected_answer:  # Ensure selected_answer is not None or empty
-            player.answers[round_name].append(selected_answer)
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-            if round_name not in quiz.correct_answers:
-                quiz.correct_answers[round_name] = []
-            quiz.correct_answers[round_name].append(correct_answer)
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 @login_required
@@ -414,17 +415,20 @@ def next_true_or_false(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! Your score has been updated.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
         
-        # Record the answer
+        # Record the answer and score
         round_name = "True or False"
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_answer
+        player.points.setdefault(round_name, {})[question_index] = score
         player.save()
         
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -432,9 +436,7 @@ def next_true_or_false(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
         
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 @login_required
@@ -475,17 +477,17 @@ def next_celebrity_age(request):
             else:
                 messages.error(request, f'You were {age_difference} years off. No points earned.')
         
-        # Record the answer
+        # Record the answer and score
         round_name = "Celebrity Age"
-        question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_age
+        player.answers.setdefault(round_name, []).append(selected_age)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
         # Save the correct answer to quiz.correct_answers if not already saved
-        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_age)
             quiz.save()
-        iterate_next_question(request)
-    return redirect('active_quiz:active_quiz')
+
+    return iterate_next_question(request)
 
 
 @login_required
@@ -506,27 +508,28 @@ def next_movie_release_date(request):
         if selected_year == correct_year:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct answer! Your score has been updated.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             if request.user.username != 'david':
                 messages.error(request, 'Incorrect answer.')
         
-        # Record the answer
+        # Record the answer and score
         round_name = "Movie Release Dates"
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_year
+        player.points.setdefault(round_name, {})[question_index] = score
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
         if question_index >= len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(correct_date)
+            quiz.correct_answers.setdefault(round_name, []).append(correct_year)
             quiz.save()
         
-        iterate_next_question(request)
-
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 @login_required
@@ -564,10 +567,11 @@ def next_who_is_the_oldest(request):
             else:
                 messages.error(request, f'You got {correct_positions} correct positions. No points earned.')
         
-        # Record the answer
+        # Record the answer and score
         round_name = "Who is the Oldest"
         question_index = request.session.get('last_question_counter', 0)
         player.answers.setdefault(round_name, {})[question_index] = selected_order
+        player.points.setdefault(round_name, {})[question_index] = score
         player.save()
         
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -575,8 +579,7 @@ def next_who_is_the_oldest(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_order)
             quiz.save()
         
-        iterate_next_question(request)
-    return redirect('active_quiz:active_quiz')
+    return iterate_next_question(request)
 
 
 # --------------------------------------------------------------------- #
@@ -590,6 +593,7 @@ def handle_flags_round(quiz, current_index):
     all_flags = Flags.objects.exclude(id=current_flag.id).values_list('country', flat=True)
     choices = random.sample(list(all_flags), 5) + [current_flag.country]
     random.shuffle(choices)
+
     return {
         'current_flag': current_flag,
         'choices': choices,
@@ -601,6 +605,7 @@ def handle_general_knowledge_round(quiz, current_index):
     current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
     gk_choices = [current_question.answer, current_question.choice_1, current_question.choice_2, current_question.choice_3]
     random.shuffle(gk_choices)
+
     return {
         'current_question': current_question,
         'gk_choices': gk_choices,
