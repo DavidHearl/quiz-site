@@ -13,6 +13,8 @@
 }
 
 .answer-list {
+    display: flex;
+    flex-direction: column;
     list-style-type: none;
     padding: 0;
 }
@@ -76,4 +78,40 @@
 .submit-button:hover {
     background: darkslategray;
     color: white;
+}
+
+.answer-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.player-answer {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.answer-value {
+    flex: 1;
+}
+
+.answer-point {
+    margin-left: 10px;
+    text-align: right;
+    min-width: 50px; /* Adjust as needed */
+}
+
+.correct {
+    background-color: rgb(96, 231, 96);
+    color: black;
+}
+
+.incorrect {
+    background-color: rgb(255, 96, 96);
+    color: white;
+}
+
+.partial {
+    background-color: rgb(255, 255, 116);
+    color: black;
 }

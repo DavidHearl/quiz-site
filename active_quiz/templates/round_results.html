@@ -17,23 +17,19 @@
                 </ul>
             {% endfor %}
         </div>
-        {% for player in quiz.players.all %}
+        {% for player, combined_data in combined_player_data.items %}
             <div class="player-result">
                 <h2 class="player-name">{{ player }} ({{ player.player.player_score }})</h2>
-                {% for round, answers in player.player.answers.items %}
+                {% for round, items in combined_data.items %}
                     <ul class="answer-list" data-round="{{ round }}">
-                        {% for answer in answers %}
-                            <li class="player-answer" data-question="{{ forloop.counter0 }}">
-                                {{ answer }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
-                {% for round, points in player.player.points.items %}
-                    <ul class="answer-list" data-round="{{ round }}">
-                        {% for point in points %}
-                            <li class="player-answer" data-question="{{ forloop.counter0 }}">
-                                {{ point }}
+                        {% for item in items %}
+                            <li class="player-answer {% if item.point|default:0 == 0 %}incorrect{% elif item.point|default:0 >= 1 %}correct{% else %}partial{% endif %}" data-question="{{ forloop.counter0 }}">
+                                {% if item.type == 'answer' %}
+                                    <span class="answer-value">{{ item.value }}</span>
+                                    <span class="answer-point">{{ item.point|default:0 }} Points</span>
+                                {% else %}
+                                    <span class="answer-value">{{ item.value }}</span>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>
@@ -69,18 +65,22 @@
             const playerAnswers = document.querySelectorAll(`.player-answer[data-question="${question}"]`);
             playerAnswers.forEach(playerAnswer => {
                 if (playerAnswer.closest('.answer-list').dataset.round === round) {
+                    playerAnswer.classList.remove('correct', 'incorrect', 'partial');
                     if (playerAnswer.textContent.trim() === correctAnswer.textContent.trim()) {
                         playerAnswer.classList.add('correct');
                     } else {
-                        playerAnswer.classList.add('incorrect');
+                        const point = parseFloat(playerAnswer.querySelector('.answer-point').textContent);
+                        if (point === 0) {
+                            playerAnswer.classList.add('incorrect');
+                        } else if (point >= 1) {
+                            playerAnswer.classList.add('correct');
+                        } else {
+                            playerAnswer.classList.add('partial');
+                        }
                     }
                 }
             });
         });
     });
-    function changeScore(button, delta) {
-        const scoreInput = button.parentElement.querySelector('.score-input');
-        scoreInput.value = parseInt(scoreInput.value) + delta;
-    }
 </script>
 {% endblock %}

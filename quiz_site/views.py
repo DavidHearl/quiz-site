@@ -38,13 +38,14 @@ def quiz_home(request):
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
-            # Reset player scores, incorrect answers, page updates, and answers
+            # Reset player scores, incorrect answers, page updates, answers, and points
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
                 player.question_answered = 0
                 player.page_updates = 0
                 player.answers = {}
+                player.points = {}
                 player.save()
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             selected_rounds = quiz_selection_form.cleaned_data['rounds']

@@ -95,13 +95,13 @@ def print_player_data(request):
 
 
 @login_required
+@login_required
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     players = quiz.players.all()
     current_round = request.session.get('current_round', None)
     question_counter = quiz.question_counter
     rounds = quiz.rounds.all()
-
     total_questions = len(rounds) * 10
 
     # Determine the start and end indices for the last 10 questions
@@ -120,13 +120,29 @@ def round_results(request):
             correct_answers = [q.date_of_birth.year for q in questions]
         # Add other rounds as needed
 
+    # Combine answers and points
+    combined_player_data = {}
+    for player in players:
+        combined_data = {}
+        for round, answers in player.player.answers.items():
+            combined_data[round] = [{'type': 'answer', 'value': answer} for answer in answers]
+        for round, points in player.player.points.items():
+            if round not in combined_data:
+                combined_data[round] = []
+            for i, point in enumerate(points):
+                if i < len(combined_data[round]):
+                    combined_data[round][i]['point'] = point
+                else:
+                    combined_data[round].append({'type': 'point', 'value': point})
+        combined_player_data[player] = combined_data
+
     context = {
         'quiz': quiz,
         'players': players,
         'current_round': current_round,
         'correct_answers': correct_answers,
+        'combined_player_data': combined_player_data,
     }
-
     return render(request, 'round_results.html', context)
 
 
@@ -206,12 +222,12 @@ def iterate_next_question(request):
             player.question_answered = 0
             player.save()
         
-        # Check if the current round has ended
-        if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
-            request.session['current_round'] = current_round
-            return redirect('active_quiz:round_results')
-        else:
-            return redirect('active_quiz:active_quiz')
+    # Check if the current round has ended
+    if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
+        request.session['current_round'] = current_round
+        return redirect('active_quiz:round_results')
+    else:
+        return redirect('active_quiz:active_quiz')
     
     # Default return if the user is not 'david'
     return redirect('active_quiz:active_quiz')
