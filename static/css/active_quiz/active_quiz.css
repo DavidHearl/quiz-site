@@ -137,6 +137,11 @@
     color: white;
 }
 
+.partial {
+    background-color: rgb(255, 182, 0);
+    color: black;
+}
+
 .correct > .player-score {
     color: white;
 }

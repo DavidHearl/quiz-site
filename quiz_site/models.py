@@ -15,6 +15,7 @@ class Player(models.Model):
         (0, 'Not Answered'),
         (1, 'Correct'),
         (2, 'Incorrect'),
+        (3, 'Partial')
     ]
     question_answered = models.IntegerField(choices=QUESTION_STATUS_CHOICES, default=0)
     answers = models.JSONField(default=dict)

@@ -222,12 +222,12 @@ def iterate_next_question(request):
             player.question_answered = 0
             player.save()
         
-    # Check if the current round has ended
-    if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
-        request.session['current_round'] = current_round
-        return redirect('active_quiz:round_results')
-    else:
-        return redirect('active_quiz:active_quiz')
+        # Check if the current round has ended
+        if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
+            request.session['current_round'] = current_round
+            return redirect('active_quiz:round_results')
+        else:
+            return redirect('active_quiz:active_quiz')
     
     # Default return if the user is not 'david'
     return redirect('active_quiz:active_quiz')
@@ -362,7 +362,7 @@ def next_celebrity(request):
             messages.success(request, 'Correct answer! You have earned 1 point.')
         elif first_name_correct or last_name_correct:
             player.player_score = (player.player_score or 0) + 0.5
-            player.question_answered = 1  # Partially correct
+            player.question_answered = 3  # Partially correct
             score = 0.5
             messages.success(request, 'Partially correct answer! You have earned 0.5 points.')
         else:
@@ -393,7 +393,10 @@ def next_logo(request):
         correct_answer = request.POST.get('correct_company')
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
-
+        
+        # Initialize score
+        score = 0
+        
         if request.user.username != 'david':
             if levenshtein_distance(selected_answer.lower(), correct_answer.lower()) <= 1:
                 player.player_score = (player.player_score or 0) + 1
@@ -405,18 +408,18 @@ def next_logo(request):
                 player.question_answered = 2  # Incorrect
                 score = 0
                 messages.error(request, 'Incorrect answer. No points earned.')
-
+        
         # Record the answer and score
         round_name = "Logos"
         player.answers.setdefault(round_name, []).append(selected_answer)
         player.points.setdefault(round_name, []).append(score)
         player.save()
-
+        
         # Save the correct answer to quiz.correct_answers if not already saved
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
-
+        
     return iterate_next_question(request)
 
 
@@ -487,7 +490,14 @@ def next_celebrity_age(request):
         
         if request.user.username != 'david':
             player.player_score = (player.player_score or 0) + score
-            player.question_answered = 1 if score > 0 else 2  # Correct if score > 0, otherwise Incorrect
+            if score >= 1:
+                player.question_answered = 1
+            elif 0 < score < 1:
+                player.question_answered = 3
+            else:
+                player.question_answered = 2
+
+            # Logic to inform the player of their results
             if score > 0:
                 messages.success(request, f'You were {age_difference} years off! You have earned {score} points.')
             else:

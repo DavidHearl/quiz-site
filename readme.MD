@@ -1,7 +1,16 @@
 ## Issues
 - The results page needs to be styled when a user does not submit a value
-- Round results does not show how many points were scored in each question.
 - The celebrity round does not show half points in the round results
+
+Add a yellow box for the answers under 1, when the box turns green for an answered question4 (This has been done for the celebrity age but needs to be continued for the rest of the partical questions)
+
+Who is the oldest doesnt fit in the mobile view
+The round results shows all answers
+Make each user see the round results
+for whos the oldest dont make celebrities re appear
+next logo does not save the score correctly
+true or false does not report the answers correclty in the round results
+David gets 0.5 points, maybe from the celebrity round
 
 ## Notes
 
