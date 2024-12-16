@@ -2,8 +2,6 @@
 - The results page needs to be styled when a user does not submit a value
 - The celebrity round does not show half points in the round results
 
-Add a yellow box for the answers under 1, when the box turns green for an answered question4 (This has been done for the celebrity age but needs to be continued for the rest of the partical questions)
-
 Who is the oldest doesnt fit in the mobile view
 The round results shows all answers
 Make each user see the round results

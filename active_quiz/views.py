@@ -519,6 +519,7 @@ def next_celebrity_age(request):
 @login_required
 def next_movie_release_date(request):
     if request.method == 'POST':
+        quiz = Quiz.objects.latest('date_created')
         selected_year = request.POST.get('year')
         correct_year = request.POST.get('correct_year')
         
@@ -531,27 +532,47 @@ def next_movie_release_date(request):
         correct_year = int(correct_year)
         
         player = request.user.player
-        if selected_year == correct_year:
-            player.player_score = (player.player_score or 0) + 1
-            player.question_answered = 1  # Correct
-            score = 1
-            messages.success(request, 'Correct answer! Your score has been updated.')
+        year_difference = abs(selected_year - correct_year)
+        
+        # Award points based on how close the user was to the correct year
+        if year_difference == 0:
+            score = 2
+        elif year_difference <= 1:
+            score = 1.5
+        elif year_difference <= 2:
+            score = 1.2
+        elif year_difference <= 4:
+            score = 0.7
+        elif year_difference <= 6:
+            score = 0.3
+        elif year_difference <= 8:
+            score = 0.1
         else:
-            player.incorrect_answers = (player.incorrect_answers or 0) + 1
-            player.question_answered = 2  # Incorrect
             score = 0
-            if request.user.username != 'david':
-                messages.error(request, 'Incorrect answer.')
+        
+        if request.user.username != 'david':
+            player.player_score = (player.player_score or 0) + score
+            if score >= 1:
+                player.question_answered = 1
+            elif 0 < score < 1:
+                player.question_answered = 3
+            else:
+                player.question_answered = 2
+
+            # Logic to inform the player of their results
+            if score > 0:
+                messages.success(request, f'You were {year_difference} years off! You have earned {score} points.')
+            else:
+                messages.error(request, f'You were {year_difference} years off. No points earned.')
         
         # Record the answer and score
         round_name = "Movie Release Dates"
-        question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_year
-        player.points.setdefault(round_name, {})[question_index] = score
+        player.answers.setdefault(round_name, []).append(selected_year)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
-        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_year)
             quiz.save()
         
@@ -587,7 +608,16 @@ def next_who_is_the_oldest(request):
         
         if request.user.username != 'david':
             player.player_score = round((player.player_score or 0) + score, 1)
-            player.question_answered = 1 if score > 0 else 2
+
+            if request.user.username != 'david':
+                player.player_score = (player.player_score or 0) + score
+                if score >= 1:
+                    player.question_answered = 1
+                elif 0 < score < 1:
+                    player.question_answered = 3
+                else:
+                    player.question_answered = 2
+
             if score > 0:
                 messages.success(request, f'You got {correct_positions} correct positions! You have earned {score} points.')
             else:
@@ -720,31 +750,10 @@ def handle_movie_release_dates_round(quiz, current_index):
     release_year = current_movie.release_date.year
     current_year = datetime.now().year
     
-    # Use a seed to ensure the same answer set for each user
-    random.seed(f"{quiz.id}-{current_index}")
-    
-    # Decide a position for the correct release year (e.g., random position within 7 options)
-    correct_position = random.randint(0, 6)
-    
-    # Determine the year interval based on the release year
-    year_interval = 2 if release_year > 2000 else 3
-    
-    # Generate year options with the specified interval
-    year_options = []
-    for i in range(7):
-        year = release_year + year_interval * (i - correct_position)
-        if year > current_year:
-            year = current_year - (year - current_year)
-        year_options.append(year)
-    
-    # Ensure the correct release year is included in the options
-    if release_year not in year_options:
-        year_options[correct_position] = release_year
-    
     return {
         'current_movie': current_movie,
         'correct_year': release_year,
-        'year_options': year_options,
+        'current_year': current_year,
     }
 
 
