@@ -43,13 +43,14 @@
                 </div>
 
                 <!-- Actors -->
-                <div>
-                    <label class="field-label" for="id_actors">Actors:</label>
-                    <div class="actor-container">
+                <div class="actors-in-film">
+                    <label class="field-label" for="id_actor_search">Actors:</label>
+                    <input type="text" id="actor_search" onkeyup="filterActors()" placeholder="Search for actors..">
+                    <div class="actor-container" id="actor_list">
                         {% for choice in movie_form.actors.field.choices %}
                             <div class="actor">
                                 <input class="actor-checkbox" type="checkbox" name="actors" value="{{ choice.0 }}"
-                            {% if choice.0 in movie_form.actors.value %}checked{% endif %}>
+                                {% if choice.0 in movie_form.actors.value %}checked{% endif %}>
                                 <label class="actor-label">{{ choice.1 }}</label>
                             </div>
                         {% endfor %}
@@ -138,6 +139,22 @@
                     cards[i].style.display = "";
                 } else {
                     cards[i].style.display = "none";
+                }
+            }
+        }
+
+        function filterActors() {
+            var input, filter, actors, actorContainer, label, i;
+            input = document.getElementById("actor_search");
+            filter = input.value.toUpperCase();
+            actorContainer = document.getElementById("actor_list");
+            actors = actorContainer.getElementsByClassName("actor");
+            for (i = 0; i < actors.length; i++) {
+                label = actors[i].getElementsByTagName("label")[0];
+                if (label.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    actors[i].style.display = "";
+                } else {
+                    actors[i].style.display = "none";
                 }
             }
         }

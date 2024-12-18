@@ -95,7 +95,6 @@ def print_player_data(request):
 
 
 @login_required
-@login_required
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     players = quiz.players.all()
