@@ -3,7 +3,6 @@
 - The round results shows all answers
 - Make each user see the round results
 - next logo does not save the score correctly
-- true or false does not report the answers correctly in the round results
 - David gets 0.5 points, maybe from the celebrity round
 
 ## Notes

@@ -166,10 +166,13 @@ def next_round(request):
     total_questions = len(rounds) * 10
     question_counter = quiz.question_counter
 
-    if request.user.username == 'david':
-        # Check if the quiz has ended
-        if question_counter >= total_questions:
-            return redirect('active_quiz:quiz_results') 
+    # Check if the quiz has ended
+    if question_counter >= total_questions:
+        return redirect('active_quiz:quiz_results')
+
+    # Redirect all users to the round results page at the end of each round
+    if question_counter % 10 == 0 and question_counter != 0:
+        return redirect('active_quiz:round_results')
 
     return redirect('active_quiz:active_quiz')
 
@@ -196,23 +199,21 @@ def update_score(request):
 # --------------------------------------------------------------------- #
 
 def iterate_next_question(request):
+    quiz = Quiz.objects.latest('date_created')
+    rounds = quiz.rounds.all()
+
+    total_questions = len(rounds) * 10
+    current_round = None
+
     if request.user.username == 'david':
-        quiz = Quiz.objects.latest('date_created')
         quiz.question_counter += 1
         quiz.save()
         
-        # Determine the current round and total questions
-        rounds = quiz.rounds.all()
-        question_counter = quiz.question_counter
-        current_round = None
-        
-        total_questions = len(rounds) * 10
-
         for round in rounds:
             round_name = round.question_type
             round_questions = len(quiz.random_numbers.get(round_name, []))
             total_questions += round_questions
-            if question_counter <= total_questions:
+            if quiz.question_counter <= total_questions:
                 current_round = round_name
                 break
         
@@ -221,12 +222,10 @@ def iterate_next_question(request):
             player.question_answered = 0
             player.save()
         
-        # Check if the current round has ended
-        if question_counter % 10 == 0 and question_counter != 0 and question_counter <= total_questions:
-            request.session['current_round'] = current_round
-            return redirect('active_quiz:round_results')
-        else:
-            return redirect('active_quiz:active_quiz')
+    # Check if the current round has ended
+    if quiz.question_counter % 10 == 0 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
+        request.session['current_round'] = current_round
+        return redirect('active_quiz:round_results')
     
     # Default return if the user is not 'david'
     return redirect('active_quiz:active_quiz')
@@ -429,31 +428,32 @@ def next_true_or_false(request):
         correct_answer = request.POST.get('correct_answer')
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
-        
-        if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
-            player.question_answered = 1  # Correct
-            score = 1
-            messages.success(request, 'Correct answer! Your score has been updated.')
-        else:
-            player.incorrect_answers = (player.incorrect_answers or 0) + 1
-            player.question_answered = 2  # Incorrect
-            score = 0
-            if request.user.username != 'david':
-                messages.error(request, 'Incorrect answer.')
-        
-        # Record the answer and score
-        round_name = "True or False"
-        question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_answer
-        player.points.setdefault(round_name, {})[question_index] = score
-        player.save()
-        
-        # Save the correct answer to quiz.correct_answers if not already saved
-        if question_index >= len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
-            quiz.save()
-        
+
+        # Initialize score
+        score = 0
+
+        if request.user.username != 'david':
+            if selected_answer == correct_answer:
+                player.player_score = (player.player_score or 0) + 1
+                player.question_answered = 1  # Correct
+                score = 1
+                messages.success(request, 'Correct answer! You have earned 1 point.')
+            else:
+                player.incorrect_answers = (player.incorrect_answers or 0) + 1
+                player.question_answered = 2  # Incorrect
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+            # Record the answer and score
+            round_name = "True or False"
+            player.answers.setdefault(round_name, []).append(selected_answer)
+            player.points.setdefault(round_name, []).append(score)
+            player.save()
+
+            # Save the correct answer to quiz.correct_answers if not already saved
+            if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+                quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+                quiz.save()
+
     return iterate_next_question(request)
 
 
