@@ -2,7 +2,6 @@
 - The results page needs to be styled when a user does not submit a value
 - The celebrity round does not show half points in the round results
 
-Who is the oldest doesnt fit in the mobile view
 The round results shows all answers
 Make each user see the round results
 for whos the oldest dont make celebrities re appear
