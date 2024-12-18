@@ -166,13 +166,8 @@ def next_round(request):
     total_questions = len(rounds) * 10
     question_counter = quiz.question_counter
 
-    # Check if the quiz has ended
     if question_counter >= total_questions:
-        return redirect('active_quiz:quiz_results')
-
-    # Redirect all users to the round results page at the end of each round
-    if question_counter % 10 == 0 and question_counter != 0:
-        return redirect('active_quiz:round_results')
+        return redirect('active_quiz:quiz_results') 
 
     return redirect('active_quiz:active_quiz')
 
@@ -202,7 +197,7 @@ def iterate_next_question(request):
     quiz = Quiz.objects.latest('date_created')
     rounds = quiz.rounds.all()
 
-    total_questions = len(rounds) * 10
+    total_questions = sum(len(quiz.random_numbers.get(round.question_type, [])) for round in rounds)
     current_round = None
 
     if request.user.username == 'david':
@@ -212,10 +207,10 @@ def iterate_next_question(request):
         for round in rounds:
             round_name = round.question_type
             round_questions = len(quiz.random_numbers.get(round_name, []))
-            total_questions += round_questions
-            if quiz.question_counter <= total_questions:
+            if quiz.question_counter <= round_questions:
                 current_round = round_name
                 break
+            quiz.question_counter -= round_questions
         
         # Reset all players' question_answered to 0 (Not Answered)
         for player in Player.objects.all():
@@ -223,11 +218,14 @@ def iterate_next_question(request):
             player.save()
         
     # Check if the current round has ended
-    if quiz.question_counter % 10 == 0 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
+    if request.user.username != 'david' and quiz.question_counter % 10 == 9 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
         request.session['current_round'] = current_round
         return redirect('active_quiz:round_results')
-    
-    # Default return if the user is not 'david'
+    elif request.user.username == 'david' and quiz.question_counter % 10 == 0 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
+        request.session['current_round'] = current_round
+        return redirect('active_quiz:round_results')
+
+    # Default return for all users
     return redirect('active_quiz:active_quiz')
         
         

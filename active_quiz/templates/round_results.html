@@ -48,12 +48,10 @@
         {% endfor %}
     </div>
 
-    {% if request.user.username == 'david' %}
-        <form method="post" action="{% url 'active_quiz:next_round' %}">
-            {% csrf_token %}
-            <button type="submit" class="next-button">Next Round</button>
-        </form>
-    {% endif %}
+    <form method="post" action="{% url 'active_quiz:next_round' %}">
+        {% csrf_token %}
+        <button type="submit" class="next-button">Next Round</button>
+    </form>
 </div>
 
 <script>
