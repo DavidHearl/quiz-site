@@ -1,13 +1,10 @@
 ## Issues
 - The results page needs to be styled when a user does not submit a value
-- The celebrity round does not show half points in the round results
-
-The round results shows all answers
-Make each user see the round results
-for whos the oldest dont make celebrities re appear
-next logo does not save the score correctly
-true or false does not report the answers correclty in the round results
-David gets 0.5 points, maybe from the celebrity round
+- The round results shows all answers
+- Make each user see the round results
+- next logo does not save the score correctly
+- true or false does not report the answers correctly in the round results
+- David gets 0.5 points, maybe from the celebrity round
 
 ## Notes
 

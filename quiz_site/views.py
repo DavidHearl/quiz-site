@@ -58,7 +58,9 @@ def quiz_home(request):
                     ids = list(model.objects.values_list('id', flat=True))
                     if ids:
                         if round_name == "Who is the Oldest":
-                            random_numbers[round_name] = [random.sample(ids, 5) for _ in range(min(10, len(ids) // 5))]
+                            # Ensure each celebrity ID is only used once across all groups
+                            random.shuffle(ids)
+                            random_numbers[round_name] = [ids[i:i + 5] for i in range(0, min(50, len(ids)), 5) if len(ids[i:i + 5]) == 5][:10]
                         else:
                             random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
             quiz.random_numbers = random_numbers
