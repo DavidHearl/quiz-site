@@ -7,8 +7,6 @@
 {% endblock %}
 
 {% block content %}
-    <button id="go-to-missing">Go to Missing</button>
-
     <!-- Add new item -->
     <div class="database-container">
         <div class="data-card">
@@ -89,16 +87,4 @@
             </div>
         {% endfor %}
     </div>
-    
-    <script>
-        document.getElementById('go-to-missing').addEventListener('click', function() {
-            const missingElement = document.querySelector('.missing');
-            if (missingElement) {
-                missingElement.scrollIntoView({ behavior: 'auto' });
-            } else {
-                alert('No missing elements found.');
-            }
-        });
-    </script>
-
 {% endblock %}

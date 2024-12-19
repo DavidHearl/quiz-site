@@ -9,13 +9,6 @@
     padding: 4px 8px;
 }
 
-#reveal-name-button,
-#submit {
-    width: 100%;
-    padding: 8px;
-    margin-top: 8px;
-}
-
 #quiz-form {
     display: flex;
     flex-direction: column;
@@ -24,6 +17,21 @@
     margin: 0 auto;
 }
 
-.text-answer {
-    width: 100%;
+.buttons-div {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.text-input-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+    gap: 8px;
+}
+
+.text-input {
+    padding: 4px;
 }

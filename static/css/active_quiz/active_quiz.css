@@ -31,11 +31,10 @@
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    border: 1px solid darkgrey;
+    border: 1px solid black;
     background: white;
-    border-radius: 4px;
-    box-shadow: 1px 1px 1px black;
-    width: 160px;
+    border-radius: 8px;
+    width: 150px;
     justify-content: center;
 }
 
@@ -60,9 +59,9 @@
     align-items: center;
     padding: 8px 12px;
     background: white;
-    border-radius: 4px;
+    border-radius: 8px;
     margin: 8px 0;
-    border: 1px solid darkgray;
+    border: 1px solid rgb(81, 81, 81);
 }
 
 .flag-card,
@@ -78,7 +77,7 @@
 .celebrity-image,
 .logo-image {
     border: 1px solid black;
-    border-radius: 2px;
+    border-radius: 8px;
     box-sizing: border-box;
     margin: 0 0 12px 0;
     max-width: 75%;
@@ -112,7 +111,7 @@
 }
 
 .highlight-correct {
-    background: green;
+    background-color: rgb(80, 190, 80);
     font-weight: bold;
 }
 
@@ -153,19 +152,21 @@
 
 .submit-button,
 .next-button {
-    width: 100%;
     padding: 8px 16px;
     font-size: 16px;
     cursor: pointer;
-    background-color: rgb(48, 182, 215);
-    border-radius: 4px;
+    background-color: rgb(40, 180, 210);
+    border-radius: 8px;
     border: 1px solid white;
 }
 
 .next-button:hover,
-.submit-button:hover {
+.submit-button:hover,
+.reveal-order-button:hover,
+.reveal-button:hover {
     background: darkslategray;
     color: white;
+    cursor: pointer;
 }
 
 @media (max-width: 600px) {

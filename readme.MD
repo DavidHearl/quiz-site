@@ -1,6 +1,5 @@
 ## Issues
-- The round results shows all answers
-- David gets 0.5 points, maybe from the celebrity round
+- The round results takes david to the wrong rounds result
 
 ## Notes
 

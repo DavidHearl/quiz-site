@@ -1,0 +1,20 @@
+.question-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bottom {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+}
+
+.submit-wide {
+    background: rgba(94,65,255,255);
+    border: 1px solid black;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 8px;
+}

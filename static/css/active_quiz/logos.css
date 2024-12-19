@@ -47,3 +47,12 @@
     background: white;
     padding: 4px 8px;
 }
+
+.text-input {
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+}

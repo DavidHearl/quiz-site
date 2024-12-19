@@ -90,7 +90,7 @@ a:hover {
     flex-direction: column;
     padding: 8px;
     width: 220px;
-    border-radius: 16px;
+    border-radius: 8px;
     background: white;
     position: relative;
     padding-bottom: 44px;
@@ -102,10 +102,11 @@ a:hover {
 .data-card-wide {
     display: flex;
     flex-direction: column;
+    background-color: white;
     border: 1px solid black;
     padding: 6px;
     width: 100%;
-    border-radius: 16px;
+    border-radius: 8px;
     margin: 0px 16px;
 }
 
@@ -159,17 +160,6 @@ a:hover {
     width: 100%;
 }
 
-input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 1px;
-    text-align: center;
-    margin-bottom: 4px;
-    border: 1px solid black;
-    padding: 8px;
-    border-radius: 8px;
-}
-
 .submit {
     width: calc(100% - 16px);
     margin-top: 8px;
@@ -196,7 +186,6 @@ input {
 
 .question-row {
     display: flex;
-    gap: 12px;
 }
 
 .question-row-gk {
@@ -207,9 +196,8 @@ input {
 
 .question-input {
     text-align: start;
-    margin: 2px 0;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 4px;
     background: rgba(219, 219, 219);
     border: 1px solid rgb(95, 99, 108);
     padding: 4px;
@@ -227,29 +215,6 @@ input {
 
 .answer {
     width: 23%;
-}
-
-.question-tf {
-    width: 62%;
-}
-
-.answer-tf {
-    width: 8%;
-}
-
-.row-width {
-    width: 8%;
-}
-
-.submit-wide {
-    margin-top: 16px;
-    height: 28px;
-    background: rgba(94,65,255,255);
-    border: 1px solid darkgreen;
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
-    width: 10%;
 }
 
 .true {

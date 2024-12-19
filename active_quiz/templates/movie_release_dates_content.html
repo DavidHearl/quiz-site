@@ -2,6 +2,7 @@
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/movie_release_dates.css' %}">
 {% endblock %}
+
 {% if current_movie %}
     <div class="movie-card">
         <img class="movie-poster" src="{{ current_movie.poster.url }}" alt="Movie Poster">
@@ -11,26 +12,32 @@
         <form id="year-form" method="post" action="{% url 'active_quiz:next_movie_release_date' %}">
             {% csrf_token %}
             <input type="hidden" name="correct_year" value="{{ correct_year }}">
-            <label for="year-slider">Guess the Release Year:</label>
-            <input type="range" id="year-slider" name="year" min="1900" max="{{ current_year }}" value="2000" oninput="updateYearDisplay(this.value)">
-            <span id="year-display">2000</span>
-            <br>
-            <button type="submit" class="submit-button">Submit</button>
+            <!-- <label for="year-slider">Guess the Release Year:</label> -->
+            <div class="slider-bar-container">
+                <input type="range" id="year-slider" name="year" min="1930" max="{{ current_year }}" value="2000" oninput="updateYearDisplay(this.value)">
+                <span id="year-display">2000</span>
+            </div>
+            <div class="button-div">
+                {% if request.user.username == 'david' %}
+                    <button type="button" class="reveal-button" onclick="revealCorrectYear()">Reveal Correct Year</button>
+                    <button type="submit" class="submit-button">Next</button>
+                {% else %}
+                    <button type="submit" class="submit-button">Submit</button>
+                {% endif %}
+            </div>
         </form>
     </div>
 {% endif %}
+
 <script>
     function updateYearDisplay(value) {
         document.getElementById('year-display').textContent = value;
     }
 
-    function highlightCorrectAnswer() {
-        const correctAge = "{{ correct_age }}";
-        const slider = document.getElementById('age-slider');
-        slider.value = correctAge;
-        updateAgeDisplay(correctAge);
-        setTimeout(() => {
-            document.getElementById('age-form').submit();
-        }, 2000);
+    function revealCorrectYear() {
+        const correctYear = "{{ correct_year }}";
+        const slider = document.getElementById('year-slider');
+        slider.value = correctYear;
+        updateYearDisplay(correctYear);
     }
 </script>

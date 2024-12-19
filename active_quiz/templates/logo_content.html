@@ -24,15 +24,18 @@
             {% csrf_token %}
             <div class="text-answer">
             {% if request.user.username != 'david' %}
-                <label class="text-answer-label" for="company">Company:</label>
                 <input type="text" class="text-input" id="company" name="company">
             {% endif %}
                 <input type="hidden" name="correct_company" value="{{ current_logo.company }}">
             </div>
+
             {% if request.user.username == 'david' %}
                 <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+                <button id="submit" type="submit" class="submit-button">Next</button>
+            {% else %}
+                <button id="submit" type="submit" class="submit-button">Submit</button>
             {% endif %}
-            <button id="submit" type="submit" class="submit-button">Submit</button>
+            
         </form>
         <div id="obfuscated-name"></div>
     </div>

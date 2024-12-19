@@ -7,6 +7,8 @@
 
 .movie-poster {
     max-width: 250px;
+    border-radius: 8px;
+    border: 1px solid black;
 }
 
 .year-button {
@@ -28,6 +30,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.movie-title {
+    padding: 4px 8px;
+    background: white;
+    margin-top: 8px;
+    border: 1px solid black;
+    border-radius: 8px;
 }
 
 .year-options-container {
@@ -35,4 +47,42 @@
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 16px;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-bar-container {
+    display: flex;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+}
+
+#year-slider {
+    width: 100%;
+}
+
+#year-display {
+    margin-left: 12px;
+}
+
+.button-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.reveal-button {
+    padding: 8px 16px;
+    background-color: rgb(40, 180, 210);
+    border-radius: 8px;
+    border: 1px solid white;
+    margin-top: 0;
 }

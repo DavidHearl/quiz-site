@@ -174,7 +174,10 @@ def update_score(request):
         return redirect('active_quiz:round_results')
 
     player = get_object_or_404(Player, id=player_id)
-    player.player_score += score_change
+    player_score = player.player_score
+    player_score += score_change
+    player.player_score = round(player_score, 1)
+
     player.save()
     
     return redirect('active_quiz:round_results')
@@ -197,16 +200,13 @@ def iterate_next_question(request):
         for round in rounds:
             round_name = round.question_type
             round_questions = len(quiz.random_numbers.get(round_name, []))
-            if quiz.question_counter <= round_questions:
-                current_round = round_name
-                break
             quiz.question_counter -= round_questions
         
         # Reset all players' question_answered to 0 (Not Answered)
         for player in Player.objects.all():
             player.question_answered = 0
             player.save()
-    
+
     # Set the current round for all users
     for round in rounds:
         round_name = round.question_type
@@ -216,7 +216,11 @@ def iterate_next_question(request):
             break
         quiz.question_counter -= round_questions
 
-    request.session['current_round'] = current_round
+    # Ensure "david" has the same current_round as everyone else
+    if request.user.username == 'david':
+        request.session['current_round'] = current_round
+    else:
+        request.session['current_round'] = current_round
 
     # Check if the current round has ended
     if request.user.username != 'david' and quiz.question_counter % 10 == 9 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
@@ -604,30 +608,26 @@ def next_who_is_the_oldest(request):
         
         if request.user.username != 'david':
             player.player_score = round((player.player_score or 0) + score, 1)
-
-            if request.user.username != 'david':
-                player.player_score = (player.player_score or 0) + score
-                if score >= 1:
-                    player.question_answered = 1
-                elif 0 < score < 1:
-                    player.question_answered = 3
-                else:
-                    player.question_answered = 2
+            if score >= 1:
+                player.question_answered = 1
+            elif 0 < score < 1:
+                player.question_answered = 3
+            else:
+                player.question_answered = 2
 
             if score > 0:
                 messages.success(request, f'You got {correct_positions} correct positions! You have earned {score} points.')
             else:
                 messages.error(request, f'You got {correct_positions} correct positions. No points earned.')
         
-        # Record the answer and score
-        round_name = "Who is the Oldest"
-        question_index = request.session.get('last_question_counter', 0)
-        player.answers.setdefault(round_name, {})[question_index] = selected_order
-        player.points.setdefault(round_name, {})[question_index] = score
-        player.save()
+            # Record the answer and score
+            round_name = "Who is the Oldest"
+            player.answers.setdefault(round_name, []).append(selected_order)
+            player.points.setdefault(round_name, []).append(score)
+            player.save()
         
         # Save the correct answer to quiz.correct_answers if not already saved
-        if question_index >= len(quiz.correct_answers.get(round_name, [])):
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_order)
             quiz.save()
         
