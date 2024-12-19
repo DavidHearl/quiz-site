@@ -1,7 +1,5 @@
 ## Issues
-- The results page needs to be styled when a user does not submit a value
 - The round results shows all answers
-- next logo does not save the score correctly
 - David gets 0.5 points, maybe from the celebrity round
 
 ## Notes

@@ -7,43 +7,40 @@
 <div class="container">
     <h1 class="quiz-title">{{ current_round }} - Round Results</h1>
     <div class="results-container">
+        <!-- Answers -->
         <div class="player-result">
             <h2 class="player-name">Answers</h2>
-            {% for round, answers in quiz.correct_answers.items %}
-                <ul class="answer-list" data-round="{{ round }}">
-                    {% for answer in answers %}
-                        <li class="correct-answer" data-question="{{ forloop.counter0 }}">{{ answer }}</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+            <ul class="answer-list" data-round="{{ current_round }}">
+                {% for answer in correct_answers %}
+                    <li class="correct-answer" data-question="{{ forloop.counter0 }}">{{ answer }}</li>
+                {% endfor %}
+            </ul>
         </div>
-        {% for player, combined_data in combined_player_data.items %}
+
+        <!-- Player Answers -->
+        {% for player, items in combined_player_data.items %}
             <div class="player-result">
                 <h2 class="player-name">{{ player }} ({{ player.player.player_score }})</h2>
-                {% for round, items in combined_data.items %}
-                    <ul class="answer-list" data-round="{{ round }}">
-                        {% for item in items %}
-                            <li class="player-answer {% if item.point|default:0 == 0 %}incorrect{% elif item.point|default:0 >= 1 %}correct{% else %}partial{% endif %}" data-question="{{ forloop.counter0 }}">
-                                {% if item.type == 'answer' %}
-                                    <span class="answer-value">{{ item.value }}</span>
-                                    <span class="answer-point">{{ item.point|default:0 }} Points</span>
-                                {% else %}
-                                    <span class="answer-value">{{ item.value }}</span>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
-                <form method="post" action="{% url 'active_quiz:update_score' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="player_id" value="{{ player.id }}">
-                    <div class="update-score-container">
-                        <div class="score-controls">
-                            <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                <ul class="answer-list" data-round="{{ current_round }}">
+                    {% for item in items %}
+                        <li class="player-answer {% if item.point|default:0 == 0 %}incorrect{% elif item.point|default:0 >= 1 %}correct{% else %}partial{% endif %}" data-question="{{ forloop.counter0 }}">
+                            <span class="answer-value">{{ item.value }}</span>
+                            <span class="answer-point">{{ item.point|default:0 }} Points</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if user.username == 'david' %}
+                    <form method="post" action="{% url 'active_quiz:update_score' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="player_id" value="{{ player.id }}">
+                        <div class="update-score-container">
+                            <div class="score-controls">
+                                <input type="number" name="score_change" value="0" class="score-input" step="0.5">
+                            </div>
+                            <button class="submit-button" type="submit">Submit</button>
                         </div>
-                        <button class="submit-button" type="submit">Submit</button>
-                    </div>
-                </form>
+                    </form>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

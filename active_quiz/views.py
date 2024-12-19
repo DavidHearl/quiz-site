@@ -107,32 +107,21 @@ def round_results(request):
     start_index = max(0, question_counter - 10)
     end_index = question_counter
 
-    # Fetch correct answers for the current round
-    correct_answers = []
-    if current_round:
-        question_ids = quiz.random_numbers.get(current_round, [])[start_index:end_index]
-        if current_round == "General Knowledge":
-            questions = GeneralKnowledge.objects.filter(id__in=question_ids)
-            correct_answers = [q.answer for q in questions]
-        elif current_round == "Celebrity Age":
-            questions = Celebrities.objects.filter(id__in=question_ids)
-            correct_answers = [q.date_of_birth.year for q in questions]
-        # Add other rounds as needed
+    correct_answers = quiz.correct_answers.get(current_round, [])  # Get correct answers for the current round
+    last_10_answers = correct_answers[-10:]
 
-    # Combine answers and points
+    # Combine answers and points for the current round
     combined_player_data = {}
     for player in players:
-        combined_data = {}
-        for round, answers in player.player.answers.items():
-            combined_data[round] = [{'type': 'answer', 'value': answer} for answer in answers]
-        for round, points in player.player.points.items():
-            if round not in combined_data:
-                combined_data[round] = []
-            for i, point in enumerate(points):
-                if i < len(combined_data[round]):
-                    combined_data[round][i]['point'] = point
-                else:
-                    combined_data[round].append({'type': 'point', 'value': point})
+        combined_data = []
+        answers = player.player.answers.get(current_round, [])
+        points = player.player.points.get(current_round, [])
+        for i, answer in enumerate(answers):
+            combined_data.append({
+                'type': 'answer',
+                'value': answer,
+                'point': points[i] if i < len(points) else 0
+            })
         combined_player_data[player] = combined_data
 
     context = {
@@ -141,6 +130,7 @@ def round_results(request):
         'current_round': current_round,
         'correct_answers': correct_answers,
         'combined_player_data': combined_player_data,
+        'last_10_answers': last_10_answers,
     }
     return render(request, 'round_results.html', context)
 
@@ -216,13 +206,22 @@ def iterate_next_question(request):
         for player in Player.objects.all():
             player.question_answered = 0
             player.save()
-        
+    
+    # Set the current round for all users
+    for round in rounds:
+        round_name = round.question_type
+        round_questions = len(quiz.random_numbers.get(round_name, []))
+        if quiz.question_counter <= round_questions:
+            current_round = round_name
+            break
+        quiz.question_counter -= round_questions
+
+    request.session['current_round'] = current_round
+
     # Check if the current round has ended
     if request.user.username != 'david' and quiz.question_counter % 10 == 9 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
-        request.session['current_round'] = current_round
         return redirect('active_quiz:round_results')
     elif request.user.username == 'david' and quiz.question_counter % 10 == 0 and quiz.question_counter != 0 and quiz.question_counter <= total_questions:
-        request.session['current_round'] = current_round
         return redirect('active_quiz:round_results')
 
     # Default return for all users

@@ -44,6 +44,7 @@ class Quiz(models.Model):
     question_counter = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
     correct_answers = models.JSONField(default=dict)
+    current_round = models.OneToOneField(Rounds, on_delete=models.CASCADE, blank=True, null=True, related_name='current_quiz_round')
 
     def __str__(self):
         return self.quiz_name

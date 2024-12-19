@@ -1,15 +1,15 @@
 .player-name {
     text-transform: capitalize;
     text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
 }
 
 .results-container {
     display: flex;
     justify-content: center;
-    margin-top: 16px;
-    gap: 16px;
+    margin-top: 12px;
+    gap: 4px;
 }
 
 .answer-list {
@@ -24,6 +24,7 @@
     padding: 4px;
     border: 1px solid black;
     border-radius: 4px;
+    font-size: 0.9rem;
 }
 
 .player-result {
@@ -42,14 +43,11 @@
 
 .quiz-title {
     text-align: center;
-}
-
-.correct {
-    background: lightgreen;
-}
-
-.incorrect {
-    background: lightcoral;
+    font-size: 1.2rem;
+    background: white;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 8px;
 }
 
 .score-input {
@@ -89,10 +87,12 @@
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
+    font-size: 0.9rem;
 }
 
 .answer-value {
     flex: 1;
+    font-size: 0.9rem;
 }
 
 .answer-point {
