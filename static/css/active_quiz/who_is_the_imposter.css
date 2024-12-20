@@ -17,7 +17,7 @@
 .celebrity-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     border: 1px solid black;
     text-align: center;
@@ -27,15 +27,15 @@
 }
 
 .celebrity-content:hover {
-    background-color: #f9f9f9;
+    background-color: #844949;
 }
 
-.celebrity-card.selected {
+.celebrity-item.selected .celebrity-content {
     border: 2px solid #007bff;
     background-color: #e7f1ff;
 }
 
-.celebrity-card.highlight-correct {
+.celebrity-item.highlight-correct .celebrity-content {
     border: 2px solid green;
     background-color: #e7f1ff;
 }

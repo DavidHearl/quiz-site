@@ -659,15 +659,26 @@ def next_who_is_the_imposter(request):
         if selected_celebrity_id == imposter_id:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
+            score = 1
             messages.success(request, 'Correct! You have identified the imposter.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
+            score = 0
             messages.error(request, 'Incorrect. Try again.')
 
+        # Record the answer and score
+        round_name = "Who is the Imposter"
+        player.answers.setdefault(round_name, []).append(selected_celebrity_id)
+        player.points.setdefault(round_name, []).append(score)
         player.save()
-        return iterate_next_question(request)
 
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
+            quiz.save()
+
+    return iterate_next_question(request)
 
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #

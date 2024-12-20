@@ -46,7 +46,7 @@
     function highlightCorrectImage() {
         const imposterId = document.querySelector('input[name="imposter_id"]').value;
         const correctCard = document.getElementById('celebrity-' + imposterId).parentElement;
-        correctCard.classList.add('highlight-correct');
+        correctCard.style.backgroundColor = 'lightgreen';
 
         setTimeout(() => {
             // Ensure a celebrity is selected before submitting
