@@ -234,18 +234,6 @@ background-color: #568869;
     justify-content: center;
 }
 
-.auth-with-fields {
-    display: flex;
-    margin-top: 96px;
-    flex-direction: column;
-    border: 1px solid black;
-    background: linear-gradient(315deg, #edeeff, lightblue);
-    padding: 16px;
-    border-radius: 16px;
-    width: 360px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
 .auth-primary {
     justify-content: center;
     display: flex;

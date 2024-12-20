@@ -98,7 +98,13 @@ def print_player_data(request):
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     players = quiz.players.all()
-    current_round = request.session.get('current_round', None)
+    
+    # Get the last round name from quiz.correct_answers
+    if quiz.correct_answers:
+        current_round = list(quiz.correct_answers.keys())[-1]
+    else:
+        current_round = None
+
     question_counter = quiz.question_counter
     rounds = quiz.rounds.all()
     total_questions = len(rounds) * 10
