@@ -20,4 +20,5 @@ urlpatterns = [
     path('next_celebrity_age/', views.next_celebrity_age, name='next_celebrity_age'),
     path('next_movie_release_date/', views.next_movie_release_date, name='next_movie_release_date'),
     path('next_who_is_the_oldest/', views.next_who_is_the_oldest, name='next_who_is_the_oldest'),
+    path('next_who_is_the_imposter/', views.next_who_is_the_imposter, name='next_who_is_the_imposter'),
 ]

@@ -1,0 +1,61 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/who_is_the_imposter.css' %}">
+{% endblock %}
+
+{% if current_movie %}
+    <div class="celebrities-container">
+        <form id="imposter-form" method="post" action="{% url 'active_quiz:next_who_is_the_imposter' %}">
+            {% csrf_token %}
+            <input type="hidden" name="imposter_id" value="{{ imposter.id }}">
+            <div class="question-view">
+                <ul id="celebrity-list" class="celebrity-list">
+                    {% for celebrity in celebrities %}
+                        <li class="celebrity-item" onclick="selectCelebrity({{ celebrity.id }})">
+                            <div class="celebrity-content">
+                                <img class="celebrity-image" src="{{ celebrity.photo.url }}" alt="Celebrity Image">
+                                <h3 class="celebrity-name">{{ celebrity.first_name }} {{ celebrity.last_name }}</h3>
+                                <input type="radio" name="selected_celebrity_id" value="{{ celebrity.id }}" id="celebrity-{{ celebrity.id }}" hidden>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if request.user.username == 'david' %}
+                <button type="button" class="next-button" onclick="highlightCorrectImage()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<script>
+    function selectCelebrity(id) {
+        // Highlight the selected celebrity
+        document.querySelectorAll('.celebrity-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        document.getElementById('celebrity-' + id).parentElement.classList.add('selected');
+
+        // Check the radio button
+        document.getElementById('celebrity-' + id).checked = true;
+
+        // Submit the form
+        document.getElementById('imposter-form').submit();
+    }
+
+    function highlightCorrectImage() {
+        const imposterId = document.querySelector('input[name="imposter_id"]').value;
+        const correctCard = document.getElementById('celebrity-' + imposterId).parentElement;
+        correctCard.classList.add('highlight-correct');
+
+        setTimeout(() => {
+            // Ensure a celebrity is selected before submitting
+            const selectedCelebrity = document.querySelector('input[name="selected_celebrity_id"]:checked');
+            if (!selectedCelebrity) {
+                // Select the correct celebrity if none is selected
+                document.getElementById('celebrity-' + imposterId).checked = true;
+            }
+            document.getElementById('imposter-form').submit();
+        }, 2000);
+    }
+</script>

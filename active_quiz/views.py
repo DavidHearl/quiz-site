@@ -44,6 +44,7 @@ def active_quiz(request):
         "Celebrity Age": handle_celebrity_age_round,
         "Movie Release Dates": handle_movie_release_dates_round,
         "Who is the Oldest": handle_who_is_the_oldest_round,
+        "Who is the Imposter": handle_who_is_the_imposter_round,
     }
 
     context = {
@@ -640,6 +641,34 @@ def next_who_is_the_oldest(request):
     return iterate_next_question(request)
 
 
+@login_required
+def next_who_is_the_imposter(request):
+    if request.method == 'POST':
+        selected_celebrity_id = request.POST.get('selected_celebrity_id')
+        imposter_id = request.POST.get('imposter_id')
+
+        if not selected_celebrity_id or not imposter_id:
+            return JsonResponse({'error': 'Invalid data'}, status=400)
+
+        selected_celebrity_id = int(selected_celebrity_id)
+        imposter_id = int(imposter_id)
+
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_celebrity_id == imposter_id:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            messages.success(request, 'Correct! You have identified the imposter.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            messages.error(request, 'Incorrect. Try again.')
+
+        player.save()
+        return iterate_next_question(request)
+
+
 # --------------------------------------------------------------------- #
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
@@ -779,4 +808,31 @@ def handle_who_is_the_oldest_round(quiz, current_index):
     return {
         'celebrities': celebrities,
         'sorted_celebrities': [c.id for c in sorted_celebrities],
+    }
+
+
+def handle_who_is_the_imposter_round(quiz, current_index):
+    movie_ids = quiz.random_numbers.get("Who is the Imposter", [])
+    current_movie = Movies.objects.get(id=movie_ids[current_index])
+    movie_celebrities = list(current_movie.actors.all())
+
+    if len(movie_celebrities) < 4:
+        raise ValueError("Not enough celebrities in the movie to create the round")
+
+    # Select 4 celebrities from the movie
+    random.seed(f"{quiz.id}-{current_index}")
+    selected_celebrities = random.sample(movie_celebrities, 4)
+
+    # Select a random celebrity who is not in the movie
+    all_celebrities = list(Celebrities.objects.exclude(id__in=[c.id for c in selected_celebrities]))
+    imposter = random.choice(all_celebrities)
+
+    # Combine the selected celebrities and the imposter
+    celebrities = selected_celebrities + [imposter]
+    random.shuffle(celebrities)
+
+    return {
+        'current_movie': current_movie,
+        'celebrities': celebrities,
+        'imposter': imposter,
     }
