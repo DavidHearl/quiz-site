@@ -48,6 +48,14 @@
         const correctCard = document.getElementById('celebrity-' + imposterId).parentElement;
         correctCard.style.backgroundColor = 'lightgreen';
 
+        // Show the movie name
+        const movieName = "{{ current_movie.title }}";
+        const movieNameElement = document.createElement('div');
+        movieNameElement.textContent = `Movie: ${movieName}`;
+        movieNameElement.style.fontWeight = 'bold';
+        movieNameElement.style.marginTop = '10px';
+        correctCard.appendChild(movieNameElement);
+
         setTimeout(() => {
             // Ensure a celebrity is selected before submitting
             const selectedCelebrity = document.querySelector('input[name="selected_celebrity_id"]:checked');

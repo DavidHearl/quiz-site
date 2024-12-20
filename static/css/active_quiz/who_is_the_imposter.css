@@ -26,10 +26,6 @@
     width: 175px;
 }
 
-.celebrity-content:hover {
-    background-color: #844949;
-}
-
 .celebrity-item.selected .celebrity-content {
     border: 2px solid #007bff;
     background-color: #e7f1ff;
@@ -56,6 +52,18 @@
     margin-bottom: 0;
     font-size: 0.9rem;
     padding: 4px;
+}
+
+#imposter-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.next-button {
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 16px;
 }
 
 @media (max-width: 600px) {
