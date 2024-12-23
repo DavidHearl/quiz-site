@@ -586,7 +586,6 @@ def next_movie_release_date(request):
     return iterate_next_question(request)
 
 
-@login_required
 def next_who_is_the_oldest(request):
     if request.method == 'POST':
         selected_order = [item for item in request.POST.getlist('celebrity_order') if item]
@@ -621,17 +620,16 @@ def next_who_is_the_oldest(request):
                 player.question_answered = 3
             else:
                 player.question_answered = 2
-
             if score > 0:
                 messages.success(request, f'You got {correct_positions} correct positions! You have earned {score} points.')
             else:
                 messages.error(request, f'You got {correct_positions} correct positions. No points earned.')
         
-            # Record the answer and score
-            round_name = "Who is the Oldest"
-            player.answers.setdefault(round_name, []).append(selected_order)
-            player.points.setdefault(round_name, []).append(score)
-            player.save()
+        # Record the answer and score
+        round_name = "Who is the Oldest"  # Define round_name here
+        player.answers.setdefault(round_name, []).append(selected_order)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
         
         # Save the correct answer to quiz.correct_answers if not already saved
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
@@ -656,16 +654,17 @@ def next_who_is_the_imposter(request):
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
-        if selected_celebrity_id == imposter_id:
-            player.player_score = (player.player_score or 0) + 1
-            player.question_answered = 1  # Correct
-            score = 1
-            messages.success(request, 'Correct! You have identified the imposter.')
-        else:
-            player.incorrect_answers = (player.incorrect_answers or 0) + 1
-            player.question_answered = 2  # Incorrect
-            score = 0
-            messages.error(request, 'Incorrect. Try again.')
+        if request.user.username != 'david':
+            if selected_celebrity_id == imposter_id:
+                player.player_score = (player.player_score or 0) + 1
+                player.question_answered = 1  # Correct
+                score = 1
+                messages.success(request, 'Correct! You have identified the imposter.')
+            else:
+                player.incorrect_answers = (player.incorrect_answers or 0) + 1
+                player.question_answered = 2  # Incorrect
+                score = 0
+                messages.error(request, 'Incorrect. Try again.')
 
         # Record the answer and score
         round_name = "Who is the Imposter"

@@ -36,7 +36,7 @@
                     <button type="button" class="reveal-order-button" onclick="revealCorrectOrder()">Reveal Correct Order</button>
                     <button type="button" class="next-button" onclick="document.getElementById('oldest-form').submit()">Next Question</button>
                 {% else %}
-                    <button type="submit" class="submit-button">Submit</button>
+                    <button type="submit" class="submit-button" id="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
                 {% endif %}
             </div>
 

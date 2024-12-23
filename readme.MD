@@ -1,5 +1,5 @@
 ## Issues
-- The round results takes david to the wrong rounds result
+- who is the imposter same person does not come up for everyone
 
 ## Notes
 
