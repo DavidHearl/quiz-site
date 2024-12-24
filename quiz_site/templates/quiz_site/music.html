@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/music.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Music</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ music_form.as_p }}
+        <button type="submit">Add Music</button>
+    </form>
+    <h2>Existing Music</h2>
+    <ul>
+        {% for music in music_list %}
+            <li>
+                <form method="post" enctype="multipart/form-data" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="music_id" value="{{ music.id }}">
+                    <input type="text" name="artist" value="{{ music.artist }}">
+                    <input type="text" name="song_title" value="{{ music.song_title }}">
+                    <input type="file" name="audio_file">
+                    <input type="text" name="difficulty" value="{{ music.difficulty }}">
+                    <button type="submit">Edit</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

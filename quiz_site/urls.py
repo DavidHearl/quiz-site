@@ -19,4 +19,6 @@ urlpatterns = [
     path('edit_movies/<int:movie_id>/', views.edit_movies, name='edit_movies'),
     path('locations/', views.locations, name='locations'),
     path('edit_locations/<int:location_id>/', views.edit_locations, name='edit_locations'),
+    path('music/', views.music, name='music'),
+    path('edit_music/<int:music_id>/', views.edit_music, name='edit_music'),
 ]

@@ -160,3 +160,17 @@ class Locations(models.Model):
 
     def __str__(self):
         return self.location
+
+
+class Music(models.Model):
+    # Answers
+    artist = models.CharField(max_length=100)
+    song_title = models.CharField(max_length=100)
+    audio_file = models.FileField(upload_to='music_files', null=True, blank=True)
+
+    # Question Stats
+    difficulty = models.FloatField(null=True, blank=True, default=0.5)
+
+    def __str__(self):
+        return self.song_title
+

@@ -189,6 +189,7 @@ def update_score(request):
     
     return redirect('active_quiz:round_results')
 
+
 # --------------------------------------------------------------------- #
 # ------------------------- Utility Functions ------------------------- #
 # --------------------------------------------------------------------- #
@@ -346,6 +347,7 @@ def next_capital_city(request):
     return iterate_next_question(request)
 
 
+@login_required
 def next_celebrity(request):
     if request.method == 'POST':
         selected_first_name = request.POST.get('first_name', '').strip().lower()
@@ -451,16 +453,16 @@ def next_true_or_false(request):
                 player.question_answered = 2  # Incorrect
                 messages.error(request, 'Incorrect answer. No points earned.')
 
-            # Record the answer and score
-            round_name = "True or False"
-            player.answers.setdefault(round_name, []).append(selected_answer)
-            player.points.setdefault(round_name, []).append(score)
-            player.save()
+        # Record the answer and score
+        round_name = "True or False"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
 
-            # Save the correct answer to quiz.correct_answers if not already saved
-            if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-                quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
-                quiz.save()
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
 
     return iterate_next_question(request)
 
@@ -515,6 +517,7 @@ def next_celebrity_age(request):
         player.answers.setdefault(round_name, []).append(selected_age)
         player.points.setdefault(round_name, []).append(score)
         player.save()
+
         # Save the correct answer to quiz.correct_answers if not already saved
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_age)

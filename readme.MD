@@ -1,5 +1,6 @@
 ## Issues
 - who is the imposter same person does not come up for everyone
+- everyone sees everyones round results
 
 ## Notes
 

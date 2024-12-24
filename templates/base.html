@@ -62,6 +62,7 @@
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'celebrities' %}{% endif %}">Celebrities <span class="to-finish">({{celebrities_count}})</span></a>
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'movies' %}{% endif %}">Movies <span class="to-finish">({{movies_count}})</span></a>
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'locations' %}{% endif %}">Locations <span class="to-finish">({{locations_count}})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'music' %}{% endif %}">Music <span class="to-finish">({{music_count}})</span></a>
             {% endif %}
 
             <h3 class="category-heading">Profile</h3>

@@ -473,3 +473,56 @@ def edit_locations(request, location_id):
     }
 
     return render(request, 'quiz_site/location.html', context)
+
+
+def music(request):
+    users = User.objects.all()
+    music_list = Music.objects.all()
+    music_form = MusicForm()
+
+    if request.method == 'POST':
+        if 'music_id' in request.POST:
+            music = get_object_or_404(Music, pk=request.POST['music_id'])
+            music_form = MusicForm(request.POST, request.FILES, instance=music)
+            if music_form.is_valid():
+                music = music_form.save(commit=False)
+                music.save()
+                messages.success(request, 'Music edited successfully.')
+                return redirect('music')
+        else:
+            music_form = MusicForm(request.POST, request.FILES)
+            if music_form.is_valid():
+                music = music_form.save(commit=False)
+                music.save()
+                messages.success(request, 'Music added successfully.')
+                return redirect('music')
+
+    context = {
+        'music_list': music_list,
+        'music_form': music_form,
+        'users': users,
+    }
+
+    return render(request, 'quiz_site/music.html', context)
+
+
+def edit_music(request, music_id):
+    music = get_object_or_404(Music, pk=music_id)
+    music_form = MusicForm(instance=music)
+
+    if request.method == 'POST':
+        music_form = MusicForm(request.POST, request.FILES, instance=music)
+        if music_form.is_valid():
+            music = music_form.save(commit=False)
+            music.save()
+            messages.success(request, 'Music edited successfully.')
+            return redirect('music')
+        else:
+            print(music_form.errors)
+
+    context = {
+        'music_form': music_form,
+        'music': music,
+    }
+
+    return render(request, 'quiz_site/edit_music.html', context)
