@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/movies.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="database-container">
+        <div class="data-card">
+            <form class="form-container" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Location -->
+                <div>
+                    <input id="id_location" type="text" name="landmark" value="{{ landmarks.landmark }}">
+                </div>
+
+                <!-- Placeholder Image -->
+                <div class="flex">
+                    <div class="image-placeholder">Placeholder</div>
+                </div>
+
+                <!-- Photo -->
+                <div>
+                    <label for="id_photo">Photo:</label>
+                    <input id="id_photo" type="file" name="photo">
+                </div>
+
+                <!-- Difficulty -->
+                <div class="column-flex">
+                    <label for="id_difficulty">Difficulty:</label>
+                    <input id="id_difficulty" type="text" name="difficulty" value="{{ landmarks.difficulty }}">
+                </div>
+
+                <button class="submit" type="submit">Submit</button>
+            </form> 
+        </div>
+
+        {% for landmark in landmarks %}
+            <div class="data-card">
+                <form class="form-container" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Location -->
+                    <div>
+                        <input id="id_location" type="text" name="landmark" value="{{ landmark.landmark }}">
+                    </div>
+
+                    <!-- Flag Image -->
+                    <div class="flex">
+                        {% if landmark.photo %}
+                            <img class="card-image" src="{{ landmark.photo.url }}" alt="">
+                        {% endif %}
+                    </div>
+
+                    <!-- Photo -->
+                    <div>
+                        <label for="id_photo">Photo:</label>
+                        <input id="id_photo" type="file" name="photo">
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="column-flex">
+                        <label for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" type="text" name="difficulty" value="{{ landmark.difficulty }}">
+                    </div>
+                    
+                    <button class="submit" type="submit">Submit</button>
+                </form> 
+            </div>
+        {% endfor %}
+
+
+{% endblock %}
