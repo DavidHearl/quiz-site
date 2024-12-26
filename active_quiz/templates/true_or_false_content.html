@@ -11,8 +11,8 @@
             {% csrf_token %}
             <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
             <div class="true-or-false-container">
-                <button type="submit" name="answer" value="False" class="false-button">False</button>
-                <button type="submit" name="answer" value="True" class="true-button">True</button>
+                <button type="submit" name="answer" value="False" class="false-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>False</button>
+                <button type="submit" name="answer" value="True" class="true-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>True</button>
             </div>
             <div class="buttons-div">
                 {% if request.user.username == 'david' %}
@@ -22,6 +22,7 @@
         </form>
     </div>
 {% endif %}
+
 <script>
     function highlightCorrectAnswer() {
         const correctAnswer = "{{ current_question.answer }}";

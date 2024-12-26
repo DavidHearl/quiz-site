@@ -669,16 +669,16 @@ def next_who_is_the_imposter(request):
                 score = 0
                 messages.error(request, 'Incorrect. Try again.')
 
-        # Record the answer and score
-        round_name = "Who is the Imposter"
-        player.answers.setdefault(round_name, []).append(selected_celebrity_id)
-        player.points.setdefault(round_name, []).append(score)
-        player.save()
+            # Record the answer and score
+            round_name = "Who is the Imposter"
+            player.answers.setdefault(round_name, []).append(selected_celebrity_id)
+            player.points.setdefault(round_name, []).append(score)
+            player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
-        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
-            quiz.save()
+        # if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+        #     quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
+        #     quiz.save()
 
     return iterate_next_question(request)
 
