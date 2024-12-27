@@ -1,6 +1,9 @@
 ## Issues
-- who is the imposter same person does not come up for everyone
 - everyone sees everyones round results
+- Timer from last entry
+- Disable re entry in who is the imposter
+- Change iron man poster it has the date
+- Rounding errors on the numbers
 
 ## Notes
 

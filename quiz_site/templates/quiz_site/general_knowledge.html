@@ -4,6 +4,11 @@
 
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/general_knowledge.css' %}">
+    <style>
+        .missing-category {
+            background-color: darkred;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -16,6 +21,16 @@
                     <div>
                         <label class="field-label" for="id_question">Question:</label>
                         <textarea class="question-input" id="id_question" name="question" rows="2">{{ general_knowledge.question }}</textarea>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label class="field-label" for="id_category">Category:</label>
+                        <select class="question-input" id="id_category" name="category">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if general_knowledge.category.id == category.id %}selected{% elif category.category == "General" %}selected{% endif %}>{{ category.category }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!-- Answer -->
@@ -54,7 +69,7 @@
         </div>
 
         {% for question in general_knowledge %}
-            <div class="data-card data-card-medium">
+            <div class="data-card data-card-medium {% if not question.category %}missing-category{% endif %}">
                 <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
                     {% csrf_token %}
                     <div class="question-row-gk">
@@ -62,6 +77,16 @@
                         <div>
                             <label class="field-label" for="id_question">Question:</label>
                             <textarea class="question-input" id="id_question" name="question" rows="2">{{ question.question }}</textarea>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label class="field-label" for="id_category">Category:</label>
+                            <select class="question-input" id="id_category" name="category">
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if question.category and question.category.id == category.id %}selected{% elif not question.category and category.category == "General" %}selected{% endif %}>{{ category.category }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <!-- Answer -->

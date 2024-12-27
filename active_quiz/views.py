@@ -238,8 +238,7 @@ def iterate_next_question(request):
 
     # Default return for all users
     return redirect('active_quiz:active_quiz')
-        
-        
+                
 
 # --------------------------------------------------------------------- #
 # ---------------------- Next Question Functions ---------------------- #
@@ -290,7 +289,7 @@ def next_general_knowledge(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
-            score = 1
+            score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
@@ -324,7 +323,7 @@ def next_capital_city(request):
         if selected_answer == correct_answer:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
-            score = 1
+            score = 1.3
             messages.success(request, 'Correct answer! You have earned 1 point.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
@@ -366,12 +365,12 @@ def next_celebrity(request):
         if first_name_correct and last_name_correct:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
-            score = 1
+            score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
         elif first_name_correct or last_name_correct:
             player.player_score = (player.player_score or 0) + 0.5
             player.question_answered = 3  # Partially correct
-            score = 0.5
+            score = 1
             messages.success(request, 'Partially correct answer! You have earned 0.5 points.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
@@ -409,7 +408,7 @@ def next_logo(request):
             if levenshtein_distance(selected_answer.lower(), correct_answer.lower()) <= 1:
                 player.player_score = (player.player_score or 0) + 1
                 player.question_answered = 1  # Correct
-                score = 1
+                score = 1.5
                 messages.success(request, 'Correct answer! You earned 1 point.')
             else:
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
@@ -488,6 +487,8 @@ def next_celebrity_age(request):
             score = 1.5
         elif age_difference <= 2:
             score = 1.2
+        elif age_difference <=3:
+            score = 1
         elif age_difference <= 4:
             score = 0.7
         elif age_difference <= 6:
@@ -661,7 +662,7 @@ def next_who_is_the_imposter(request):
             if selected_celebrity_id == imposter_id:
                 player.player_score = (player.player_score or 0) + 1
                 player.question_answered = 1  # Correct
-                score = 1
+                score = 1.5
                 messages.success(request, 'Correct! You have identified the imposter.')
             else:
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
@@ -719,6 +720,7 @@ def handle_capital_cities_round(quiz, current_index):
     all_flags = Flags.objects.exclude(id=current_flag.id).values_list('capital', flat=True)
     choices = random.sample(list(all_flags), 5) + [current_flag.capital]
     random.shuffle(choices)
+    
     return {
         'current_flag': current_flag,
         'choices': choices,
@@ -728,6 +730,7 @@ def handle_capital_cities_round(quiz, current_index):
 def handle_celebrities_round(quiz, current_index):
     celebrity_ids = quiz.random_numbers.get("Celebrities", [])
     current_celebrity = Celebrities.objects.get(id=celebrity_ids[current_index])
+
     return {
         'current_celebrity': current_celebrity,
     }

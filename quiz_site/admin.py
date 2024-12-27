@@ -5,6 +5,7 @@ from .models import *
 admin.site.register(Quiz)
 admin.site.register(Player)
 admin.site.register(Rounds)
+admin.site.register(GeneralKnowledgeCategory)
 
 # Question Models
 admin.site.register(GeneralKnowledge)

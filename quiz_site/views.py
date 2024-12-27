@@ -85,6 +85,7 @@ def quiz_home(request):
 def general_knowledge(request):
     users = User.objects.all()
     general_knowledge = GeneralKnowledge.objects.all()
+    categories = GeneralKnowledgeCategory.objects.all()
     general_knowledge_form = GeneralKnowledgeForm()
 
     if request.method == 'POST':
@@ -103,6 +104,7 @@ def general_knowledge(request):
         'general_knowledge': general_knowledge,
         'general_knowledge_form': general_knowledge_form,
         'users': users,
+        'categories': categories,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
@@ -111,6 +113,7 @@ def general_knowledge(request):
 def edit_general_knowledge(request, question_id):
     users = User.objects.all()
     question = get_object_or_404(GeneralKnowledge, pk=question_id)
+    categories = GeneralKnowledgeCategory.objects.all()
     general_knowledge_form = GeneralKnowledgeForm(instance=question)
 
     if request.method == 'POST':
@@ -118,6 +121,7 @@ def edit_general_knowledge(request, question_id):
         print(edit_general_knowledge_form.errors)
         if edit_general_knowledge_form.is_valid():
             question = edit_general_knowledge_form.save(commit=False)
+            question.category = edit_general_knowledge_form.cleaned_data['category']
             question.save()
             messages.success(request, 'Question edited successfully.')
             print('Question edited successfully')
@@ -127,6 +131,7 @@ def edit_general_knowledge(request, question_id):
         'general_knowledge': general_knowledge,
         'general_knowledge_form': general_knowledge_form,
         'users': users,
+        'categories': categories,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
