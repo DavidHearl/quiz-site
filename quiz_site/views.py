@@ -84,27 +84,39 @@ def quiz_home(request):
 
 def general_knowledge(request):
     users = User.objects.all()
-    general_knowledge = GeneralKnowledge.objects.all()
     categories = GeneralKnowledgeCategory.objects.all()
+    selected_category = request.GET.get('category', None)
+    
+    if selected_category:
+        general_knowledge = GeneralKnowledge.objects.filter(category_id=selected_category)
+    else:
+        general_knowledge = GeneralKnowledge.objects.all()
+
     general_knowledge_form = GeneralKnowledgeForm()
+
+    # Count questions per category
+    category_counts = {category.category: 0 for category in categories}
+    for question in GeneralKnowledge.objects.all():
+        if question.category:
+            category_counts[question.category.category] += 1
+        else:
+            category_counts['Uncategorized'] = category_counts.get('Uncategorized', 0) + 1
 
     if request.method == 'POST':
         general_knowledge_form = GeneralKnowledgeForm(request.POST, request.FILES)
-        print(general_knowledge_form.errors)
         if general_knowledge_form.is_valid():
             general_knowledge = general_knowledge_form.save(commit=False)
             general_knowledge.save()
             messages.success(request, 'Question added successfully.')
-            print('Question added successfully')
             return redirect('general_knowledge')
-        else:
-            print(general_knowledge_form.errors)
 
     context = {
         'general_knowledge': general_knowledge,
         'general_knowledge_form': general_knowledge_form,
         'users': users,
         'categories': categories,
+        'category_counts': category_counts,
+        'selected_category': selected_category,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)

@@ -64,7 +64,7 @@ class GeneralKnowledge(models.Model):
     # Question and Answer
     question = models.CharField(max_length=128)
     answer = models.CharField(max_length=100)
-    category = models.OneToOneField(GeneralKnowledgeCategory, on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey(GeneralKnowledgeCategory, on_delete=models.CASCADE, blank=True, null=True)
 
     # Multiple Choice Answers
     choice_1 = models.CharField(max_length=100, null=True, blank=True)

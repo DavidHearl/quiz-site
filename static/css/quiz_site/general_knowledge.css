@@ -1,0 +1,23 @@
+.category-list {
+    list-style: none;
+}
+
+.cat-count {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.category-separator {
+    border-style: solid;
+    border-color: rgb(210, 210, 210);
+}
+
+#category_filter {
+    width: 100%;
+    padding: 4px;
+}
+
+#filter-container {
+    margin-top: 8px;
+}

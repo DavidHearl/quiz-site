@@ -13,6 +13,31 @@
 
 {% block content %}
     <div class="database-container">
+        <!-- Category Counts -->
+        <div class="data-card">
+            <div class="category-counts">
+                <h2>Category Counts</h2>
+                <ul class="category-list">
+                    {% for category, count in category_counts.items %}
+                        <li class="cat-count">
+                            <p>{{ category }}:</p>
+                            <p>{{ count }}</p>
+                        </li>
+                        <hr class="category-separator">
+                    {% endfor %}
+                </ul>
+                <form method="get" class="form-container" id="filter-container">
+                    <label for="category_filter">Filter by Category:</label>
+                    <select id="category_filter" name="category" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.category }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+
         <div class="data-card data-card-medium create-input">
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
