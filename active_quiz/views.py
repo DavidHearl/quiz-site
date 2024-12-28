@@ -703,7 +703,7 @@ def handle_flags_round(quiz, current_index):
 
 def handle_general_knowledge_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("General Knowledge", [])
-    current_question = GeneralKnowledge.objects.get(id=question_ids[current_index])
+    current_question = GeneralKnowledge.objects.filter(id__in=question_ids, category__category='General').first()
     gk_choices = [current_question.answer, current_question.choice_1, current_question.choice_2, current_question.choice_3]
     random.shuffle(gk_choices)
 
