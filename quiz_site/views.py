@@ -20,6 +20,7 @@ def quiz_home(request):
     quiz = Quiz.objects.all()
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
+        "History": GeneralKnowledge,
         "True or False": TrueOrFalse,
         "Flags": Flags,
         "Capital Cities": Flags,
@@ -59,6 +60,9 @@ def quiz_home(request):
                         general_category = GeneralKnowledgeCategory.objects.get(category='General')
                         available_questions = model.objects.filter(category=general_category)
                         ids = list(available_questions.values_list('id', flat=True))
+                    elif round_name == "History":
+                        history_category = GeneralKnowledgeCategory.objects.get(category='History')
+                        ids = list(model.objects.filter(category=history_category).values_list('id', flat=True))
                     else:
                         ids = list(model.objects.values_list('id', flat=True))
                         

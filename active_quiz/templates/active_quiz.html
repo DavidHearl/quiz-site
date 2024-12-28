@@ -66,6 +66,8 @@
                     {% include 'flag_content.html' %}
                 {% elif current_question and current_round == "General Knowledge" %}
                     {% include 'general_knowledge_content.html' %}
+                {% elif current_question and current_round == "History" %}
+                    {% include 'history_content.html' %}
                 {% elif current_flag and current_round == "Capital Cities" %}
                     {% include 'capital_cities_content.html' %}
                 {% elif current_celebrity and current_round == "Celebrities" %}

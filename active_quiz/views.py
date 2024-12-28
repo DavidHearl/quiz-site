@@ -35,8 +35,9 @@ def active_quiz(request):
         return redirect('active_quiz:round_results')
 
     round_handlers = {
-        "Flags": handle_flags_round,
         "General Knowledge": handle_general_knowledge_round,
+        "History": handle_history_round,
+        "Flags": handle_flags_round,
         "Capital Cities": handle_capital_cities_round,
         "Celebrities": handle_celebrities_round,
         "Logos": handle_logos_round,
@@ -311,6 +312,39 @@ def next_general_knowledge(request):
 
     return iterate_next_question(request)
 
+
+@login_required
+def next_history(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 1.5
+            messages.success(request, 'Correct answer! You have earned 1.5 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        # Record the answer and score
+        round_name = "History"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
 
 @login_required
 def next_capital_city(request):
@@ -590,6 +624,7 @@ def next_movie_release_date(request):
     return iterate_next_question(request)
 
 
+@login_required
 def next_who_is_the_oldest(request):
     if request.method == 'POST':
         selected_order = [item for item in request.POST.getlist('celebrity_order') if item]
@@ -687,20 +722,6 @@ def next_who_is_the_imposter(request):
 # ---------------------- Round Handling Functions ---------------------- #
 # --------------------------------------------------------------------- #
 
-def handle_flags_round(quiz, current_index):
-    flag_ids = quiz.random_numbers.get("Flags", [])
-    current_flag = Flags.objects.get(id=flag_ids[current_index])
-    random.seed(f"{quiz.id}-{current_index}")
-    all_flags = Flags.objects.exclude(id=current_flag.id).values_list('country', flat=True)
-    choices = random.sample(list(all_flags), 5) + [current_flag.country]
-    random.shuffle(choices)
-
-    return {
-        'current_flag': current_flag,
-        'choices': choices,
-    }
-
-
 def handle_general_knowledge_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("General Knowledge", [])
     general_category = GeneralKnowledgeCategory.objects.get(category='General')
@@ -719,6 +740,41 @@ def handle_general_knowledge_round(quiz, current_index):
     return {
         'current_question': current_question,
         'gk_choices': gk_choices,
+    }
+
+
+def handle_history_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("History", [])
+    history_category = GeneralKnowledgeCategory.objects.get(category='History')
+    
+    # Get specific question by ID from random_numbers array at current_index
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(
+        id=current_question_id,
+        category=history_category
+    )
+    
+    history_choices = [current_question.answer, current_question.choice_1, 
+                      current_question.choice_2, current_question.choice_3]
+    random.shuffle(history_choices)
+
+    return {
+        'current_question': current_question,
+        'gk_choices': history_choices,  # Keep same key name for template compatibility
+    }
+
+
+def handle_flags_round(quiz, current_index):
+    flag_ids = quiz.random_numbers.get("Flags", [])
+    current_flag = Flags.objects.get(id=flag_ids[current_index])
+    random.seed(f"{quiz.id}-{current_index}")
+    all_flags = Flags.objects.exclude(id=current_flag.id).values_list('country', flat=True)
+    choices = random.sample(list(all_flags), 5) + [current_flag.country]
+    random.shuffle(choices)
+
+    return {
+        'current_flag': current_flag,
+        'choices': choices,
     }
 
 

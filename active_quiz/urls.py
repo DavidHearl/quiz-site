@@ -13,6 +13,7 @@ urlpatterns = [
     path('next_round/', views.next_round, name='next_round'),
     path('next_flag/', views.next_flag, name='next_flag'),
     path('next_general_knowledge/', views.next_general_knowledge, name='next_general_knowledge'),
+    path('next_history/', views.next_history, name='next_history'),
     path('next_capital_city/', views.next_capital_city, name='next_capital_city'),
     path('next_celebrity/', views.next_celebrity, name='next_celebrity'),
     path('next_logo/', views.next_logo, name='next_logo'),
