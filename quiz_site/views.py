@@ -21,6 +21,14 @@ def quiz_home(request):
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
         "History": GeneralKnowledge,
+        "Entertainment": GeneralKnowledge,
+        "Maths": GeneralKnowledge, 
+        "Pop Culture": GeneralKnowledge,
+        "Mythology": GeneralKnowledge,
+        "Technology": GeneralKnowledge,
+        "Geography": GeneralKnowledge,
+        "Science": GeneralKnowledge,
+        "Sport": GeneralKnowledge,
         "True or False": TrueOrFalse,
         "Flags": Flags,
         "Capital Cities": Flags,
@@ -60,9 +68,30 @@ def quiz_home(request):
                         general_category = GeneralKnowledgeCategory.objects.get(category='General')
                         available_questions = model.objects.filter(category=general_category)
                         ids = list(available_questions.values_list('id', flat=True))
+                    elif round_name == "Pop Culture":
+                        category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
                     elif round_name == "History":
                         history_category = GeneralKnowledgeCategory.objects.get(category='History')
                         ids = list(model.objects.filter(category=history_category).values_list('id', flat=True))
+                    elif round_name == "Entertainment":
+                        entertainment_category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+                        ids = list(model.objects.filter(category=entertainment_category).values_list('id', flat=True))
+                    elif round_name == "Mythology":
+                        category = GeneralKnowledgeCategory.objects.get(category='Mythology')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                    elif round_name == "Technology":
+                        category = GeneralKnowledgeCategory.objects.get(category='Technology')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                    elif round_name == "Geography":
+                        category = GeneralKnowledgeCategory.objects.get(category='Geography')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                    elif round_name == "Science":
+                        category = GeneralKnowledgeCategory.objects.get(category='Science')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                    elif round_name == "Sport":
+                        category = GeneralKnowledgeCategory.objects.get(category='Sport')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
                     else:
                         ids = list(model.objects.values_list('id', flat=True))
                         

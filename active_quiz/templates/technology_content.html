@@ -1,0 +1,59 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/general_knowledge.css' %}">
+{% endblock %}
+
+{% if current_question %}
+    <div class="question-card">
+        <h2 class="quiz-question">{{ current_question.question }}</h2>
+    </div>
+    
+    <div class="multiple-choice-container">
+        <form id="entertainment-form" method="post" action="{% url 'active_quiz:next_technology' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
+            {% if request.user.username != 'david' %}
+                {% for choice in gk_choices %}
+                    <div class="multiple-choice">
+                        <input type="radio" class="radio-button" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}">
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="submit-button">Submit</button>
+            {% else %}
+                {% for choice in gk_choices %}
+                    <div class="multiple-choice">
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+                <button type="button" id="next-button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<script>
+    function highlightCorrectAnswer() {
+        const correctAnswer = "{{ current_question.answer }}";
+        const labels = document.querySelectorAll('.multiple-choice');
+        labels.forEach(label => {
+            if (label.textContent.trim() === correctAnswer) {
+                label.classList.add('highlight-correct');
+            }
+        });
+        setTimeout(() => {
+            document.getElementById('entertainment-form').submit();
+        }, 2000);
+    }
+
+    document.getElementById('entertainment-form').addEventListener('submit', function(event) {
+        const user = "{{ request.user.username }}";
+        if (user !== 'david') {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                event.preventDefault();
+                alert('Please select an answer before proceeding.');
+            }
+        }
+    });
+</script>

@@ -37,6 +37,14 @@ def active_quiz(request):
     round_handlers = {
         "General Knowledge": handle_general_knowledge_round,
         "History": handle_history_round,
+        "Entertainment": handle_entertainment_round,
+        "Maths": handle_maths_round,
+        "Pop Culture": handle_pop_culture_round,
+        "Mythology": handle_mythology_round,
+        "Technology": handle_technology_round,
+        "Geography": handle_geography_round,
+        "Science": handle_science_round,
+        "Sport": handle_sport_round,
         "Flags": handle_flags_round,
         "Capital Cities": handle_capital_cities_round,
         "Celebrities": handle_celebrities_round,
@@ -345,6 +353,263 @@ def next_history(request):
             quiz.save()
 
     return iterate_next_question(request)
+
+
+@login_required
+def next_entertainment(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 1.5
+            messages.success(request, 'Correct answer! You have earned 1.5 points.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Entertainment"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_maths(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 1.5
+            messages.success(request, 'Correct answer! You have earned 1.5 points.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Maths"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_pop_culture(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Pop Culture"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_mythology(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Mythology"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_technology(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Technology"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_geography(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Geography"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_science(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Science"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_sport(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1
+            player.question_answered = 1  # Correct
+            score = 2
+            messages.success(request, 'Correct answer! You have earned 1 point.')
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        round_name = "Mythology"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+
+    return iterate_next_question(request)
+
 
 @login_required
 def next_capital_city(request):
@@ -761,6 +1026,112 @@ def handle_history_round(quiz, current_index):
     return {
         'current_question': current_question,
         'gk_choices': history_choices,  # Keep same key name for template compatibility
+    }
+
+
+def handle_entertainment_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Entertainment", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_maths_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Maths", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Maths')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+
+def handle_pop_culture_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Pop Culture", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_mythology_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Mythology", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Mythology')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_technology_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Technology", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Technology')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_geography_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Geography", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Geography')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_science_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Science", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Science')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
+    }
+
+def handle_sport_round(quiz, current_index):
+    question_ids = quiz.random_numbers.get("Sport", [])
+    category = GeneralKnowledgeCategory.objects.get(category='Sport')
+    current_question_id = question_ids[current_index]
+    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    choices = [current_question.answer, current_question.choice_1, 
+              current_question.choice_2, current_question.choice_3]
+    random.shuffle(choices)
+    return {
+        'current_question': current_question,
+        'gk_choices': choices,
     }
 
 

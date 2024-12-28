@@ -68,6 +68,22 @@
                     {% include 'general_knowledge_content.html' %}
                 {% elif current_question and current_round == "History" %}
                     {% include 'history_content.html' %}
+                {% elif current_question and current_round == "Entertainment" %}
+                    {% include 'entertainment_content.html' %}
+                {% elif current_question and current_round == "Maths" %}
+                    {% include 'maths_content.html' %}
+                {% elif current_question and current_round == "Pop Culture" %}
+                    {% include 'pop_culture_content.html' %}
+                {% elif current_question and current_round == "Mythology" %}
+                    {% include 'mythology_content.html' %}
+                {% elif current_question and current_round == "Technology" %}
+                    {% include 'technology_content.html' %}
+                {% elif current_question and current_round == "Geography" %}
+                    {% include 'geography_content.html' %}
+                {% elif current_question and current_round == "Science" %}
+                    {% include 'science_content.html' %}
+                {% elif current_question and current_round == "Sport" %}
+                    {% include 'sport_content.html' %}
                 {% elif current_flag and current_round == "Capital Cities" %}
                     {% include 'capital_cities_content.html' %}
                 {% elif current_celebrity and current_round == "Celebrities" %}
