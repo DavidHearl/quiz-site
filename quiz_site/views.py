@@ -55,7 +55,13 @@ def quiz_home(request):
                 round_name = round.question_type
                 if round_name in db_mapping:
                     model = db_mapping[round_name]
-                    ids = list(model.objects.values_list('id', flat=True))
+                    if round_name == "General Knowledge":
+                        general_category = GeneralKnowledgeCategory.objects.get(category='General')
+                        available_questions = model.objects.filter(category=general_category)
+                        ids = list(available_questions.values_list('id', flat=True))
+                    else:
+                        ids = list(model.objects.values_list('id', flat=True))
+                        
                     if ids:
                         if round_name == "Who is the Oldest":
                             # Ensure each celebrity ID is only used once across all groups
