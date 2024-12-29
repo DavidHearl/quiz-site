@@ -42,11 +42,11 @@
             }
         });
         setTimeout(() => {
-            document.getElementById('entertainment-form').submit();
+            document.getElementById('maths-form').submit();
         }, 2000);
     }
 
-    document.getElementById('entertainment-form').addEventListener('submit', function(event) {
+    document.getElementById('maths-form').addEventListener('submit', function(event) {
         const user = "{{ request.user.username }}";
         if (user !== 'david') {
             const selected = document.querySelector('input[name="answer"]:checked');

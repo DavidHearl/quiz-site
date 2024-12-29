@@ -1,4 +1,5 @@
 ## Issues
+- Which film is the oldest
 - everyone sees everyones round results
 - Timer from last entry
 - Disable re entry in who is the imposter

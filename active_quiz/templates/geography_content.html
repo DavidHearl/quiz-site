@@ -9,7 +9,7 @@
     </div>
     
     <div class="multiple-choice-container">
-        <form id="entertainment-form" method="post" action="{% url 'active_quiz:next_geography' %}">
+        <form id="geography-form" method="post" action="{% url 'active_quiz:next_geography' %}">
             {% csrf_token %}
             <input type="hidden" name="correct_answer" value="{{ current_question.answer }}">
             {% if request.user.username != 'david' %}
@@ -42,11 +42,11 @@
             }
         });
         setTimeout(() => {
-            document.getElementById('entertainment-form').submit();
+            document.getElementById('geography-form').submit();
         }, 2000);
     }
 
-    document.getElementById('entertainment-form').addEventListener('submit', function(event) {
+    document.getElementById('geography-form').addEventListener('submit', function(event) {
         const user = "{{ request.user.username }}";
         if (user !== 'david') {
             const selected = document.querySelector('input[name="answer"]:checked');
