@@ -1,0 +1,13 @@
+.question-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fighter-image {
+    width: 500px;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid black;
+}

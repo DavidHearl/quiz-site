@@ -18,8 +18,8 @@ class Player(models.Model):
         (3, 'Partial')
     ]
     question_answered = models.IntegerField(choices=QUESTION_STATUS_CHOICES, default=0)
-    answers = models.JSONField(default=dict)
-    points = models.JSONField(default=dict)
+    answers = models.JSONField(default=dict, blank=True, null=True)
+    points = models.JSONField(default=dict, blank=True, null=True)
 
     def __str__(self):
         return self.user.username

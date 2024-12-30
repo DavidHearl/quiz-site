@@ -1,0 +1,58 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/fighter_jet.css' %}">
+{% endblock %}
+
+{% if current_jet %}
+    <div class="question-card">
+        <h2 class="quiz-question">
+            {% if question_type == 'name' %}
+                What is the name of this fighter jet?
+            {% else %}
+                What is the code name of this fighter jet?
+            {% endif %}
+        </h2>
+        {% if current_jet.photo %}
+            <img class="fighter-image" src="{{ current_jet.photo.url }}" alt="Fighter Jet Photo">
+        {% endif %}
+    </div>
+    
+    <div class="multiple-choice-container">
+        <form id="fighter-jet-form" method="post" action="{% url 'active_quiz:next_fighter_jet' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_answer" value="{{ correct_answer }}">
+            <input type="hidden" name="question_type" value="{{ question_type }}">
+            {% if request.user.username != 'david' %}
+                {% for choice in choices %}
+                    <div class="multiple-choice">
+                        <input type="radio" class="radio-button" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}">
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="submit-button">Submit</button>
+            {% else %}
+                {% for choice in choices %}
+                    <div class="multiple-choice">
+                        <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
+                    </div>
+                {% endfor %}
+                <button type="button" id="next-button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<script>
+    function highlightCorrectAnswer() {
+        const correctAnswer = "{{ correct_answer }}";
+        const labels = document.querySelectorAll('.multiple-choice');
+        labels.forEach(label => {
+            if (label.textContent.trim() === correctAnswer) {
+                label.classList.add('highlight-correct');
+            }
+        });
+        setTimeout(() => {
+            document.getElementById('fighter-jet-form').submit();
+        }, 2000);
+    }
+</script>

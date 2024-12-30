@@ -8,7 +8,10 @@ import random
 from datetime import datetime
 import Levenshtein
 from Levenshtein import distance as levenshtein_distance
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 '''
 Main function that controls the active quiz page.
@@ -54,6 +57,7 @@ def active_quiz(request):
         "Movie Release Dates": handle_movie_release_dates_round,
         "Who is the Oldest": handle_who_is_the_oldest_round,
         "Who is the Imposter": handle_who_is_the_imposter_round,
+        "Fighter Jets": handle_fighter_jet_round,
     }
 
     context = {
@@ -317,6 +321,50 @@ def next_general_knowledge(request):
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_fighter_jet(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('answer')
+        correct_answer = request.POST.get('correct_answer')
+        question_type = request.POST.get('question_type')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        logger.debug(f"Selected answer: {selected_answer}")
+        logger.debug(f"Correct answer: {correct_answer}")
+        logger.debug(f"Question type: {question_type}")
+        print('Statment Called')
+
+        if selected_answer == correct_answer:
+            player.player_score = (player.player_score or 0) + 1.5
+            player.question_answered = 1  # Correct
+            score = 1.5
+            messages.success(request, 'Correct answer! You have earned 1.5 points.')
+            logger.debug(f"Player {player.user.username} answered correctly. Score: {score}")
+        else:
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            player.question_answered = 2  # Incorrect
+            score = 0
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+            logger.debug(f"Player {player.user.username} answered incorrectly. Score: {score}")
+
+        round_name = "Fighter Jets"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+
+        logger.debug(f"Player answers: {player.answers}")
+        logger.debug(f"Player points: {player.points}")
+
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+            logger.debug(f"Correct answer saved to quiz: {correct_answer}")
 
     return iterate_next_question(request)
 
@@ -1042,11 +1090,21 @@ def handle_entertainment_round(quiz, current_index):
         'gk_choices': choices,
     }
 
+
 def handle_maths_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Maths", [])
     category = GeneralKnowledgeCategory.objects.get(category='Maths')
     current_question_id = question_ids[current_index]
-    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+
+    # Log the values of current_question_id and category
+    logger.debug(f"Maths Round - current_question_id: {current_question_id}, category: {category}")
+
+    try:
+        current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    except GeneralKnowledge.DoesNotExist:
+        logger.error(f"GeneralKnowledge with id {current_question_id} and category {category} does not exist.")
+        raise
+
     choices = [current_question.answer, current_question.choice_1, 
               current_question.choice_2, current_question.choice_3]
     random.shuffle(choices)
@@ -1069,6 +1127,7 @@ def handle_pop_culture_round(quiz, current_index):
         'gk_choices': choices,
     }
 
+
 def handle_mythology_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Mythology", [])
     category = GeneralKnowledgeCategory.objects.get(category='Mythology')
@@ -1081,6 +1140,7 @@ def handle_mythology_round(quiz, current_index):
         'current_question': current_question,
         'gk_choices': choices,
     }
+
 
 def handle_technology_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Technology", [])
@@ -1095,6 +1155,7 @@ def handle_technology_round(quiz, current_index):
         'gk_choices': choices,
     }
 
+
 def handle_geography_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Geography", [])
     category = GeneralKnowledgeCategory.objects.get(category='Geography')
@@ -1108,6 +1169,7 @@ def handle_geography_round(quiz, current_index):
         'gk_choices': choices,
     }
 
+
 def handle_science_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Science", [])
     category = GeneralKnowledgeCategory.objects.get(category='Science')
@@ -1120,6 +1182,7 @@ def handle_science_round(quiz, current_index):
         'current_question': current_question,
         'gk_choices': choices,
     }
+
 
 def handle_sport_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Sport", [])
@@ -1287,4 +1350,29 @@ def handle_who_is_the_imposter_round(quiz, current_index):
         'current_movie': current_movie,
         'celebrities': celebrities,
         'imposter': imposter,
+    }
+
+
+def handle_fighter_jet_round(quiz, current_index):
+    jet_ids = quiz.random_numbers.get("Fighter Jets", [])
+    current_jet = Jets.objects.get(id=jet_ids[current_index])
+    random.seed(f"{quiz.id}-{current_index}")
+
+    # Determine if the question will be based on name or code_name
+    question_type = 'name' if current_index % 2 == 1 else 'code_name'
+    if question_type == 'name':
+        correct_answer = current_jet.name
+        all_options = Jets.objects.exclude(id=current_jet.id).values_list('name', flat=True)
+    else:
+        correct_answer = current_jet.code_name
+        all_options = Jets.objects.exclude(id=current_jet.id).values_list('code_name', flat=True)
+
+    choices = random.sample(list(all_options), 3) + [correct_answer]
+    random.shuffle(choices)
+
+    return {
+        'current_jet': current_jet,
+        'choices': choices,
+        'question_type': question_type,
+        'correct_answer': correct_answer,
     }

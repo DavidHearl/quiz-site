@@ -68,6 +68,9 @@ def quiz_home(request):
                         general_category = GeneralKnowledgeCategory.objects.get(category='General')
                         available_questions = model.objects.filter(category=general_category)
                         ids = list(available_questions.values_list('id', flat=True))
+                    elif round_name == "Maths":
+                        category = GeneralKnowledgeCategory.objects.get(category='Maths')
+                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
                     elif round_name == "Pop Culture":
                         category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
                         ids = list(model.objects.filter(category=category).values_list('id', flat=True))

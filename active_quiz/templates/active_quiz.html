@@ -66,6 +66,8 @@
                     {% include 'flag_content.html' %}
                 {% elif current_question and current_round == "General Knowledge" %}
                     {% include 'general_knowledge_content.html' %}
+                {% elif current_jet and current_round == "Fighter Jets" %}
+                    {% include 'fighter_jet_content.html' %}
                 {% elif current_question and current_round == "History" %}
                     {% include 'history_content.html' %}
                 {% elif current_question and current_round == "Entertainment" %}
