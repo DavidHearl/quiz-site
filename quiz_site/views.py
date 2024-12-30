@@ -17,7 +17,6 @@ The question sets are created for the active quiz.
 def quiz_home(request):
     users = User.objects.all()
     rounds = Rounds.objects.all()
-    quiz = Quiz.objects.all()
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
         "History": GeneralKnowledge,
@@ -38,16 +37,12 @@ def quiz_home(request):
         "Celebrity Age": Celebrities,
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
-        "Who is the Imposter": Movies,
-        "Movie Release Dates": Movies,
-        "Locations": Locations,
     }
-    quiz_selection_form = QuizSelectionForm()
+
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
             quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
-            # Reset player scores, incorrect answers, page updates, answers, and points
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
@@ -56,55 +51,79 @@ def quiz_home(request):
                 player.answers = {}
                 player.points = {}
                 player.save()
+
             quiz.players.set(quiz_selection_form.cleaned_data['users'])
             selected_rounds = quiz_selection_form.cleaned_data['rounds']
             quiz.rounds.set(selected_rounds)
             random_numbers = {}
+            exclude_previous = quiz_selection_form.cleaned_data.get('exclude_previous', False)
+
             for round in selected_rounds:
                 round_name = round.question_type
                 if round_name in db_mapping:
                     model = db_mapping[round_name]
+                    base_query = model.objects.all()
+
+                    # Apply category filters first
                     if round_name == "General Knowledge":
                         general_category = GeneralKnowledgeCategory.objects.get(category='General')
-                        available_questions = model.objects.filter(category=general_category)
-                        ids = list(available_questions.values_list('id', flat=True))
+                        base_query = base_query.filter(category=general_category)
                     elif round_name == "Maths":
                         category = GeneralKnowledgeCategory.objects.get(category='Maths')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "Pop Culture":
                         category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "History":
                         history_category = GeneralKnowledgeCategory.objects.get(category='History')
-                        ids = list(model.objects.filter(category=history_category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=history_category)
                     elif round_name == "Entertainment":
                         entertainment_category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
-                        ids = list(model.objects.filter(category=entertainment_category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=entertainment_category)
                     elif round_name == "Mythology":
                         category = GeneralKnowledgeCategory.objects.get(category='Mythology')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "Technology":
                         category = GeneralKnowledgeCategory.objects.get(category='Technology')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "Geography":
                         category = GeneralKnowledgeCategory.objects.get(category='Geography')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "Science":
                         category = GeneralKnowledgeCategory.objects.get(category='Science')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
+                        base_query = base_query.filter(category=category)
                     elif round_name == "Sport":
                         category = GeneralKnowledgeCategory.objects.get(category='Sport')
-                        ids = list(model.objects.filter(category=category).values_list('id', flat=True))
-                    else:
-                        ids = list(model.objects.values_list('id', flat=True))
-                        
+                        base_query = base_query.filter(category=category)
+
+                    # Apply exclusion filter
+                    if exclude_previous:
+                        previous_questions = Quiz.objects.values_list('random_numbers', flat=True)
+                        previous_question_ids = set()
+                        for pq in previous_questions:
+                            if pq and isinstance(pq, dict):
+                                for key, value in pq.items():
+                                    if isinstance(value, list):
+                                        if any(isinstance(x, list) for x in value):
+                                            flattened = [item for sublist in value for item in (sublist if isinstance(sublist, list) else [sublist])]
+                                            previous_question_ids.update(flattened)
+                                        else:
+                                            previous_question_ids.update(value)
+                                    else:
+                                        previous_question_ids.add(value)
+                        base_query = base_query.exclude(id__in=previous_question_ids)
+
+                    # Get final IDs
+                    ids = list(base_query.values_list('id', flat=True))
+
+                    # Apply random selection
                     if ids:
                         if round_name == "Who is the Oldest":
-                            # Ensure each celebrity ID is only used once across all groups
                             random.shuffle(ids)
                             random_numbers[round_name] = [ids[i:i + 5] for i in range(0, min(50, len(ids)), 5) if len(ids[i:i + 5]) == 5][:10]
                         else:
                             random_numbers[round_name] = random.sample(ids, min(10, len(ids)))
+
             quiz.random_numbers = random_numbers
             quiz.save()
             return redirect('active_quiz:active_quiz')
@@ -112,11 +131,11 @@ def quiz_home(request):
             print("Form Errors:", quiz_selection_form.errors)
     else:
         quiz_selection_form = QuizSelectionForm()
+
     context = {
-        'rounds': rounds,
-        'quiz': quiz,
-        'quiz_selection_form': quiz_selection_form,
         'users': users,
+        'rounds': rounds,
+        'quiz_selection_form': quiz_selection_form,
     }
     return render(request, 'quiz_site/quiz_home.html', context)
     

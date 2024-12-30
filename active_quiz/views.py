@@ -922,11 +922,10 @@ def next_movie_release_date(request):
                 messages.success(request, f'You were {year_difference} years off! You have earned {score} points.')
             else:
                 messages.error(request, f'You were {year_difference} years off. No points earned.')
-        
         # Record the answer and score
         round_name = "Movie Release Dates"
         player.answers.setdefault(round_name, []).append(selected_year)
-        player.points.setdefault(round_name, []).append(score)
+        player.points.setdefault(round_name, []).append(round(score, 1))
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
@@ -1025,9 +1024,9 @@ def next_who_is_the_imposter(request):
             player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
-        # if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-        #     quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
-        #     quiz.save()
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
+            quiz.save()
 
     return iterate_next_question(request)
 

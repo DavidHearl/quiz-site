@@ -3,13 +3,14 @@ from django.contrib.auth.models import User
 from .models import *
 
 class QuizSelectionForm(forms.Form):
-    class Meta:
-        model = Quiz
-        fields = ['quiz_name']
-
     quiz_name = forms.CharField(max_length=200)
     users = forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=forms.CheckboxSelectMultiple)
     rounds = forms.ModelMultipleChoiceField(queryset=Rounds.objects.all(), widget=forms.CheckboxSelectMultiple)
+    exclude_previous = forms.BooleanField(required=False, label="Exclude questions from previous quizzes")
+
+    class Meta:
+        model = Quiz
+        fields = ['quiz_name', 'users', 'rounds', 'exclude_previous']
 
 
 # -------------------------------------------------------------------------------

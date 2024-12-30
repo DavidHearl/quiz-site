@@ -3,8 +3,7 @@
 - everyone sees everyones round results
 - Timer from last entry
 - Disable re entry in who is the imposter
-- Change iron man poster it has the date
-- Rounding errors on the numbers
+- Rounding errors on the numbers movie release dates
 
 ## Notes
 
