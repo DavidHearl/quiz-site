@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Reset and general styles */
+    * {
+        box-sizing: border-box;
+    }
+    
+    /* Container and layout */
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-top: 24px;
+    }
+    
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 20px;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    /* Hero section */
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 4rem 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 0;
+    }
+    
+    /* Tab card */
+    .tab-card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        grid-column: 3 / 11;
+    }
+    
+    @media (max-width: 768px) {
+        .tab-card {
+            grid-column: 1 / 13;
+        }
+    }
+    
+    .tab-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .tab-header {
+        display: flex;
+        background: #f8f9fa;
+    }
+    
+    .tab-button {
+        flex: 1;
+        padding: 1rem;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        background: transparent;
+    }
+    
+    .tab-button.active {
+        background: white;
+        color: #2575fc;
+        border-bottom: 3px solid #2575fc;
+    }
+    
+    .tab-content {
+        padding: 1.75rem;
+        background: white;
+    }
+    
+    .tab-content h3 {
+        margin-bottom: 1.5rem;
+    }
+    
+    .tab-description {
+        margin-top: 2rem;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    /* Form styling */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+    
+    .input-code {
+        font-size: 1.5rem;
+        text-align: center;
+        letter-spacing: 0.5rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        cursor: pointer;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+        margin-bottom: 0.5rem;
+        border: none;
+        width: 100%;
+    }
+    
+    .btn-primary {
+        background-color: #2575fc;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #1a65e0;
+    }
+    
+    .btn-secondary {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ced4da;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e9ecef;
+    }
+    
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background-color: #218838;
+    }
+    
+    /* Features section */
+    .features {
+        margin-top: 2rem;
+    }
+    
+    .features-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+        border-radius: 15px;
+        background: #f8f9fa;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        color: #2575fc;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="grid">
+        <div class="tab-card">
+            <div class="tab-header">
+                <button class="tab-button active" data-tab="master">Quiz Master</button>
+                <button class="tab-button" data-tab="participant">Participant</button>
+            </div>
+            
+            <div class="tab-content" id="master-content">
+                <h3>Create or Manage a Quiz</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_quiz_name" class="form-label">Quiz Name</label>
+                        <input type="text" class="form-input" id="id_quiz_name" name="quiz_name" required placeholder="Enter quiz name">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Create Quiz</button>
+                    </div>
+                </form>
+                <div class="tab-description">
+                    <p>As a Quiz Master, you can create custom quizzes, select categories, 
+                    and control the quiz flow. Players will join using the code.</p>
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="participant-content">
+                <h3>Join a Quiz</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="join_code" class="form-label">Enter Join Code</label>
+                        <input type="text" class="form-input input-code" id="join_code" name="join_code" placeholder="ENTER CODE" maxlength="4">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-success">Join Quiz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="features">
+        <div class="features-header">
+            <h2>Why Choose QuizMaster?</h2>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h4>Quick Setup</h4>
+                <p>Create a quiz in minutes with our intuitive interface. Choose from various categories or create your own questions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>Interactive Experience</h4>
+                <p>Engage participants with real-time scoring, leaderboards, and interactive question formats.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h4>Mobile Friendly</h4>
+                <p>Participants can join using any device with a browser. No app installation required.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show content for active tab
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`${tabName}-content`).classList.remove('hidden');
+            });
+        });
+    });
+</script>
+{% endblock %}

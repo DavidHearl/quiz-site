@@ -11,12 +11,73 @@ import json
 
 
 '''
+Home, the user can select to be a quiz master or a player and enter a code
+'''
+def home(request):
+    if request.method == 'POST':
+        # Handle participant joining with code
+        if 'join_code' in request.POST:
+            join_code = request.POST.get('join_code')
+            if join_code:
+                try:
+                    quiz = Quiz.objects.get(join_code=join_code)
+                    # Add the current user to the quiz if they're not already in it
+                    if request.user.is_authenticated and request.user not in quiz.players.all():
+                        quiz.players.add(request.user)
+                        quiz.save()
+                    return redirect('loading_page') 
+                except Quiz.DoesNotExist:
+                    messages.error(request, 'Invalid join code. Please try again.')
+        
+        # Handle simple quiz creation
+        elif 'quiz_name' in request.POST:
+            quiz_name = request.POST.get('quiz_name')
+            if quiz_name:
+                quiz = Quiz.objects.create(quiz_name=quiz_name)
+                
+                # Generate a random 4-character join code
+                def generate_join_code():
+                    import string
+                    import random
+                    chars = string.ascii_uppercase + string.digits
+                    code = ''.join(random.choice(chars) for _ in range(4))
+                    # Check if code already exists
+                    if Quiz.objects.filter(join_code=code).exists():
+                        return generate_join_code()  # Try again if exists
+                    return code
+                
+                # Set the join code
+                quiz.join_code = generate_join_code()
+                
+                # If user is authenticated, add them as a player
+                if request.user.is_authenticated:
+                    quiz.players.add(request.user)
+                
+                quiz.save()
+                
+                messages.success(request, f'Quiz created! Join code: {quiz.join_code}')
+                return redirect('quiz_home')  # Redirect to select rounds, etc.
+    
+    return render(request, 'quiz_site/home.html')
+
+
+'''
 This view is used to create the quiz. The user can select the players, rounds and the quiz name.
 The question sets are created for the active quiz.
 '''
 def quiz_home(request):
     users = User.objects.all()
     rounds = Rounds.objects.all()
+    import random
+    import string
+
+    # Get the most recently created quiz
+    latest_quiz = Quiz.objects.order_by('-date_created').first()
+    
+    current_players = []
+    if latest_quiz:
+        current_players = latest_quiz.players.all()
+
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
         "History": GeneralKnowledge,
@@ -42,7 +103,11 @@ def quiz_home(request):
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
         if quiz_selection_form.is_valid():
-            quiz = Quiz.objects.create(quiz_name=quiz_selection_form.cleaned_data['quiz_name'])
+            # Use the existing quiz instead of creating a new one
+            # This preserves the join code so players don't need a new one
+            quiz = latest_quiz
+            
+            # Reset player-specific data 
             for player in Player.objects.all():
                 player.player_score = 0
                 player.incorrect_answers = 0
@@ -51,8 +116,8 @@ def quiz_home(request):
                 player.answers = {}
                 player.points = {}
                 player.save()
-
-            quiz.players.set(quiz_selection_form.cleaned_data['users'])
+            
+            # Only update the rounds, not the players
             selected_rounds = quiz_selection_form.cleaned_data['rounds']
             quiz.rounds.set(selected_rounds)
             random_numbers = {}
@@ -126,6 +191,9 @@ def quiz_home(request):
 
             quiz.random_numbers = random_numbers
             quiz.save()
+            
+            # Display the join code to the user
+            messages.success(request, f'Quiz ready! Join code: {quiz.join_code}')
             return redirect('active_quiz:active_quiz')
         else:
             print("Form Errors:", quiz_selection_form.errors)
@@ -136,8 +204,17 @@ def quiz_home(request):
         'users': users,
         'rounds': rounds,
         'quiz_selection_form': quiz_selection_form,
+        'latest_quiz': latest_quiz,
+        'current_players': current_players,
     }
     return render(request, 'quiz_site/quiz_home.html', context)
+
+
+def loading_page(request):
+    """
+    Display a loading page before redirecting to the active quiz
+    """
+    return render(request, 'quiz_site/loading.html')
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------

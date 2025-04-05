@@ -8,9 +8,6 @@
 
 {% block content %}
     <div class="container">
-        <h1 class="title">Quiz Home</h1>
-        <p class="instructions">Welcome to the Quiz Home page.</p>
-
         {% if not user.is_authenticated %}
             <p class="instructions">Let's get you logged in. If you already have an account you can <a class="authentication-label" href="{% url 'account_login' %}">Login</a> using the credentials below</p>
             <hr>
@@ -29,26 +26,34 @@
             </div>
 
         {% else %}
+            <!-- Latest Quiz Information -->
+            {% if latest_quiz %}
+            <div class="quiz-info">
+                <h1>Quiz Setup</h1>
+                <p>Name: <strong>{{ latest_quiz.quiz_name }}</strong></p>
+                <p>Join Code: <strong>{{ latest_quiz.join_code }}</strong></p>
+                <p>Share this code with players so they can join the quiz!</p>
+                
+                <!-- Display current players -->
+                <div class="current-players">
+                    <h3>Current Players</h3>
+                    {% if current_players %}
+                        <ul class="player-list">
+                            {% for player in current_players %}
+                                <li class="player-item">{{ player.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No players have joined yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
             <form method="post">
                 {% csrf_token %}
-                <!-- Quiz Name -->
-                <p class="instructions">Enter the quiz name:</p>
-                <div class="form-group">
-                    <input id="id_quiz_name" type="text" name="quiz_name" required>
-                </div>
-        
-                <!-- Players -->
-                <p class="instructions">Who is participating in the quiz?</p>
-                <div class="select-users small-spacing">
-                    {% for user in quiz_selection_form.users.field.queryset %}
-                        {% if not user.is_superuser %}
-                            <div class="user">
-                                <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.users.html_name }}" value="{{ user.id }}">
-                                <h2 class="user-title">{{ user.username }}</h2>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                <!-- Hidden Quiz Name field pre-filled with latest quiz name -->
+                <input type="hidden" id="id_quiz_name" name="quiz_name" value="{{ latest_quiz.quiz_name }}">
         
                 <!-- Rounds -->
                 <p class="instructions">What question sets do you want?</p>
@@ -67,9 +72,8 @@
                     <label for="id_exclude_previous">Exclude questions from previous quizzes</label>
                 </div>
         
-                <input class="quiz-submit" type="submit" value="Create Quiz">
+                <input class="quiz-submit" type="submit" value="Start Quiz">
             </form>
         {% endif %}
     </div>
-
 {% endblock %}

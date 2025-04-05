@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.conf.urls.static import static
-
 from django.contrib import admin
 from django.urls import include, path
-from quiz_site.views import quiz_home
+from quiz_site.views import home, quiz_home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', quiz_home, name='quiz_home'),
+    path('', home, name='home'),  # Make development the home page
+    path('create_quiz/', quiz_home, name='quiz_home'),  # Move quiz_home to create_quiz/
     path('quiz/', include('quiz_site.urls')),
     path('accounts/', include('allauth.urls')),
     path('active_quiz/', include(('active_quiz.urls', 'active_quiz'), namespace='active_quiz')),
