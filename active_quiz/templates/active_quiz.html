@@ -28,10 +28,23 @@
                     playerDataCache = data.players;
                     console.log('Player data:', playerDataCache);
                     updatePlayerElements(playerDataCache);
+                    
+                    // Check if countdown is active
+                    if (data.countdown_active) {
+                        document.getElementById('countdown-timer').style.display = 'block';
+                        document.getElementById('countdown-seconds').textContent = data.countdown_seconds;
+                    } else {
+                        document.getElementById('countdown-timer').style.display = 'none';
+                    }
+                    
+                    // Check if we need to reload (for 'david' user when timer reaches zero)
+                    if (data.reload) {
+                        location.reload();
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
-        setInterval(pollPlayerData, 2000);
+        setInterval(pollPlayerData, 1000); // Update more frequently for smoother countdown // Update more frequently for smoother countdown
 
         function updatePlayerElements(players) {
             players.forEach(player => {
@@ -60,6 +73,24 @@
 
     <div class="container">
         <h1 class="quiz-title">{{ quiz.quiz_name }} ({{ current_round }}) {{ quiz.question_counter }}</h1>
+
+        <div id="countdown-timer" class="countdown-timer" style="display: none;">
+            <p>Time remaining: <span id="countdown-seconds">5</span> seconds</p>
+        </div>
+        
+        <style>
+            .countdown-timer {
+                background-color: #ff9900;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
+                margin: 10px auto;
+                max-width: 300px;
+            }
+        </style>
+
         <div class="quiz-container">
             <div class="question-container">
                 {% if current_flag and current_round == "Flags" %}
@@ -108,9 +139,11 @@
             {% if user.username == 'david' %}
                 <div class="score-container">
                     {% for player in quiz.players.all %}
-                        <div class="player-information" id="{{ player }}">
-                            <h2 class="player-name">{{ player }}</h2>
-                        </div>
+                        {% if player.username != 'david' %}
+                            <div class="player-information" id="{{ player.username }}">
+                                <h2 class="player-name">{{ player }}</h2>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}

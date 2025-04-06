@@ -97,15 +97,88 @@ def check_update(request):
 @login_required
 def print_player_data(request):
     players = Player.objects.all()
+    quiz = Quiz.objects.latest('date_created')
+    
     player_data = []
     for player in players:
-        player_data.append({
-            'username': player.user.username,
-            'score': player.player_score,
-            'incorrect_answers': player.incorrect_answers,
-            'question_answered': player.question_answered,
-        })
-    return JsonResponse({'players': player_data})
+        # Skip adding david to the player data
+        if player.user.username != 'david':
+            player_data.append({
+                'username': player.user.username,
+                'score': player.player_score,
+                'incorrect_answers': player.incorrect_answers,
+                'question_answered': player.question_answered,
+            })
+    
+    # Check for countdown condition
+    countdown_active = False
+    countdown_seconds = 0
+    
+    # Only check if we're in an active quiz with players
+    if quiz:
+        # Get players excluding david
+        active_players = quiz.players.exclude(username='david')
+        total_players = active_players.count()
+        
+        # Get Player objects for these users
+        player_objects = Player.objects.filter(user__in=active_players)
+        
+        # Count how many have answered (correctly or incorrectly)
+        answered_count = player_objects.filter(
+            question_answered__in=[1, 2, 3]  # 1=correct, 2=incorrect, 3=partial
+        ).count()
+        
+        # Always start countdown if ANY players have answered
+        if answered_count > 0:
+            # If countdown hasn't started yet, set it now
+            if not quiz.countdown_start_time:
+                from django.utils import timezone
+                quiz.countdown_start_time = timezone.now()
+                quiz.save()
+                print("Debug - Starting countdown timer")
+            
+            # Calculate remaining seconds
+            from django.utils import timezone
+            import math
+            elapsed = (timezone.now() - quiz.countdown_start_time).total_seconds()
+            remaining = max(0, 5 - math.floor(elapsed))
+            
+            countdown_active = True
+            countdown_seconds = remaining
+            
+            # If countdown expired, move to next question automatically
+            if remaining == 0 and request.user.username == 'david':
+                # Reset the countdown timer for next question
+                quiz.countdown_start_time = None
+                quiz.save()
+                
+                # Force advancing to next question
+                quiz.question_counter += 1
+                quiz.save()
+                
+                # Reset all players' question_answered to 0 (Not Answered)
+                for player in Player.objects.all():
+                    player.question_answered = 0
+                    player.save()
+                
+                # Tell the frontend to reload the page
+                return JsonResponse({
+                    'players': player_data,
+                    'countdown_active': False,
+                    'countdown_seconds': 0,
+                    'reload': True
+                })
+        else:
+            # Reset timer if no one has answered
+            if quiz.countdown_start_time:
+                quiz.countdown_start_time = None
+                quiz.save()
+    
+    return JsonResponse({
+        'players': player_data,
+        'countdown_active': countdown_active,
+        'countdown_seconds': countdown_seconds
+    })
 
 
 @login_required
