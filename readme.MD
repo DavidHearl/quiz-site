@@ -1,20 +1,22 @@
 ## Issues
 - Which film is the oldest
-- everyone sees everyones round results
+- everyone sees everyones round results, make it so only the person sees their scores
 - Timer from last entry
 - Disable re entry in who is the imposter
 - Rounding errors on the numbers movie release dates
+- People can still cheat
+- If the timer times out the quiz will break as the user has not submitted an answer
+- David is still present in the results
+- Assign a player as the quiz master and use that instead of 'david'
+
 
 ## Notes
+Login Proceedure..
 
-When the user submits the form the database will update.
-Poll the data with javascript then use the information to update the elements on the page.
+Find ip
+ipconfig getifaddr en0
+python3 manage.py runserver 0.0.0.0:8000
 
-- Keep the answers to the end of the round
-- Keep the scores till the end of the round
+enter in ip of the mac + :8000
 
-{% for player in players %}
-    {% for point in player.points.item %}
-        {{ point }}
-    {% endfor %}
-{% endfor %}
+

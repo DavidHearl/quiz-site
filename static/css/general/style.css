@@ -310,6 +310,10 @@ background-color: #568869;
     opacity: 0.3;
 }
 
+.player-list {
+    list-style: none;
+}
+
 @media (max-width: 1440px) {
     .container {
         margin: 0 24px;

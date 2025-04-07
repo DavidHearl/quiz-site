@@ -1,9 +1,30 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load custom_filters %}
 
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/general/home.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Function to check for player updates
+        function checkForPlayerUpdates() {
+            fetch("{% url 'check_players_update' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.update) {
+                        // Refresh the page if there are new players
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error checking for updates:', error));
+        }
+        
+        // Poll for updates every 5 seconds
+        setInterval(checkForPlayerUpdates, 5000);
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -29,22 +50,31 @@
             <!-- Latest Quiz Information -->
             {% if latest_quiz %}
             <div class="quiz-info">
-                <h1>Quiz Setup</h1>
-                <p>Name: <strong>{{ latest_quiz.quiz_name }}</strong></p>
-                <p>Join Code: <strong>{{ latest_quiz.join_code }}</strong></p>
-                <p>Share this code with players so they can join the quiz!</p>
+                <div class="quiz-header">
+                    <h1>Quiz Setup</h1>
+                    <div class="quiz-details">
+                        <span class="quiz-detail">Name: <strong>{{ latest_quiz.quiz_name }}</strong></span>
+                        <span class="quiz-detail">Join Code: <strong>{{ latest_quiz.join_code }}</strong></span>
+                    </div>
+                </div>
                 
                 <!-- Display current players -->
                 <div class="current-players">
                     <h3>Current Players</h3>
                     {% if current_players %}
-                        <ul class="player-list">
+                        <div class="player-list">
                             {% for player in current_players %}
-                                <li class="player-item">{{ player.username }}</li>
+                                <div class="player-item">
+                                    <span class="player-initial">{{ player.username|make_list|first|upper }}</span>
+                                    <span class="player-name">{{ player.username }}</span>
+                                </div>
                             {% endfor %}
-                        </ul>
+                        </div>
                     {% else %}
                         <p>No players have joined yet.</p>
+                        <div class="waiting-dots">
+                            <span></span><span></span><span></span>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -58,14 +88,35 @@
                 <!-- Rounds -->
                 <p class="instructions">What question sets do you want?</p>
                 <div class="select-questions">
+                    <!-- Active Rounds First -->
                     {% for round in quiz_selection_form.rounds.field.queryset %}
-                        <div class="question {% if round.disabled %}disabled{% endif %}">
-                            <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.rounds.html_name }}" value="{{ round.id }}">
-                            <h2 class="question-title">{{ round.question_type }}</h2>
-                        </div>
+                        {% if not round.disabled %}
+                            <div class="question">
+                                <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.rounds.html_name }}" value="{{ round.id }}" id="round_{{ round.id }}">
+                                <label for="round_{{ round.id }}" class="question-title">
+                                    {{ round.question_type }}
+                                    <span class="question-count">({{ question_counts|get_item:round.question_type }} questions)</span>
+                                </label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Disabled Rounds at the Bottom -->
+                    <div class="disabled-rounds-divider"></div>
+                    <h3 class="disabled-rounds-heading">Disabled Rounds</h3>
+                    {% for round in quiz_selection_form.rounds.field.queryset %}
+                        {% if round.disabled %}
+                            <div class="question disabled">
+                                <input class="question-checkbox" type="checkbox" name="{{ quiz_selection_form.rounds.html_name }}" value="{{ round.id }}" id="round_{{ round.id }}" disabled>
+                                <label for="round_{{ round.id }}" class="question-title">
+                                    {{ round.question_type }}
+                                    <span class="question-count">({{ question_counts|get_item:round.question_type }} questions)</span>
+                                </label>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
-        
+
                 <!-- Exclude Previous Questions -->
                 <div class="form-group">
                     <input type="checkbox" id="id_exclude_previous" name="exclude_previous">
@@ -74,6 +125,97 @@
         
                 <input class="quiz-submit" type="submit" value="Start Quiz">
             </form>
+            
+            <style>
+                .quiz-header {
+                    margin-bottom: 20px;
+                }
+                
+                .quiz-header h1 {
+                    margin-bottom: 5px;
+                }
+                
+                .quiz-details {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+                
+                .quiz-detail {
+                    font-size: 16px;
+                }
+
+                .player-list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 10px;
+                }
+                .player-item {
+                    background-color: #f5f5f5;
+                    border-radius: 4px;
+                    padding: 5px 10px;
+                    display: flex;
+                    align-items: center;
+                }
+                .player-initial {
+                    background-color: #4a90e2;
+                    color: white;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 8px;
+                    font-weight: bold;
+                }
+                .waiting-dots {
+                    display: flex;
+                    gap: 5px;
+                    margin-top: 8px;
+                }
+                .waiting-dots span {
+                    width: 8px;
+                    height: 8px;
+                    background-color: #4a90e2;
+                    border-radius: 50%;
+                    display: inline-block;
+                    animation: pulse 1.4s infinite ease-in-out;
+                }
+                .waiting-dots span:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+                .waiting-dots span:nth-child(3) {
+                    animation-delay: 0.4s;
+                }
+                @keyframes pulse {
+                    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+                    50% { opacity: 1; transform: scale(1); }
+                }
+                
+                /* Question count styling */
+                .question-count {
+                    font-size: 0.8em;
+                    color: #666;
+                    margin-left: 5px;
+                    font-weight: normal;
+                }
+                
+                /* Disabled rounds styling */
+                .disabled-rounds-divider {
+                    margin: 15px 0 10px;
+                    border-top: 1px solid #ddd;
+                }
+                .disabled-rounds-heading {
+                    font-size: 14px;
+                    color: #666;
+                    margin-bottom: 10px;
+                }
+                .disabled {
+                    opacity: 0.7;
+                }
+            </style>
         {% endif %}
     </div>
 {% endblock %}

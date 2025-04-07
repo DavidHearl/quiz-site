@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('loading/', views.loading_page, name='loading_page'),
+    path('check_players_update/', views.check_players_update, name='check_players_update'),
     path('general_knowledge/', views.general_knowledge, name='general_knowledge'),
     path('edit_general_knowledge/<int:question_id>/', views.edit_general_knowledge, name='edit_general_knowledge'),
     path('true_or_false/', views.true_or_false, name='true_or_false'),
@@ -12,6 +13,7 @@ urlpatterns = [
     path('edit_flags/<int:flag_id>/', views.edit_flags, name='edit_flags'),
     path('logos/', views.logos, name='logos'),
     path('edit_logos/<int:logo_id>/', views.edit_logos, name='edit_logos'),
+    path('logos/delete/<int:logo_id>/', views.delete_logos, name='delete_logos'),
     path('jets/', views.jets, name='jets'),
     path('edit_jets/<int:jet_id>/', views.edit_jets, name='edit_jets'),
     path('celebrities/', views.celebrities, name='celebrities'),

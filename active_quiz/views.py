@@ -128,8 +128,8 @@ def print_player_data(request):
             question_answered__in=[1, 2, 3]  # 1=correct, 2=incorrect, 3=partial
         ).count()
         
-        # Always start countdown if ANY players have answered
-        if answered_count > 0:
+        # Changed: Only start countdown when all but one player have answered
+        if total_players > 1 and answered_count >= total_players - 1:
             # If countdown hasn't started yet, set it now
             if not quiz.countdown_start_time:
                 from django.utils import timezone
@@ -141,7 +141,7 @@ def print_player_data(request):
             from django.utils import timezone
             import math
             elapsed = (timezone.now() - quiz.countdown_start_time).total_seconds()
-            remaining = max(0, 5 - math.floor(elapsed))
+            remaining = max(0, 10 - math.floor(elapsed))  # Using 10 seconds as requested
             
             countdown_active = True
             countdown_seconds = remaining
@@ -169,7 +169,7 @@ def print_player_data(request):
                     'reload': True
                 })
         else:
-            # Reset timer if no one has answered
+            # Reset timer if conditions no longer met
             if quiz.countdown_start_time:
                 quiz.countdown_start_time = None
                 quiz.save()

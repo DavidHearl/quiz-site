@@ -67,13 +67,37 @@
                     <!-- Difficulty -->
                     <div class="column-flex">
                         <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if logo.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ logo.difficulty }}">
+                        <input id="id_difficulty" class="{% if logo.difficulty == None %}missing{% endif %}" type="text" name="difficulty" value="{{ logo.difficulty }}">
                     </div>
 
-                    <button class="submit" type="submit">Save</button>
+                    <div class="button-container">
+                        <button class="submit" type="submit">Save</button>
+                        <a href="{% url 'delete_logos' logo.id %}" class="delete-button">Delete</a>
+                    </div>
                 </form>
             </div>
         {% endfor %}
-
     </div>
+
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .delete-button {
+            background-color: #ba2121;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .delete-button:hover {
+            background-color: #a41515;
+        }
+    </style>
 {% endblock %}

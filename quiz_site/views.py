@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import *
 from .forms import *
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 import random
 from django.core.serializers.json import DjangoJSONEncoder
 import json
@@ -99,6 +101,85 @@ def quiz_home(request):
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
     }
+    
+    # Count available questions for each round
+    question_counts = {}
+    for round_name, model in db_mapping.items():
+        base_query = model.objects.all()
+        
+        # Apply category filters for GeneralKnowledge-based rounds
+        if round_name == "General Knowledge":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='General')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "History":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='History')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Entertainment":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Maths":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Maths')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Pop Culture":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Mythology":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Mythology')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Technology":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Technology')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Geography":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Geography')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Science":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Science')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Sport":
+            try:
+                category = GeneralKnowledgeCategory.objects.get(category='Sport')
+                base_query = base_query.filter(category=category)
+            except GeneralKnowledgeCategory.DoesNotExist:
+                base_query = model.objects.none()
+        elif round_name == "Capital Cities":
+            base_query = base_query.filter(capital__isnull=False).exclude(capital='')
+            
+        # Count questions in special way for "Who is the Oldest"
+        if round_name == "Who is the Oldest":
+            total_celebrities = base_query.count()
+            # We need sets of 5, so divide by 5 and round down
+            count = total_celebrities // 5
+        else:
+            count = base_query.count()
+            
+        question_counts[round_name] = count
 
     if request.method == 'POST':
         quiz_selection_form = QuizSelectionForm(request.POST)
@@ -206,8 +287,35 @@ def quiz_home(request):
         'quiz_selection_form': quiz_selection_form,
         'latest_quiz': latest_quiz,
         'current_players': current_players,
+        'question_counts': question_counts,  # Add the counts to the context
     }
     return render(request, 'quiz_site/quiz_home.html', context)
+
+
+@login_required
+def check_players_update(request):
+    """
+    Check if new players have joined the quiz since the last check
+    """
+    quiz = Quiz.objects.latest('date_created')
+    
+    # Get current player count from session
+    current_player_count = request.session.get('player_count', 0)
+    current_player_ids = set(request.session.get('player_ids', []))
+    
+    # Get actual players from database
+    actual_players = quiz.players.all()
+    actual_player_count = actual_players.count()
+    actual_player_ids = set(player.id for player in actual_players)
+    
+    # Update session with current values
+    request.session['player_count'] = actual_player_count
+    request.session['player_ids'] = list(actual_player_ids)
+    
+    # Return whether an update is needed
+    return JsonResponse({
+        'update': current_player_count != actual_player_count or current_player_ids != actual_player_ids
+    })
 
 
 def loading_page(request):
@@ -429,6 +537,18 @@ def edit_logos(request, logo_id):
     }
 
     return render(request, 'quiz_site/logos.html', context)
+
+
+def delete_logos(request, logo_id):
+    """
+    View to delete a specific logo from the database
+    """
+    logo = get_object_or_404(Logos, pk=logo_id)
+    logo_name = logo.company  # Store the name before deletion for the message
+    logo.delete()
+    messages.success(request, f'Logo "{logo_name}" deleted successfully.')
+    
+    return redirect('logos')
 
 
 def jets(request):
