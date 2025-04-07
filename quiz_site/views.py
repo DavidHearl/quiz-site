@@ -70,8 +70,6 @@ The question sets are created for the active quiz.
 def quiz_home(request):
     users = User.objects.all()
     rounds = Rounds.objects.all()
-    import random
-    import string
 
     # Get the most recently created quiz
     latest_quiz = Quiz.objects.order_by('-date_created').first()
@@ -101,7 +99,35 @@ def quiz_home(request):
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
     }
+
+    # Initialize dictionary to store previously seen questions by round
+    previously_seen_questions = {round_name: set() for round_name in db_mapping.keys()}
     
+    # Get all quizzes that current players have participated in
+    if current_players:
+        player_quizzes = Quiz.objects.filter(players__in=current_players).distinct()
+        
+        # Extract previously seen question IDs for each round
+        for quiz in player_quizzes:
+            if not quiz.random_numbers:
+                continue
+                
+            for round_name, question_ids in quiz.random_numbers.items():
+                if round_name not in previously_seen_questions:
+                    continue
+                    
+                # Handle different structures of question_ids
+                if isinstance(question_ids, list):
+                    if any(isinstance(x, list) for x in question_ids):
+                        # Handle nested lists (like for "Who is the Oldest")
+                        flattened = [item for sublist in question_ids for item in 
+                                     (sublist if isinstance(sublist, list) else [sublist])]
+                        previously_seen_questions[round_name].update(flattened)
+                    else:
+                        previously_seen_questions[round_name].update(question_ids)
+                else:
+                    previously_seen_questions[round_name].add(question_ids)
+
     # Count available questions for each round
     question_counts = {}
     for round_name, model in db_mapping.items():
@@ -171,6 +197,10 @@ def quiz_home(request):
         elif round_name == "Capital Cities":
             base_query = base_query.filter(capital__isnull=False).exclude(capital='')
             
+        # Exclude questions previously seen by current players
+        if previously_seen_questions[round_name]:
+            base_query = base_query.exclude(id__in=previously_seen_questions[round_name])
+        
         # Count questions in special way for "Who is the Oldest"
         if round_name == "Who is the Oldest":
             total_celebrities = base_query.count()
