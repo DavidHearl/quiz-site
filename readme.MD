@@ -6,7 +6,6 @@
 - Rounding errors on the numbers movie release dates
 - People can still cheat
 - If the timer times out the quiz will break as the user has not submitted an answer
-- David is still present in the results
 - Assign a player as the quiz master and use that instead of 'david'
 
 
