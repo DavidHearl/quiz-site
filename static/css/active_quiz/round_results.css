@@ -64,7 +64,8 @@
     font-size: 16px;
     cursor: pointer;
     background-color: rgb(48, 182, 215);
-    border-radius: 4px;
+    border-radius: 8px;
+    border: 1px solid black;
 }
 
 .submit-button{
@@ -74,8 +75,7 @@
 
 .next-button {
     margin-top: 16px;
-    padding: 8px 16px;
-    border: 1px solid white;
+    padding: 8px;
 }
 
 .next-button:hover,
@@ -122,4 +122,54 @@
 .partial {
     background-color: rgb(255, 255, 116);
     color: black;
+}
+
+@media (max-width: 600px) {
+    .results-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .player-result {
+        padding: 6px;
+        font-size: 0.9rem;
+    }
+
+    .quiz-title {
+        font-size: 1rem;
+        padding: 6px;
+    }
+
+    .score-input {
+        width: 40px;
+        padding: 4px 6px;
+    }
+
+    .submit-button,
+    .next-button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .next-button {
+        margin: 12px 0;
+    }
+
+    .answer-list li {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+    }
+
+    .player-answer {
+        font-size: 0.8rem;
+        padding: 4px 0;
+    }
+
+    .answer-value {
+        font-size: 0.8rem;
+    }
+
+    .answer-point {
+        margin-left: 10px;
+    }
 }

@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import *
+
 
 class QuizSelectionForm(forms.Form):
     quiz_name = forms.CharField(max_length=200)
@@ -15,6 +17,18 @@ class QuizSelectionForm(forms.Form):
     class Meta:
         model = Quiz
         fields = ['quiz_name', 'users', 'rounds', 'exclude_previous']
+
+
+class CustomUserCreationForm(UserCreationForm):
+    """
+    A form that creates a user, with no email field and with
+    the option to upload a profile image.
+    """
+    player_photo = forms.ImageField(required=False)
+    
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
 
 
 # -------------------------------------------------------------------------------

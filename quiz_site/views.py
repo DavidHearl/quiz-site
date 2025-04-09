@@ -12,6 +12,31 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 
 
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Create the user
+            user = form.save()
+            
+            # Create or update the player profile
+            player, created = Player.objects.get_or_create(user=user)
+            
+            # Save the photo if provided
+            if 'player_photo' in request.FILES:
+                player.player_photo = request.FILES['player_photo']
+                player.save()
+                
+            # Log the user in
+            login(request, user)
+            
+            # Redirect to home page
+            return redirect('home')
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'registration/register.html', {'form': form})
+
 '''
 Home, the user can select to be a quiz master or a player and enter a code
 '''

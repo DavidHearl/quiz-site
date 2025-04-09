@@ -1,59 +1,238 @@
 {% extends "base.html" %}
-{% load allauth i18n %}
-{% load allauth account socialaccount %}
-
-{% block head_title %}
-    {% trans "Signup" %}
-{% endblock head_title %}
 
 {% block content %}
-    <div class="auth-container">
-        <div class="auth-with-fields">
-            <h2 class="auth-primary">Register</h2>
-            
-            <form method="post" action="{{ action_url }}" class="entrance login">
-                {% csrf_token %}
-            
-                <div class="form-group">
-                    <label class="form-label" for="id_username">{% trans "Username" %}</label>
-                    <input type="text" name="username" class="form-control" required id="id_username">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="id_email">{% trans "Email" %}</label>
-                    <input type="email" name="email" class="form-control" required id="id_email">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="id_email2">{% trans "Confirm Email" %}</label>
-                    <input type="email" name="email2" class="form-control" required id="id_email2">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="id_password1">{% trans "Password" %}</label>
-                    <input type="password" name="password1" class="form-control" required id="id_password1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="id_password2">{% trans "Confirm Password" %}</label>
-                    <input type="password" name="password2" class="form-control" required id="id_password2">
-                </div>
-            
-                {% if redirect_field_value %}
-                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                {% endif %}
-                
-                <button type="submit" class="auth-button login-button">{% trans "Register" %}</button>
-            </form>
+<style>
+  /* Main container */
+  .signup-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    background: linear-gradient(to bottom right, #ffffff, #f5f7fa);
+  }
+  
+  /* Headings */
+  .signup-heading {
+    text-align: center;
+    color: #2d3748;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 28px;
+  }
+  
+  /* Error messages */
+  .error-container {
+    color: #e53e3e;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-left: 4px solid #e53e3e;
+    background-color: rgba(229, 62, 62, 0.1);
+    border-radius: 4px;
+  }
+  
+  .error-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  /* Form fields */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4a5568;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+  
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+  }
+  
+  .help-text {
+    display: block;
+    color: #718096;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  /* Photo upload */
+.photo-upload-container {
+    border: 2px dashed #cbd5e0;
+    padding: 20px;
+    border-radius: 6px;
+    text-align: center;
+    background-color: #f7fafc;
+    margin-bottom: 25px;
+}
+  
+.file-input {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 15px;
+    background: linear-gradient(to right, #4299e1, #3182ce);
+    color: white;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+    border: none;
+    width: auto;
+}
 
-            <div class="auth-secondary">
-                {% blocktrans %}
-                    <p class="auth-link1">Already have an account?</p>
-                    <a class="auth-link2" href="{{ login_url }}">Login</a>
-                {% endblocktrans %}
-            </div>
-        </div>
-    </div>
+.file-input:hover {
+    background: linear-gradient(to right, #3182ce, #2b6cb0);
+    transform: translateY(-2px);
+}
 
-    {% url 'account_signup' as action_url %}
+.file-input::before {
+  display: inline-block;
+  cursor: pointer;
+}
+  
+  .file-name {
+    margin-top: 10px;
+    color: #718096;
+    font-size: 14px;
+  }
+  
+  .photo-hint {
+    margin-top: 5px;
+    color: #718096;
+    font-size: 14px;
+  }
+  
+  /* Submit button */
+  .submit-button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #3182ce, #2b6cb0);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(49, 130, 206, 0.3);
+  }
+  
+  .submit-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Login link */
+  .login-container {
+    margin-top: 25px;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+  }
+  
+  .login-text {
+    color: #718096;
+    font-size: 15px;
+  }
+  
+  .login-link {
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  .login-link:hover {
+    color: #2b6cb0;
+    text-decoration: underline;
+  }
 
-   
+  #id_username,
+  #id_password1,
+  #id_password2 {
+    box-sizing: border-box;
+  }
+</style>
 
+<div class="signup-container">
+  <h2 class="signup-heading">Create Account</h2>
+  
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     
-{% endblock content %}
+    {% if form.errors %}
+    <div class="error-container">
+      <p class="error-title">There was an error with your registration:</p>
+      {{ form.errors }}
+    </div>
+    {% endif %}
+    
+    <div class="form-group">
+      <label class="form-label" for="{{ form.username.id_for_label }}">Username:</label>
+      {{ form.username }}
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label" for="{{ form.password1.id_for_label }}">Password:</label>
+      {{ form.password1 }}
+      <small class="help-text">{{ form.password1.help_text }}</small>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label" for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+      {{ form.password2 }}
+    </div>
+    
+    <div class="photo-upload-container">
+        <input type="file" name="{{ form.player_photo.html_name }}" id="{{ form.player_photo.id_for_label }}" class="file-input">
+        <p class="file-name" id="file-name">No file selected</p>
+        <p class="photo-hint">Add your photo to personalize your profile</p>
+      </div>
+    
+    <button type="submit" class="submit-button">Register</button>
+  </form>
+  
+  <div class="login-container">
+    <p class="login-text">Already have an account? <a href="{% url 'account_login' %}" class="login-link">Login</a></p>
+  </div>
+</div>
+
+<script>
+  // File upload functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    var fileInput = document.getElementById('{{ form.player_photo.id_for_label }}');
+    var fileNameDisplay = document.getElementById('file-name');
+    
+    if (fileInput && fileNameDisplay) {
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          fileNameDisplay.textContent = this.files[0].name;
+        } else {
+          fileNameDisplay.textContent = 'No file selected';
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

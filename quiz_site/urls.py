@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from . import views
 
 urlpatterns = [
+    path('register/', views.register, name='register'),
     path('loading/', views.loading_page, name='loading_page'),
     path('check_players_update/', views.check_players_update, name='check_players_update'),
     path('general_knowledge/', views.general_knowledge, name='general_knowledge'),
