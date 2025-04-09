@@ -253,6 +253,39 @@
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+.countdown-timer {
+    position: fixed;
+    top: 10px;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust to true center */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    z-index: 1000;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.countdown-timer span {
+    font-weight: bold;
+}
+
+/* Add a subtle animation for the timer when it's low */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.countdown-timer.critical {
+    background-color: rgba(220, 20, 20, 0.8);
+    animation: pulse 1s infinite;
+}
+
 @media (max-width: 600px) {
     .player-information {
         width: 40%;

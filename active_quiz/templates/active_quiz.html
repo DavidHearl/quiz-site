@@ -69,27 +69,29 @@
                 }
             });
         }
+
+        function updateTimer(seconds) {
+            const timerElement = document.querySelector('.countdown-timer span');
+            if (timerElement) {
+                timerElement.textContent = seconds;
+                
+                // Add critical class for low time
+                const timerContainer = document.querySelector('.countdown-timer');
+                if (seconds <= 10) {
+                    timerContainer.classList.add('critical');
+                } else {
+                    timerContainer.classList.remove('critical');
+                }
+            }
+        }
     </script>
 
     <div class="container">
         <h1 class="quiz-title">{{ quiz.quiz_name }} ({{ current_round }}) {{ quiz.question_counter }}</h1>
 
-        <div id="countdown-timer" class="countdown-timer" style="display: none;">
-            <p>Time remaining: <span id="countdown-seconds">5</span> seconds</p>
+        <div class="countdown-timer" id="countdown-timer" style="display: none;">
+            ⏱️ <span id="countdown-seconds">0</span>
         </div>
-        
-        <style>
-            .countdown-timer {
-                background-color: #ff9900;
-                color: white;
-                padding: 10px 15px;
-                border-radius: 5px;
-                text-align: center;
-                font-weight: bold;
-                margin: 10px auto;
-                max-width: 300px;
-            }
-        </style>
 
         <div class="quiz-container">
             <div class="question-container">

@@ -9,9 +9,13 @@ from datetime import datetime
 import Levenshtein
 from Levenshtein import distance as levenshtein_distance
 import logging
+from django.utils import timezone
+import math
 
 
 logger = logging.getLogger(__name__)
+
+QUESTION_TIMER = 30
 
 '''
 Main function that controls the active quiz page.
@@ -132,16 +136,13 @@ def print_player_data(request):
         if total_players > 1 and answered_count >= total_players - 1:
             # If countdown hasn't started yet, set it now
             if not quiz.countdown_start_time:
-                from django.utils import timezone
                 quiz.countdown_start_time = timezone.now()
                 quiz.save()
                 print("Debug - Starting countdown timer")
             
-            # Calculate remaining seconds
-            from django.utils import timezone
-            import math
+            # Timer to skip next question
             elapsed = (timezone.now() - quiz.countdown_start_time).total_seconds()
-            remaining = max(0, 10 - math.floor(elapsed))  # Using 10 seconds as requested
+            remaining = max(0, QUESTION_TIMER - math.floor(elapsed))
             
             countdown_active = True
             countdown_seconds = remaining
