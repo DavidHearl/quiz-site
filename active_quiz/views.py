@@ -185,7 +185,14 @@ def print_player_data(request):
 @login_required
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
-    players = quiz.players.all()
+    
+    # Fix player selection logic
+    if request.user.username == 'david':
+        # Quiz master sees all players except themselves
+        players = quiz.players.exclude(username='david')
+    else:
+        # Regular player only sees their own results
+        players = User.objects.filter(id=request.user.id)
     
     # Get the last round name from quiz.correct_answers
     if quiz.correct_answers:
