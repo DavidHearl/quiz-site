@@ -141,7 +141,14 @@
                     {% for player in quiz.players.all %}
                         {% if player.username != 'david' %}
                             <div class="player-information" id="{{ player.username }}">
-                                <h2 class="player-name">{{ player }}</h2>
+                                <div class="player-photo-container">
+                                    {% if player.player and player.player.player_photo %}
+                                        <img src="{{ player.player.player_photo.url }}" alt="{{ player.username }}" class="player-photo">
+                                    {% else %}
+                                        <div class="player-initial">{{ player.username|make_list|first|upper }}</div>
+                                    {% endif %}
+                                </div>
+                                <h2 class="player-name">{{ player.username }}</h2>
                             </div>
                         {% endif %}
                     {% endfor %}

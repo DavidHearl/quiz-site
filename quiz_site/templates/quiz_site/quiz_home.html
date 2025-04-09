@@ -64,8 +64,14 @@
                         <div class="player-list">
                             {% for player in current_players %}
                                 <div class="player-item">
-                                    <span class="player-initial">{{ player.username|make_list|first|upper }}</span>
-                                    <span class="player-name">{{ player.username }}</span>
+                                    <div class="player-photo-container">
+                                        {% if player.player and player.player.player_photo %}
+                                            <img src="{{ player.player.player_photo.url }}" alt="{{ player.username }}" class="player-photo">
+                                        {% else %}
+                                            <div class="player-initial">{{ player.username|make_list|first|upper }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="player-name">{{ player.username }}</div>
                                 </div>
                             {% endfor %}
                         </div>

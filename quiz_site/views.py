@@ -76,7 +76,7 @@ def quiz_home(request):
     
     current_players = []
     if latest_quiz:
-        current_players = latest_quiz.players.exclude(username='david').all()
+        current_players = latest_quiz.players.exclude(username='david')
 
     db_mapping = {
         "General Knowledge": GeneralKnowledge,
