@@ -15,7 +15,7 @@ import math
 
 logger = logging.getLogger(__name__)
 
-QUESTION_TIMER = 30
+QUESTION_TIMER = 300
 
 '''
 Main function that controls the active quiz page.

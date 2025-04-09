@@ -1,21 +1,27 @@
-## Issues
-- Which film is the oldest
-- everyone sees everyones round results, make it so only the person sees their scores
-- Timer from last entry
+## To Do
+
+### Questions
+- Which film is the oldest needs to be finished
 - Disable re entry in who is the imposter
 - Rounding errors on the numbers movie release dates
 - People can still cheat
-- If the timer times out the quiz will break as the user has not submitted an answer
-- Assign a player as the quiz master and use that instead of 'david'
 
+### Timer
+- Timer will automatically skip to the next question without submitting an answer for the player.
+- Timer needs to show the correct answer before it moves on to the next question
 
-## Notes
-Login Proceedure..
+### General
+- Assign a player as the quiz master and use that instead of 'david' so there can be more quiz masters
+- Create a quiz master property in the model.
 
-Find ip
-ipconfig getifaddr en0
+## Setup Proceedure
+Get the IP address of the machine running the program
+
+Windows : ``` ipconfig ```
+
+Mac OS : ``` ipconfig getifaddr en0 ```
+
+```
+# Run the website/server
 python3 manage.py runserver 0.0.0.0:8000
-
-enter in ip of the mac + :8000
-
-
+```

@@ -17,11 +17,11 @@
                 <div class="text-input-div">
                     <div class="text-answer">
                         <label class="text-answer-label" for="first_name">First Name:</label>
-                        <input type="text" class="text-input" id="first_name" name="first_name">
+                        <input type="text" class="text-input" id="first_name" name="first_name" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
                     </div>
                     <div class="text-answer">
                         <label class="text-answer-label" for="last_name">Last Name:</label>
-                        <input type="text" class="text-input" id="last_name" name="last_name">
+                        <input type="text" class="text-input" id="last_name" name="last_name" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
                     </div>
                 </div>
             {% endif %}
@@ -33,7 +33,7 @@
                         <button class="submit-button" id="submit" type="submit">Next</button>
                     </div>
                 {% else %}
-                    <button class="submit-button" id="submit" type="submit">Submit</button>
+                    <button class="submit-button" id="submit" type="submit" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
                 {% endif %}
             </div>
         </form>

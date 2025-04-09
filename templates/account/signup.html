@@ -5,8 +5,8 @@
   /* Main container */
   .signup-container {
     max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
+    margin: 16px auto;
+    padding: 24px;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
     background: linear-gradient(to bottom right, #ffffff, #f5f7fa);
@@ -16,9 +16,9 @@
   .signup-heading {
     text-align: center;
     color: #2d3748;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     font-weight: 600;
-    font-size: 28px;
+    font-size: 1.5rem;
   }
   
   /* Error messages */
@@ -38,7 +38,7 @@
   
   /* Form fields */
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
   
   .form-label {
@@ -85,14 +85,13 @@
 .file-input {
     display: inline-block;
     text-align: center;
-    padding: 10px 15px;
+    padding: 8px 16px;
     background: linear-gradient(to right, #4299e1, #3182ce);
     color: white;
     border-radius: 4px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    margin-bottom: 10px;
     border: none;
     width: auto;
 }
@@ -145,10 +144,10 @@
   
   /* Login link */
   .login-container {
-    margin-top: 25px;
+    margin-top: 20px;
     text-align: center;
     border-top: 1px solid #e2e8f0;
-    padding-top: 20px;
+    padding-top: 16px;
   }
   
   .login-text {
@@ -173,6 +172,17 @@
   #id_password2 {
     box-sizing: border-box;
   }
+
+.help-text ul {
+    margin: 12px 0 0 20px;
+    font-size: 0.75rem ;
+}
+
+@media (max-width: 600px) {
+    .signup-container {
+        margin: 0 12px;
+    }
+}
 </style>
 
 <div class="signup-container">
@@ -206,8 +216,6 @@
     
     <div class="photo-upload-container">
         <input type="file" name="{{ form.player_photo.html_name }}" id="{{ form.player_photo.id_for_label }}" class="file-input">
-        <p class="file-name" id="file-name">No file selected</p>
-        <p class="photo-hint">Add your photo to personalize your profile</p>
       </div>
     
     <button type="submit" class="submit-button">Register</button>

@@ -79,6 +79,7 @@
     box-sizing: border-box;
     margin: 0 0 12px 0;
     max-height: 300px;
+    max-width: 100%;
 }
 
 .radio-button {
