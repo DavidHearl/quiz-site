@@ -88,6 +88,33 @@ def home(request):
     return render(request, 'quiz_site/home.html')
 
 
+@login_required
+def manage_quizzes(request):
+    """
+    View to manage all quizzes - list, view details, and delete
+    """
+    # Get all quizzes ordered by most recent first
+    quizzes = Quiz.objects.all().order_by('-date_created')
+    
+    if request.method == 'POST':
+        if 'delete_quiz' in request.POST:
+            quiz_id = request.POST.get('delete_quiz')
+            try:
+                quiz = Quiz.objects.get(id=quiz_id)
+                quiz_name = quiz.quiz_name
+                quiz.delete()
+                messages.success(request, f'Quiz "{quiz_name}" has been deleted.')
+            except Quiz.DoesNotExist:
+                messages.error(request, 'Quiz not found.')
+            return redirect('manage_quizzes')
+    
+    context = {
+        'quizzes': quizzes,
+    }
+    
+    return render(request, 'quiz_site/manage_quizzes.html', context)
+
+
 '''
 This view is used to create the quiz. The user can select the players, rounds and the quiz name.
 The question sets are created for the active quiz.
