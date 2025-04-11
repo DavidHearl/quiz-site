@@ -14,6 +14,28 @@
 - Assign a player as the quiz master and use that instead of 'david' so there can be more quiz masters
 - Create a quiz master property in the model.
 
+### Cheating Check
+[] Flags
+[x] General Knowledge
+[] Capital Cities
+[] Celebrities
+[] Fighter Jets
+[] Logos
+[] Celebrity Age
+[] True or False
+[] Whos the oldest
+[] Movie Release Dates (Unfinished)
+[x] History
+[x] Maths
+[x] Entertainment
+[x] Pop Culture
+[x] Mythology
+[x] Technology
+[x] Geography
+[x] Science
+[x] Sport
+
+
 ## Setup Proceedure
 Get the IP address of the machine running the program
 

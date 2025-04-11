@@ -15,11 +15,12 @@
             {% if request.user.username != 'david' %}
                 {% for choice in gk_choices %}
                     <div class="multiple-choice">
-                        <input type="radio" class="radio-button" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}">
+                        <input type="radio" class="radio-button" id="choice_{{ forloop.counter }}" name="answer" value="{{ choice }}"
+                            {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
                         <label class="multiple-choice-label" for="choice_{{ forloop.counter }}">{{ choice }}</label>
                     </div>
                 {% endfor %}
-                <button type="submit" class="submit-button">Submit</button>
+                <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
             {% else %}
                 {% for choice in gk_choices %}
                     <div class="multiple-choice">
