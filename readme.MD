@@ -13,14 +13,15 @@
 ### General
 - Assign a player as the quiz master and use that instead of 'david' so there can be more quiz masters
 - Create a quiz master property in the model.
+- Replace the 'meat' in the question templates with 'include' clauses.
 
-### Cheating Check
-[] Flags
+### Cheating Check : 11/04/2025
+[x] Flags
 [x] General Knowledge
-[] Capital Cities
-[] Celebrities
-[] Fighter Jets
-[] Logos
+[x] Capital Cities
+[x] Celebrities
+[x] Fighter Jets
+[x] Logos
 [] Celebrity Age
 [] True or False
 [] Whos the oldest
@@ -47,3 +48,5 @@ Mac OS : ``` ipconfig getifaddr en0 ```
 # Run the website/server
 python3 manage.py runserver 0.0.0.0:8000
 ```
+
+## Virtual Environment

@@ -33,7 +33,7 @@
                 <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
                 <button id="submit" type="submit" class="submit-button">Next</button>
             {% else %}
-                <button id="submit" type="submit" class="submit-button">Submit</button>
+                <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
             {% endif %}
             
         </form>

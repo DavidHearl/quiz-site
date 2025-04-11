@@ -30,7 +30,7 @@
             {% if request.user.username == 'david' %}
                 <button class="next-button" type="submit" id="next-button">Next</button>
             {% else %}
-                <button class="next-button" type="submit" id="next-button">Submit</button>
+                <button type="submit" class="next-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
             {% endif %}
         </form>
     </div>
