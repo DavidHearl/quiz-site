@@ -22,9 +22,9 @@
 [x] Celebrities
 [x] Fighter Jets
 [x] Logos
-[] Celebrity Age
-[] True or False
-[] Whos the oldest
+[x] Celebrity Age
+[x] True or False
+[x] Whos the oldest
 [] Movie Release Dates (Unfinished)
 [x] History
 [x] Maths

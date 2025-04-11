@@ -158,3 +158,19 @@
     margin-top: 0;
     width: 100%;
 }
+
+@media (max-width: 600px) {
+    .celebrity-image {
+        width: 90px;
+        height: 90px;
+    }
+
+    .move-buttons button {
+        height: 90px;
+        padding: 4px 12px;
+    }
+
+    .celebrity-name {
+        font-size: 0.8rem;
+    }
+}

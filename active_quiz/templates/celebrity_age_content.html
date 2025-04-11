@@ -18,7 +18,7 @@
             {% if request.user.username == 'david' %}
                 <button type="button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
             {% else %}
-                <button type="submit" class="submit-button">Submit</button>
+                <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
             {% endif %}
         </form>
     </div>
