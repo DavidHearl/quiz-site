@@ -7,127 +7,134 @@
 {% endblock %}
 
 {% block content %}
-    <div class="database-container">
-
-        <div class="data-card data-card-search">
+    <div class="celebs-container">
+        <!-- Search Section -->
+        <div class="search-container">
             <label class="field-label" for="id_celebrity_search">Search Celebrities:</label>
-            <input type="text" id="celebrity_search" onkeyup="filterCelebrities()" placeholder="Search for names..">
-        
-            <div id="celebrity_list" class="scrollable-list">
-                {% for celebrity in celebrities %}
-                    <div class="celebrity-card">
-                        <p class="celebrity-search-item">{{ celebrity.first_name }} {{ celebrity.last_name }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+            <input type="text" id="celebrity_search" onkeyup="filterCelebrities()" placeholder="Search for names...">
         </div>
         
-        <div class="data-card">
+        <!-- Add New Celebrity Section -->
+        <div class="add-new-container">
+            <div class="add-new-title">Add New Celebrity</div>
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                <!-- First Name -->
-                <div>
-                    <label class="field-label" for="id_first_name">First Name:</label>
-                    <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
-                </div>
-
-                <!-- Last Name -->
-                <div>
-                    <label class="field-label" for="id_last_name">Last Name:</label>
-                    <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
-                </div>
-                    
-                <!-- Placeholder Image -->
-                <div class="flex">
-                    <div class="image-placeholder">Placeholder</div>
-                </div>
-
-                <!-- Photo Button -->
-                <div>
-                    <label class="field-label" for="id_photo">Photo:</label>
-                    <input id="id_photo" type="file" name="photo">
-                </div>
-
-                <!-- Date of Birth -->
-                <div class="column-flex">
-                    <label class="field-label" for="id_date_of_birth">Birthday:</label>
-                    <input id="id_date_of_birth" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
-                </div>
-
-                <!-- Difficulty -->
-                <div class="column-flex">
-                    <label class="field-label" for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ celebrity.difficulty }}">
-                </div>
-
-                <button class="submit" type="submit">Submit</button>
-            </form> 
-        </div>
-
-        {% for celebrity in celebrities %}
-            <div class="data-card">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_celebrities' celebrity.id %}">
-                    {% csrf_token %}
-
-                    <!-- First Name -->
-                    <div>
-                        <label class="field-label" for="id_flag">First Name:</label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="field-label" for="id_first_name">First Name:</label>
                         <input id="id_first_name" type="text" name="first_name" value="{{ celebrity.first_name }}">
                     </div>
-
-                    <!-- Last Name -->
-                    <div>
-                        <label class="field-label" for="id_flag">Last Name:</label>
+                    
+                    <div class="form-group">
+                        <label class="field-label" for="id_last_name">Last Name:</label>
                         <input id="id_last_name" type="text" name="last_name" value="{{ celebrity.last_name }}">
                     </div>
                     
-                    <!-- Celebrity Photo -->
-                    <div class="flex">
-                        {% if celebrity.photo %}
-                            <img class="card-image" src="{{ celebrity.photo.url }}" alt="">
-                        {% endif %}
-                    </div>
-
-                    <!-- Photo Button -->
-                    <div>
+                    <div class="form-group">
                         <label class="field-label" for="id_photo">Photo:</label>
                         <input id="id_photo" type="file" name="photo">
                     </div>
-
-                    <!-- Date of Birth -->
-                    <div class="column-flex">
+                    
+                    <div class="form-group">
                         <label class="field-label" for="id_date_of_birth">Birthday:</label>
-                        <input id="id_date_of_birth" class="{% if celebrity.date_of_birth == None %}missing{% endif %}" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
+                        <input id="id_date_of_birth" type="date" name="date_of_birth" value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
                     </div>
-
-                    <!-- Difficulty -->
-                    <div class="column-flex">
+                    
+                    <div class="form-group">
                         <label class="field-label" for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if celebrity.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ celebrity.difficulty }}">
+                        <input id="id_difficulty" type="text" name="difficulty" value="{{ celebrity.difficulty }}">
                     </div>
-
-                    <button class="submit" type="submit">Save</button>
-                </form>
+                    
+                    <div class="form-group submit-group">
+                        <button class="btn btn-primary" type="submit">Add Celebrity</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Table-like Listing -->
+        <div class="table-container">
+            <!-- Table Header -->
+            <div class="table-header">
+                <div class="table-cell photo-cell">Photo</div>
+                <div class="table-cell name-cell">First Name</div>
+                <div class="table-cell name-cell">Last Name</div>
+                <div class="table-cell upload-cell">Upload</div>
+                <div class="table-cell date-cell">Birthday</div>
+                <div class="table-cell diff-cell">Difficulty</div>
+                <div class="table-cell action-cell">Action</div>
             </div>
-        {% endfor %}
+            
+            <!-- Table Rows -->
+            <div id="celebrity-rows">
+                {% for celebrity in celebrities %}
+                <div class="table-row" data-name="{{ celebrity.first_name }} {{ celebrity.last_name }}">
+                    <form class="table-form" method="post" enctype="multipart/form-data" action="{% url 'edit_celebrities' celebrity.id %}">
+                        {% csrf_token %}
+                        
+                        <!-- Photo Cell -->
+                        <div class="table-cell photo-cell">
+                            {% if celebrity.photo %}
+                                <img class="celebrity-img" src="{{ celebrity.photo.url }}" alt="{{ celebrity.first_name }}">
+                            {% else %}
+                                <div class="celebrity-img placeholder-img">
+                                    {{ celebrity.first_name|first }}{{ celebrity.last_name|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- First Name Cell -->
+                        <div class="table-cell name-cell">
+                            <input type="text" name="first_name" value="{{ celebrity.first_name }}">
+                        </div>
+                        
+                        <!-- Last Name Cell -->
+                        <div class="table-cell name-cell">
+                            <input type="text" name="last_name" value="{{ celebrity.last_name }}">
+                        </div>
+                        
+                        <!-- Photo Upload Cell -->
+                        <div class="table-cell upload-cell">
+                            <input type="file" name="photo">
+                        </div>
+                        
+                        <!-- Date of Birth Cell -->
+                        <div class="table-cell date-cell">
+                            <input type="date" name="date_of_birth" class="{% if celebrity.date_of_birth == None %}missing{% endif %}"
+                                   value="{{ celebrity.date_of_birth|date:'Y-m-d' }}">
+                        </div>
+                        
+                        <!-- Difficulty Cell -->
+                        <div class="table-cell diff-cell">
+                            <input type="text" name="difficulty" class="{% if celebrity.difficulty == None %}missing{% endif %}"
+                                   value="{{ celebrity.difficulty }}">
+                        </div>
+                        
+                        <!-- Action Cell -->
+                        <div class="table-cell action-cell">
+                            <button class="btn btn-save" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     <script>
         function filterCelebrities() {
-            var input, filter, cards, cardContainer, p, i;
-            input = document.getElementById("celebrity_search");
-            filter = input.value.toUpperCase();
-            cardContainer = document.getElementById("celebrity_list");
-            cards = cardContainer.getElementsByClassName("celebrity-card");
-            for (i = 0; i < cards.length; i++) {
-                p = cards[i].getElementsByTagName("p")[0];
-                if (p.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    cards[i].style.display = "";
+            var input = document.getElementById("celebrity_search");
+            var filter = input.value.toUpperCase();
+            var rows = document.querySelectorAll("#celebrity-rows .table-row");
+            
+            rows.forEach(function(row) {
+                var name = row.getAttribute("data-name");
+                if (name.toUpperCase().indexOf(filter) > -1) {
+                    row.style.display = "";
                 } else {
-                    cards[i].style.display = "none";
+                    row.style.display = "none";
                 }
-            }
+            });
         }
     </script>
 {% endblock %}

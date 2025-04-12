@@ -248,6 +248,12 @@ def quiz_home(request):
                 base_query = model.objects.none()
         elif round_name == "Capital Cities":
             base_query = base_query.filter(capital__isnull=False).exclude(capital='')
+        elif round_name == "Movie Release Dates":
+            base_query = Movies.objects.all()
+            print(f"Total movies: {base_query.count()}")
+            base_query = Movies.objects.filter(release_date__isnull=False)
+            print(f"Movies with release dates: {base_query.count()}")
+            
             
         # Exclude questions previously seen by current players
         if previously_seen_questions[round_name]:
