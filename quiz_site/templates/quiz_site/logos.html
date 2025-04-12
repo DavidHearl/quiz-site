@@ -7,97 +7,118 @@
 {% endblock %}
 
 {% block content %}
-    <!-- Add new item -->
-    <div class="database-container">
-        <div class="data-card">
-            <form class="form-containe" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <!-- Company -->
-                <div>
-                    <label for="id_company">Company:</label>
-                    <input id="id_company" type="text" name="company" value="{{ logo.company }}">
-                </div>
-
-                <!-- Placeholder Image -->
-                <div class="flex">
-                    <div class="image-placeholder">Placeholder</div>
-                </div>
-
-                <!-- Logo Image -->
-                <div>
-                    <label for="id_logo">Logo:</label>
-                    <input id="id_logo" type="file" name="logo">
-                </div>
-
-                <!-- Difficulty -->
-                <div class="column-flex">
-                    <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ logo.difficulty }}">
-                </div>
-
-                <button class="submit" type="submit">Submit</button>
-            </form> 
+    <div class="logos-container">
+        <!-- Search Section -->
+        <div class="search-container">
+            <label class="field-label" for="id_logo_search">Search Logos:</label>
+            <input type="text" id="logo_search" onkeyup="filterLogos()" placeholder="Search for companies...">
         </div>
-
-        {% for logo in logos %}
-            <div class="data-card">
-                <form class="form-containe" method="post" enctype="multipart/form-data" action="{% url 'edit_logos' logo.id %}">
-                    {% csrf_token %}
-
-                    <!-- Country -->
-                    <div>
-                        <label for="id_company">Company:</label>
-                        <input id="id_company" type="text" name="company" value="{{ logo.company }}">
+        
+        <!-- Add New Logo Section -->
+        <div class="add-new-container">
+            <div class="add-new-title">Add New Logo</div>
+            <form class="form-container" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="field-label" for="id_company">Company Name:</label>
+                        <input id="id_company" type="text" name="company" value="{{ logo_form.company.value|default:'' }}">
                     </div>
-
-                    <!-- Logo Image -->
-                    <div class="flex">
-                        {% if logo.logo %}
-                            <img class="card-image" src="{{ logo.logo.url }}" alt="">
-                        {% endif %}
-                    </div>
-
-                    <!-- Logo -->
-                    <div>
-                        <label for="id_logo">Logo:</label>
+                    
+                    <div class="form-group">
+                        <label class="field-label" for="id_logo">Logo Image:</label>
                         <input id="id_logo" type="file" name="logo">
                     </div>
-
-                    <!-- Difficulty -->
-                    <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if logo.difficulty == None %}missing{% endif %}" type="text" name="difficulty" value="{{ logo.difficulty }}">
+                    
+                    <div class="form-group">
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
+                        <input id="id_difficulty" type="text" name="difficulty" value="{{ logo_form.difficulty.value|default:'' }}">
                     </div>
-
-                    <div class="button-container">
-                        <button class="submit" type="submit">Save</button>
-                        <a href="{% url 'delete_logos' logo.id %}" class="delete-button">Delete</a>
+                    
+                    <div class="form-group submit-group">
+                        <button class="btn btn-primary" type="submit">Add Logo</button>
                     </div>
-                </form>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Table-like Listing -->
+        <div class="table-container">
+            <!-- Table Header -->
+            <div class="table-header">
+                <div class="table-cell logo-cell">Logo</div>
+                <div class="table-cell company-cell">Company</div>
+                <div class="table-cell upload-cell">Upload</div>
+                <div class="table-cell diff-cell">Difficulty</div>
+                <div class="table-cell action-cell">Actions</div>
             </div>
-        {% endfor %}
+            
+            <!-- Table Rows -->
+                <div id="logo-rows">
+                    {% for logo in logos %}
+                    <div class="table-row" data-name="{{ logo.company }}">
+                        <form class="table-form" method="post" enctype="multipart/form-data" action="{% url 'edit_logos' logo.id %}">
+                            {% csrf_token %}
+                            
+                            <!-- Logo Image Cell -->
+                            <div class="table-cell logo-cell">
+                                {% if logo.logo %}
+                                    <img class="logo-img" src="{{ logo.logo.url }}" alt="{{ logo.company }}">
+                                {% else %}
+                                    <div class="logo-img placeholder-img">
+                                        {{ logo.company|first }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Company Name Cell -->
+                            <div class="table-cell company-cell">
+                                <input type="text" name="company" value="{{ logo.company }}">
+                            </div>
+                            
+                            <!-- Logo Upload Cell -->
+                            <div class="table-cell upload-cell">
+                                <input type="file" name="logo">
+                            </div>
+                            
+                            <!-- Difficulty Cell -->
+                            <div class="table-cell diff-cell">
+                                <input type="text" name="difficulty" class="{% if logo.difficulty == None %}missing{% endif %}" value="{{ logo.difficulty }}">
+                            </div>
+                            
+                            <!-- Action Cell -->
+                            <div class="table-cell action-cell">
+                                <div class="button-group">
+                                    <button class="btn btn-save" type="submit">Save</button>
+                                    <a href="{% url 'delete_logos' logo.id %}" class="btn btn-delete" 
+                                    onclick="return confirm('Are you sure you want to delete {{ logo.company }}?')">Delete</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 
-    <style>
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
+    <script>
+        function filterLogos() {
+            var input = document.getElementById("logo_search");
+            var filter = input.value.toUpperCase();
+            console.log("Filter value:", filter); // Debugging line
+            var rows = document.querySelectorAll("#logo-rows .table-row");
+            rows.forEach(function(row) {
+                var name = row.getAttribute("data-name");
+                console.log("Row data-name:", name); // Debugging line
+                if (name && name.toUpperCase().indexOf(filter) > -1) {
+                    console.log("Match found for:", name); // Debugging line
+                    row.style.display = "";
+                } else {
+                    console.log("No match for:", name); // Debugging line
+                    row.style.display = "none";
+                }
+            });
         }
-        .delete-button {
-            background-color: #ba2121;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .delete-button:hover {
-            background-color: #a41515;
-        }
-    </style>
+    </script>
 {% endblock %}
