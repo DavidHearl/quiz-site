@@ -1,58 +1,214 @@
-.actor {
-    display: flex;
+/* General Layout */
+.movies-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px;
 }
 
-.actor-checkbox {
-    width: 18px;
-    height: 18px;
-    margin-right: 4px;
-    margin-bottom: 4px;
+/* Search Section */
+.search-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Add New Movie Section */
+.add-new-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-new-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #343a40;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Add to your movies.css file */
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-column .form-group {
+    flex: 1;
+    width: 100%;
+}
+
+/* Make the actor container taller to fill the space */
+.form-column .actor-container {
+    max-height: 120px;
+    height: 100%;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .actor-container {
-    max-height: 110px;
+    max-height: 200px;
     overflow-y: auto;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 5px;
+    background-color: white;
 }
 
-.actor-label {
-    padding: 0;
-    margin-top: 0;
-    width: 100%;
-    color: #807e7e;
-    font-size: 0.9rem;
-}
-
-.actor-name {
-    padding: 0;
-    margin-top: 3px;
-    width: 100%;
-    color: #807e7e;
-    font-size: 0.75rem;
-}
-
-.actors-in-film {
-    margin-bottom: 12px;
-    min-height: 116px;
-}
-
-.movie-search-item {
-    color: gray;
-}
-
-#movie_list {
-    padding: 4px;
+.actor {
     display: flex;
-    flex-direction: column;
-    text-align: start;
+    align-items: center;
+    padding: 5px;
 }
 
-input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 1px;
-    text-align: center;
-    margin-bottom: 4px;
-    border: 1px solid black;
-    padding: 8px;
-    border-radius: 8px;
+.actor-checkbox {
+    margin-right: 10px;
+}
+
+.submit-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-start;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background-color: #0069d9;
+}
+
+/* Movies List Table */
+.movies-list {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.movies-table-header {
+    display: flex;
+    background-color: #343a40;
+    color: white;
+    font-weight: bold;
+}
+
+.movie-row {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.movie-row:hover {
+    background-color: #e9ecef;
+}
+
+.movie-col {
+    flex: 1;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.movie-thumbnail {
+    max-height: 60px;
+    max-width: 100px;
+    object-fit: contain;
+}
+
+.actors-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.actor-tag {
+    background-color: #e2e6ea;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.edit-btn {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+    text-decoration: none;
+    color: white;
+}
+
+.missing {
+    background-color: #ffcccc;
+}
+
+.no-image {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .movies-table-header, .movie-row {
+        flex-direction: column;
+    }
+    
+    .movie-col {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .movies-table-header .movie-col {
+        border-bottom: 1px solid #495057;
+    }
 }

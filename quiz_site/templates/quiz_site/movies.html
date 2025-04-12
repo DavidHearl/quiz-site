@@ -1,162 +1,140 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/movies.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/movies.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="database-container">
+<div class="movies-container">
+    <!-- Search Section -->
+    <div class="search-container">
+        <label class="field-label" for="unified_search">Search Movies or Actors:</label>
+        <input type="text" id="unified_search" onkeyup="filterMoviesAndActors()" placeholder="Search for movies or actors...">
+    </div>
 
-        <div class="data-card data-card-search">
-            <label class="field-label" for="id_movie_search">Search Movies:</label>
-            <input type="text" id="movie_search" onkeyup="filterMovies()" placeholder="Search for titles..">
-        
-            <div id="movie_list" class="scrollable-list">
-                {% for movie in movies %}
-                    <div class="movie-card">
-                        <p class="movie-search-item">{{ movie.title }}</p>
+    <!-- Add new movie form -->
+    <div class="add-new-container">
+        <div class="add-new-title">Add New Movie</div>
+        <form class="form-container" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+                <!-- Left Column: Title, Poster, Release Date -->
+                <div class="form-column" style="flex: 1;">
+                    <div class="form-group">
+                        <label class="field-label" for="{{ movie_form.title.id_for_label }}">Title</label>
+                        {{ movie_form.title }}
                     </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="data-card">            
-            <form class="form-containe" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <!-- Title -->
-                <div>
-                    <label class="field-label" for="id_title">Title:</label>
-                    <input id="id_title" type="text" name="title" value="{{ movie.title }}">
-                </div>
-                    
-                <!-- Placeholder Image -->
-                <div class="flex">
-                    <div class="image-placeholder">Placeholder</div>
-                </div>
-
-                <!-- Photo Button -->
-                <div>
-                    <label class="field-label" for="id_poster">Photo:</label>
-                    <input id="id_poster" type="file" name="poster">
-                </div>
-
-                <!-- Actors -->
-                <div class="actors-in-film">
-                    <label class="field-label" for="id_actor_search">Actors:</label>
-                    <input type="text" id="actor_search" onkeyup="filterActors()" placeholder="Search for actors..">
-                    <div class="actor-container" id="actor_list">
-                        {% for choice in movie_form.actors.field.choices %}
-                            <div class="actor">
-                                <input class="actor-checkbox" type="checkbox" name="actors" value="{{ choice.0 }}"
-                                {% if choice.0 in movie_form.actors.value %}checked{% endif %}>
-                                <label class="actor-label">{{ choice.1 }}</label>
-                            </div>
-                        {% endfor %}
+                    <div class="form-group">
+                        <label class="field-label" for="{{ movie_form.poster.id_for_label }}">Poster</label>
+                        {{ movie_form.poster }}
                     </div>
-                </div>
-
-                <!-- Release Date -->
-                <div class="column-flex">
-                    <label class="field-label" for="id_release_date">Release:</label>
-                    <input id="id_release_date" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
-                </div>
-
-                <!-- Difficulty -->
-                <div class="column-flex">
-                    <label class="field-label" for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ movie.difficulty }}">
+                    <div class="form-group">
+                        <label class="field-label" for="{{ movie_form.release_date.id_for_label }}">Release Date</label>
+                        {{ movie_form.release_date }}
+                    </div>
                 </div>
                 
-                <button class="submit" type="submit">Submit</button>
-            </form> 
-        </div>
-
-        {% for movie in movies %}
-            <div class="data-card">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_movies' movie.id %}">
-                    {% csrf_token %}
-
-                    <!-- Title -->
-                    <div>
-                        <label class="field-label" for="id_title">Title:</label>
-                        <input id="id_title" type="text" name="title" value="{{ movie.title }}">
-                    </div>
-                        
-                    <!-- Placeholder Image -->
-                    <div class="flex">
-                        {% if movie.poster %}
-                            <img class="card-image" src="{{ movie.poster.url }}" alt="">
-                        {% endif %}
-                    </div>
-
-                    <!-- Photo Button -->
-                    <div>
-                        <label class="field-label" for="id_poster">Photo:</label>
-                        <input id="id_poster" type="file" name="poster">
-                    </div>
-
-                    <!-- Actors -->
-                    <div class="actors-in-film">
-                        <label class="field-label" for="id_actors">Actors:</label>
-                        <div class="actor-container">
-                            {% for actor in movie.actors.all %}
+                <!-- Right Column: Actors -->
+                {% if movie_form.actors %}
+                <div class="form-column" style="flex: 2;">
+                    <div class="form-group">
+                        <label class="field-label" for="actor_search">Filter actors:</label>
+                        <input type="text" id="actor_search" onkeyup="filterActorsList()" placeholder="Filter actors in list...">
+                        <div class="actor-container" id="actor_list">
+                            {% for choice in movie_form.actors.field.choices %}
                                 <div class="actor">
-                                    <p class="actor-name">{{ actor.first_name }} {{ actor.last_name }}</p>
+                                    <input class="actor-checkbox" type="checkbox" name="actors" value="{{ choice.0 }}" 
+                                        {% if choice.0 in movie_form.actors.value %}checked{% endif %}>
+                                    <label class="actor-label">{{ choice.1 }}</label>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
-
-                    <!-- Release Date -->
-                    <div class="column-flex">
-                        <label class="field-label" for="id_release_date">Release:</label>
-                        <input id="id_release_date" class="{% if movie.release_date == None %}missing{% endif %}" type="date" name="release_date" value="{{ movie.release_date|date:'Y-m-d' }}">
-                    </div>
-
-                    <!-- Difficulty -->
-                    <div class="column-flex">
-                        <label class="field-label" for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" class="{% if movie.difficulty == None %}missing{% endif %}  type="text" name="difficulty" value="{{ movie.difficulty }}">
-                    </div>
-                    
-                    <button class="submit" type="submit">Submit</button>
-                </form> 
+                </div>
+                {% endif %}
             </div>
-        {% endfor %}
+            
+            <button type="submit" class="submit-btn">Add Movie</button>
+        </form>
     </div>
-    <script>
-        function filterMovies() {
-            var input, filter, cards, cardContainer, p, i;
-            input = document.getElementById("movie_search");
-            filter = input.value.toUpperCase();
-            cardContainer = document.getElementById("movie_list");
-            cards = cardContainer.getElementsByClassName("movie-card");
-            for (i = 0; i < cards.length; i++) {
-                p = cards[i].getElementsByTagName("p")[0];
-                if (p.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    cards[i].style.display = "";
-                } else {
-                    cards[i].style.display = "none";
-                }
+
+    <!-- Movies list - Table view -->
+    <div class="movies-list">
+        <div class="movies-table-header">
+            <div class="movie-col">Poster</div>
+            <div class="movie-col">Title</div>
+            <div class="movie-col">Release Date</div>
+            <div class="movie-col" style="flex: 2;">Actors</div>
+        </div>
+        
+        <div id="movies_table" class="movies-table-body">
+            {% for movie in movies %}
+            <div class="movie-row">
+                <div class="movie-col">
+                    {% if movie.poster %}
+                    <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-thumbnail">
+                    {% else %}
+                    <span class="no-image">No Image</span>
+                    {% endif %}
+                </div>
+                <div class="movie-col">{{ movie.title }}</div>
+                <div class="movie-col">{{ movie.release_date|date:"Y" }}</div>
+                <div class="movie-col actors-list" style="flex: 2;">
+                    {% for actor in movie.actors.all %}
+                    <span class="actor-tag">{{ actor.first_name }} {{ actor.last_name }}</span>
+                    {% empty %}
+                    <span class="no-actors">No actors</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="movie-row">
+                <div class="movie-col" style="flex: 5">No movies added yet.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Unified search function for movies and actors
+    function filterMoviesAndActors() {
+        var input = document.getElementById("unified_search");
+        var filter = input.value.toUpperCase();
+        var rows = document.getElementsByClassName("movie-row");
+        
+        for (var i = 0; i < rows.length; i++) {
+            var titleCol = rows[i].getElementsByClassName("movie-col")[1]; // Title column
+            var actorsCol = rows[i].getElementsByClassName("movie-col")[3]; // Actors column
+            var title = titleCol ? (titleCol.textContent || titleCol.innerText) : "";
+            var actors = actorsCol ? (actorsCol.textContent || actorsCol.innerText) : "";
+            
+            if (title.toUpperCase().indexOf(filter) > -1 || actors.toUpperCase().indexOf(filter) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
             }
         }
-
-        function filterActors() {
-            var input, filter, actors, actorContainer, label, i;
-            input = document.getElementById("actor_search");
-            filter = input.value.toUpperCase();
-            actorContainer = document.getElementById("actor_list");
-            actors = actorContainer.getElementsByClassName("actor");
-            for (i = 0; i < actors.length; i++) {
-                label = actors[i].getElementsByTagName("label")[0];
-                if (label.innerHTML.toUpperCase().indexOf(filter) > -1) {
+    }
+    
+    // Filter actors in the add/edit form
+    function filterActorsList() {
+        var input = document.getElementById("actor_search");
+        var filter = input.value.toUpperCase();
+        var actors = document.getElementsByClassName("actor");
+        
+        for (var i = 0; i < actors.length; i++) {
+            var label = actors[i].getElementsByClassName("actor-label")[0];
+            if (label) {
+                var text = label.textContent || label.innerText;
+                if (text.toUpperCase().indexOf(filter) > -1) {
                     actors[i].style.display = "";
                 } else {
                     actors[i].style.display = "none";
                 }
             }
         }
-    </script>
+    }
+</script>
 {% endblock %}

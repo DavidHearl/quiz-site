@@ -581,7 +581,11 @@ def edit_flags(request, flag_id):
 
 def logos(request):
     users = User.objects.all()
-    logos = Logos.objects.all()
+    logos = Logos.objects.all().order_by(
+        models.F('logo').asc(nulls_first=True),  # Put nulls (no logo) first
+        'company'  # Then sort alphabetically by company name
+    )
+    logo_form = LogoForm()
     logo_form = LogoForm()
 
     if request.method == 'POST':
