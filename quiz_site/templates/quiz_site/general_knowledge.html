@@ -1,153 +1,214 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load custom_filters %}
 
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/general_knowledge.css' %}">
-    <style>
-        .missing-category {
-            background-color: darkred;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
     <div class="database-container">
-        <!-- Category Counts -->
-        <div class="data-card">
-            <div class="category-counts">
-                <h2>Category Counts</h2>
-                <ul class="category-list">
-                    {% for category, count in category_counts.items %}
-                        <li class="cat-count">
-                            <p>{{ category }}:</p>
-                            <p>{{ count }}</p>
-                        </li>
-                        <hr class="category-separator">
-                    {% endfor %}
-                </ul>
-                <form method="get" class="form-container" id="filter-container">
-                    <label for="category_filter">Filter by Category:</label>
-                    <select id="category_filter" name="category" onchange="this.form.submit()">
-                        <option value="">All Categories</option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.category }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <div class="category-tab {% if not selected_category %}active{% endif %}" data-category="">
+                All Categories
+                <span class="category-count">{{ total_questions_count }}</span>
             </div>
+            {% for category in categories %}
+                <div class="category-tab {% if selected_category == category.id|stringformat:'s' %}active{% endif %}" 
+                     data-category="{{ category.id }}">
+                    {{ category.category }}
+                    <span class="category-count">{{ category_counts|get_item:category.category }}</span>
+                </div>
+            {% endfor %}
         </div>
 
-        <div class="data-card data-card-medium create-input">
-            <form class="form-container" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="question-row-gk">
-                    <!-- Question -->
-                    <div>
-                        <label class="field-label" for="id_question">Question:</label>
-                        <textarea class="question-input" id="id_question" name="question" rows="2">{{ general_knowledge.question }}</textarea>
-                    </div>
+        <!-- Hidden form for category filtering -->
+        <div style="display: none;">
+            <form method="get" id="category-filter-form">
+                <input type="hidden" id="category-filter-input" name="category" value="{{ selected_category }}">
+            </form>
+        </div>
 
-                    <!-- Category -->
-                    <div>
-                        <label class="field-label" for="id_category">Category:</label>
-                        <select class="question-input" id="id_category" name="category">
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if general_knowledge.category.id == category.id %}selected{% elif category.category == "General" %}selected{% endif %}>{{ category.category }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Answer -->
-                    <div>
-                        <label class="field-label" for="id_answer">Answer:</label>
-                        <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
-                    </div>
-
-                    <!-- Choice 1 -->
-                    <div>
-                        <label class="field-label" for="id_choice_1">Choice 1:</label>
-                        <input class="question-input" id="id_choice_1" type="text" name="choice_1" value="{{ general_knowledge.choice_1 }}">
-                    </div>
-
-                    <!-- Choice 2 -->
-                    <div>
-                        <label class="field-label" for="id_choice_2">Choice 2:</label>
-                        <input class="question-input" id="id_choice_2" type="text" name="choice_2" value="{{ general_knowledge.choice_2 }}">
-                    </div>
-
-                    <!-- Choice 3 -->
-                    <div>
-                        <label class="field-label" for="id_choice_3">Choice 3:</label>
-                        <input class="question-input" id="id_choice_3" type="text" name="choice_3" value="{{ general_knowledge.choice_3 }}">
-                    </div>
-
-                    <!-- Difficulty -->
-                    <div class="column-flex">
-                        <label class="field-label" for="id_difficulty">Difficulty:</label>
-                        <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ general_knowledge.difficulty }}">
+        <!-- Questions Table -->
+        <div class="questions-table">
+            <!-- New Question Form (Creation Form) -->
+            <div class="question-row">
+                <form class="creation-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="question-cell">
+                        <label class="cell-label" for="id_question">Question:</label>
+                        <textarea class="question-input" id="id_question" name="question" rows="3">{{ general_knowledge.question }}</textarea>
                     </div>
                     
-                    <button class="submit" type="submit">Submit</button>
-                </div>
-            </form> 
-        </div>
-
-        {% for question in general_knowledge %}
-            <div class="data-card data-card-medium {% if not question.category %}missing-category{% endif %}">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
-                    {% csrf_token %}
-                    <div class="question-row-gk">
-                        <!-- Question -->
-                        <div>
-                            <label class="field-label" for="id_question">Question:</label>
-                            <textarea class="question-input" id="id_question" name="question" rows="2">{{ question.question }}</textarea>
-                        </div>
-
-                        <!-- Category -->
-                        <div>
-                            <label class="field-label" for="id_category">Category:</label>
-                            <select class="question-input" id="id_category" name="category">
-                                {% for category in categories %}
-                                    <option value="{{ category.id }}" {% if question.category and question.category.id == category.id %}selected{% elif not question.category and category.category == "General" %}selected{% endif %}>{{ category.category }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Answer -->
-                        <div>
-                            <label class="field-label" for="id_answer">Answer:</label>
-                            <input class="question-input" id="id_answer" type="text" name="answer" value="{{ question.answer }}">
-                        </div>
-
-                        <!-- Choice 1 -->
-                        <div>
-                            <label class="field-label" for="id_choice_1">Choice 1:</label>
-                            <input class="question-input {% if question.choice_1 == None %}missing{% endif %}" id="id_choice_1" type="text" name="choice_1" value="{{ question.choice_1 }}">
-                        </div>
-
-                        <!-- Choice 2 -->
-                        <div>
-                            <label class="field-label" for="id_choice_2">Choice 2:</label>
-                            <input class="question-input {% if question.choice_2 == None %}missing{% endif %}" id="id_choice_2" type="text" name="choice_2" value="{{ question.choice_2 }}">
-                        </div>
-
-                        <!-- Choice 3 -->
-                        <div>
-                            <label class="field-label" for="id_choice_3">Choice 3:</label>
-                            <input class="question-input {% if question.choice_3 == None %}missing{% endif %}" id="id_choice_3" type="text" name="choice_3" value="{{ question.choice_3 }}">
-                        </div>
-
-                        <!-- Difficulty -->
-                        <div class="column-flex">
-                            <label class="field-label" for="id_difficulty">Difficulty:</label>
-                            <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
-                        </div>
+                    <div class="answer-choices-cell">
+                        <label class="cell-label" for="id_answer">Answer:</label>
+                        <input class="question-input" id="id_answer" type="text" name="answer" value="{{ general_knowledge.answer }}">
                         
-                        <button class="submit" type="submit">Submit</button>
+                        <label class="cell-label">Answer Choices:</label>
+                        <div class="choices-grid">
+                            <input class="question-input" id="id_choice_1" type="text" name="choice_1" placeholder="Choice 1" value="{{ general_knowledge.choice_1 }}">
+                            <input class="question-input" id="id_choice_2" type="text" name="choice_2" placeholder="Choice 2" value="{{ general_knowledge.choice_2 }}">
+                            <input class="question-input" id="id_choice_3" type="text" name="choice_3" placeholder="Choice 3" value="{{ general_knowledge.choice_3 }}">
+                        </div>
                     </div>
-                </form> 
+                    
+                    <div class="actions-cell">
+                        <label class="cell-label" for="id_category">Category:</label>
+                        <select class="category-dropdown" id="id_category" name="category">
+                            <option value="">Select Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if general_knowledge.category.id == category.id %}selected{% endif %}>{{ category.category }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <label class="cell-label" for="id_difficulty">Difficulty:</label>
+                        <input class="difficulty-input" id="id_difficulty" type="text" name="difficulty" value="{{ general_knowledge.difficulty }}">
+                        
+                        <button class="submit btn-primary" type="submit">Add Question</button>
+                    </div>
+                </form>
             </div>
-        {% endfor %}
+            
+            <!-- Existing Questions -->
+            {% for question in general_knowledge %}
+            <div class="question-row {% if not question.category %}missing-category{% endif %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
+                    {% csrf_token %}
+                    <div class="question-cell">
+                        <label class="cell-label" for="id_question_{{ question.id }}">Question:</label>
+                        <textarea class="question-input" id="id_question_{{ question.id }}" name="question" rows="3">{{ question.question }}</textarea>
+                    </div>
+                    
+                    <div class="answer-choices-cell">
+                        <label class="cell-label" for="id_answer_{{ question.id }}">Answer:</label>
+                        <input class="question-input" id="id_answer_{{ question.id }}" type="text" name="answer" value="{{ question.answer }}">
+                        
+                        <label class="cell-label">Answer Choices:</label>
+                        <div class="choices-grid">
+                            <input class="question-input {% if question.choice_1 == None %}missing{% endif %}" id="id_choice_1_{{ question.id }}" type="text" name="choice_1" placeholder="Choice 1" value="{{ question.choice_1 }}">
+                            <input class="question-input {% if question.choice_2 == None %}missing{% endif %}" id="id_choice_2_{{ question.id }}" type="text" name="choice_2" placeholder="Choice 2" value="{{ question.choice_2 }}">
+                            <input class="question-input {% if question.choice_3 == None %}missing{% endif %}" id="id_choice_3_{{ question.id }}" type="text" name="choice_3" placeholder="Choice 3" value="{{ question.choice_3 }}">
+                        </div>
+                    </div>
+                    
+                    <div class="actions-cell">
+                        <label class="cell-label" for="id_category_{{ question.id }}">Category:</label>
+                        <select class="category-dropdown" id="id_category_{{ question.id }}" name="category">
+                            <option value="">Select Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if question.category and question.category.id == category.id %}selected{% endif %}>{{ category.category }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <label class="cell-label" for="id_difficulty_{{ question.id }}">Difficulty:</label>
+                        <input class="difficulty-input" id="id_difficulty_{{ question.id }}" type="text" name="difficulty" value="{{ question.difficulty }}">
+                        
+                        <button class="submit" type="submit">Save</button>
+                        <a href="{% url 'delete_general_knowledge' question.id %}" class="submit" style="background-color: #e53e3e; text-align: center; text-decoration: none; margin-top: 8px;"
+                        onclick="return confirm('Are you sure you want to delete this question?')">Delete</a>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Utility function to set active category tab
+            function setActiveTab(tabs, activeTab) {
+                tabs.forEach(tab => {
+                    tab.style.backgroundColor = '#f8f8f8';
+                    tab.style.color = 'inherit';
+                });
+                activeTab.style.backgroundColor = '#2575fc';
+                activeTab.style.color = 'white';
+            }
+            
+            // Tab switching for filtering
+            const filterTabs = document.querySelectorAll('.category-tab');
+            const filterForm = document.getElementById('category-filter-form');
+            const filterInput = document.getElementById('category-filter-input');
+            const categoryDropdown = document.getElementById('id_category'); // This is only for the creation form
+            
+            // Add hidden input to the creation form to maintain category after submission
+            const creationForm = document.querySelector('.creation-form');
+            const hiddenCategoryInput = document.createElement('input');
+            hiddenCategoryInput.type = 'hidden';
+            hiddenCategoryInput.name = 'selected_tab';
+            hiddenCategoryInput.value = filterInput.value || '';
+            creationForm.appendChild(hiddenCategoryInput);
+
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab styling
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Get category ID from clicked tab
+                    const categoryId = this.getAttribute('data-category');
+                    
+                    // Update filter form
+                    filterInput.value = categoryId;
+                    
+                    // Update the hidden input in creation form
+                    hiddenCategoryInput.value = categoryId;
+                    
+                    // Update dropdown in creation form (for new questions only)
+                    if (categoryDropdown) {
+                        categoryDropdown.value = categoryId;
+                    }
+                    
+                    // Submit the filter form
+                    filterForm.submit();
+                });
+            });
+
+            // New question form category selection
+            const categoryTabsNew = document.querySelectorAll('.category-select-tab');
+            const categoryInput = document.getElementById('id_category');
+    
+            categoryTabsNew.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    setActiveTab(categoryTabsNew, this);
+                    categoryInput.value = this.getAttribute('data-category-id');
+                });
+            });
+    
+            // Initialize active category for new question form
+            const activeCategoryId = categoryInput.value;
+            if (activeCategoryId) {
+                const activeTab = document.querySelector(`.category-select-tab[data-category-id="${activeCategoryId}"]`);
+                if (activeTab) setActiveTab(categoryTabsNew, activeTab);
+            }
+    
+            // Edit forms category selection
+            const editGroups = {};
+            
+            document.querySelectorAll('[class^="category-select-tab-edit-"]').forEach(tab => {
+                const questionId = tab.getAttribute('data-question-id');
+                if (!editGroups[questionId]) {
+                    editGroups[questionId] = [];
+                }
+                editGroups[questionId].push(tab);
+                
+                tab.addEventListener('click', function() {
+                    setActiveTab(editGroups[questionId], this);
+                    document.getElementById('id_category_edit_' + questionId).value = this.getAttribute('data-category-id');
+                });
+            });
+    
+            // Initialize active category for each edit form
+            Object.keys(editGroups).forEach(questionId => {
+                const hiddenInput = document.getElementById('id_category_edit_' + questionId);
+                const activeValue = hiddenInput.value;
+                if (activeValue) {
+                    const activeTab = document.querySelector(`.category-select-tab-edit-${questionId}[data-category-id="${activeValue}"]`);
+                    if (activeTab) setActiveTab(editGroups[questionId], activeTab);
+                }
+            });
+        });
+    </script>
 {% endblock %}

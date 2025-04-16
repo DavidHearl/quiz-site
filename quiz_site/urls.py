@@ -8,6 +8,7 @@ urlpatterns = [
     path('check_players_update/', views.check_players_update, name='check_players_update'),
     path('general_knowledge/', views.general_knowledge, name='general_knowledge'),
     path('edit_general_knowledge/<int:question_id>/', views.edit_general_knowledge, name='edit_general_knowledge'),
+    path('delete_general_knowledge/<int:question_id>/', views.delete_general_knowledge, name='delete_general_knowledge'),
     path('true_or_false/', views.true_or_false, name='true_or_false'),
     path('edit_true_or_false/<int:question_id>/', views.edit_true_or_false, name='edit_true_or_false'),
     path('flags/', views.flags, name='flags'),

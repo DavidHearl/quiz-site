@@ -442,7 +442,15 @@ def general_knowledge(request):
             general_knowledge = general_knowledge_form.save(commit=False)
             general_knowledge.save()
             messages.success(request, 'Question added successfully.')
+            
+            # Get selected_tab and redirect back to the same category
+            selected_tab = request.POST.get('selected_tab', '')
+            if selected_tab:
+                from django.urls import reverse
+                return redirect(f"{reverse('general_knowledge')}?category={selected_tab}")
             return redirect('general_knowledge')
+
+    total_questions_count = sum(category_counts.values())
 
     context = {
         'general_knowledge': general_knowledge,
@@ -451,6 +459,7 @@ def general_knowledge(request):
         'categories': categories,
         'category_counts': category_counts,
         'selected_category': selected_category,
+        'total_questions_count': total_questions_count,
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
@@ -481,6 +490,18 @@ def edit_general_knowledge(request, question_id):
     }
 
     return render(request, 'quiz_site/general_knowledge.html', context)
+
+
+def delete_general_knowledge(request, question_id):
+    """
+    View to delete a specific general knowledge question from the database
+    """
+    question = get_object_or_404(GeneralKnowledge, pk=question_id)
+    question_text = question.question  # Store the question before deletion for the message
+    question.delete()
+    messages.success(request, f'Question "{question_text}" deleted successfully.')
+    
+    return redirect('general_knowledge')
 
 
 def true_or_false(request):

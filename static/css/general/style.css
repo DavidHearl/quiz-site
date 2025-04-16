@@ -160,7 +160,7 @@ a:hover {
     width: 100%;
 }
 
-.submit {
+/* .submit {
     width: calc(100% - 16px);
     margin-top: 8px;
     height: 28px;
@@ -171,7 +171,7 @@ a:hover {
     position: absolute;
     bottom: 8px;
     cursor: pointer;
-}
+} */
 
 .category,
 .select-box {
