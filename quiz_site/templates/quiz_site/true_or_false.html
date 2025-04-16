@@ -7,77 +7,75 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="database-container-tf">
         <div class="data-card-wide create-input">
+            <h3 class="section-title">Add New Question</h3>
             <form class="form-container" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="question-row">
-                    <div class="top">
-                        <!-- Question -->
-                        <div class="question-tf">
-                            <label class="field-label" for="id_question">Question:</label>
-                            <input class="question-input" id="id_question" type="text" name="question" value="{{ true_or_false.question }}">
-                        </div>
+                    <!-- Question -->
+                    <div class="question-tf">
+                        <label class="field-label" for="id_question">Question:</label>
+                        <input class="question-input" id="id_question" type="text" name="question" value="{{ true_or_false.question }}" placeholder="Enter new question">
                     </div>
 
-                    <div class="bottom">
-                        <!-- Answer -->
-                        <div class="answer-tf">
-                            <label class="field-label" for="id_answer">Answer:</label>
-                            <select class="select-box" id="id_answer" name="answer">
-                                <option value="true">True</option>
-                                <option value="false">False</option>
-                            </select>
-                        </div>
+                    <!-- Answer -->
+                    <div class="answer-tf">
+                        <label class="field-label" for="id_answer">Answer:</label>
+                        <select class="select-box" id="id_answer" name="answer">
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
 
-                        <!-- Difficulty -->
-                        <div class="column-flex row-width">
-                            <label class="field-label" for="id_difficulty">Difficulty:</label>
-                            <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ true_or_false.difficulty }}">
-                        </div>
-                        
+                    <!-- Difficulty -->
+                    <div class="difficulty-container">
+                        <label class="field-label" for="id_difficulty">Difficulty:</label>
+                        <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ true_or_false.difficulty }}">
+                    </div>
+                    
+                    <div class="button-container">
                         <button class="submit-wide" type="submit">Submit</button>
                     </div>
                 </div>
             </form> 
         </div>
 
-        {% for question in true_or_false %}
-            <div class="data-card-wide">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_true_or_false' question.id %}">
-                    {% csrf_token %}
-                    <div class="question-row">
-                        <div class="top">
+        <!-- <h3 class="section-title">Current Questions</h3> -->
+        <div class="questions-list">
+            {% for question in true_or_false %}
+                <div class="question-card">
+                    <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_true_or_false' question.id %}">
+                        {% csrf_token %}
+                        <div class="question-row">
                             <!-- Question -->
                             <div class="question-tf">
-                                <label class="field-label" for="id_question">Question:</label>
-                                <input class="question-input" id="id_question" type="text" name="question" value="{{ question.question }}">
+                                <label class="field-label" for="id_question_{{ question.id }}">Question:</label>
+                                <input class="question-input" id="id_question_{{ question.id }}" type="text" name="question" value="{{ question.question }}">
                             </div>
-                        </div>
 
-                        <div class="bottom">
                             <!-- Answer -->
                             <div class="answer-tf">
-                                <label class="field-label" for="id_answer">Answer:</label>
-                                <select class="select-box {% if question.answer == True %}true{% else %}false{% endif %}" id="id_answer" name="answer">
+                                <label class="field-label" for="id_answer_{{ question.id }}">Answer:</label>
+                                <select class="select-box {% if question.answer == True %}true{% else %}false{% endif %}" id="id_answer_{{ question.id }}" name="answer">
                                     <option value="true" {% if question.answer %}selected{% endif %}>True</option>
                                     <option value="false" {% if not question.answer %}selected{% endif %}>False</option>
                                 </select>
                             </div>
 
                             <!-- Difficulty -->
-                            <div class="column-flex row-width">
-                                <label class="field-label" for="id_difficulty">Difficulty:</label>
-                                <input class="question-input" id="id_difficulty" type="text" name="difficulty" value="{{ question.difficulty }}">
+                            <div class="difficulty-container">
+                                <label class="field-label" for="id_difficulty_{{ question.id }}">Difficulty:</label>
+                                <input class="question-input" id="id_difficulty_{{ question.id }}" type="text" name="difficulty" value="{{ question.difficulty }}">
                             </div>
                             
-                            <button class="submit-wide" type="submit">Submit</button>
+                            <div class="button-container">
+                                <button class="submit-wide" type="submit">Update</button>
+                            </div>
                         </div>
-
-                    </div>
-                </form> 
-            </div>
-        {% endfor %}
+                    </form> 
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
