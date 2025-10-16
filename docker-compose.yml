@@ -1,0 +1,43 @@
+services:
+  web:
+    build: .
+    env_file:
+      - .env
+    # gunicorn command is already in your Dockerfile CMD; no need to repeat it here
+    # command: gunicorn quiz_site.wsgi:application -w 3 -b :8000
+    networks: [traefik-net]
+    ports:
+      - "8000:8000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.quiz.rule=Host(`quiz.mediaservers.co.uk`)
+      - traefik.http.routers.quiz.entrypoints=web
+      - traefik.http.services.quiz.loadbalancer.server.port=8000
+    # optional but nice: persist static/media across rebuilds
+    volumes:
+      - staticfiles:/app/staticfiles
+      - media:/app/media
+    restart: unless-stopped
+    # Only keep this if you actually have a /healthz view;
+    # otherwise use "/" or drop the healthcheck for now.
+    healthcheck:
+      test: ["CMD-SHELL","wget -qO- http://localhost:8000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    command:
+      - gunicorn
+      - quiz.wsgi:application
+      - --bind=0.0.0.0:8000
+      - --workers=3
+      - --log-level=debug
+      - --access-logfile=-
+      - --error-logfile=-
+
+volumes:
+  staticfiles:
+  media:
+
+networks:
+  traefik-net:
+    external: true
