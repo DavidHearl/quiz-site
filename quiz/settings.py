@@ -13,9 +13,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +30,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-unsafe")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "0") == "1"
+DEBUG = True
 
 ALLOWED_HOSTS = ["quiz.mediaservers.co.uk","127.0.0.1","localhost", "100.113.6.98:8000", "*"]
 
@@ -138,39 +142,22 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", os.path.join(BASE_DIR, "staticfiles"))
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, 'static'),
+]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.environ.get("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 
-# DB
-if os.getenv('DATABASE_URL'):
-    # Uses dj_database_url to parse the remote connection string
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=False  # Set to True if using Cloudflare's PostgreSQL proxy/SSL
-        )
-    }
-
-
-#DATABASES = {
-#    "default": dj_database_url.parse(
-#        os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"),
-#        conn_max_age=600,
-#    )
-#}
-
-#STATIC_URL = '/static/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-#STATICFILES_DIRS = [
-#    os.path.join(BASE_DIR, 'static'),
-#]
-
-#MEDIA_URL = '/media/'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Database configuration
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=False  # Set to True if using Cloudflare's PostgreSQL proxy/SSL
+    )
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -180,12 +167,3 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS","").split(",") if o.strip()]
-# --- Use DATABASE_URL from the environment if provided (fallback to existing DATABASES) ---
-try:
-    DATABASES["default"] = dj_database_url.config(
-        default=DATABASES.get("default"),
-        conn_max_age=600,
-        ssl_require=False,
-    )
-except Exception:
-    pass
