@@ -30,7 +30,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-unsafe")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["quiz.mediaservers.co.uk","127.0.0.1","localhost", "100.113.6.98:8000", "*"]
 
@@ -158,6 +158,14 @@ DATABASES = {
         ssl_require=False  # Set to True if using Cloudflare's PostgreSQL proxy/SSL
     )
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
