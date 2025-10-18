@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     libjpeg-dev \
     libpng-dev \
+    postgresql-client \
     wget ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
