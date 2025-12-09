@@ -17,6 +17,7 @@ services:
     volumes:
       - staticfiles:/app/staticfiles
       - media:/app/media
+      - .:/app
     restart: unless-stopped
     # Only keep this if you actually have a /healthz view;
     # otherwise use "/" or drop the healthcheck for now.
@@ -37,6 +38,7 @@ services:
 volumes:
   staticfiles:
   media:
+
 
 networks:
   traefik-net:
