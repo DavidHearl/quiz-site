@@ -6,26 +6,174 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Music</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ music_form.as_p }}
-        <button type="submit">Add Music</button>
-    </form>
-    <h2>Existing Music</h2>
-    <ul>
-        {% for music in music_list %}
-            <li>
-                <form method="post" enctype="multipart/form-data" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="music_id" value="{{ music.id }}">
-                    <input type="text" name="artist" value="{{ music.artist }}">
-                    <input type="text" name="song_title" value="{{ music.song_title }}">
-                    <input type="file" name="audio_file">
-                    <input type="text" name="difficulty" value="{{ music.difficulty }}">
-                    <button type="submit">Edit</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="music-container">      
+        <!-- Add New Music Form -->
+        <h2 class="section-title">Add New Music</h2>
+        <form method="post" enctype="multipart/form-data" id="add-music-form" class="music-form">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_artist">Artist:</label>
+                    {{ music_form.artist }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_song_title">Song Title:</label>
+                    {{ music_form.song_title }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_difficulty">Difficulty (0-1):</label>
+                    {{ music_form.difficulty }}
+                </div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="id_audio_file">Audio File:</label>
+                {{ music_form.audio_file }}
+            </div>
+            
+            <div class="audio-preview-container" id="new-audio-preview">
+                <span class="audio-preview-label">🎵 Audio Preview:</span>
+                <audio id="new-audio-player" controls></audio>
+                <div class="file-info" id="new-file-info"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Music</button>
+        </form>
+        
+        <!-- Existing Music List -->
+        <div class="existing-music-section">
+            <div class="section-header">
+                <h2 class="section-title">Existing Music ({{ music_list.count }})</h2>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="music-search" class="search-input" placeholder="🔍 Search by artist or song title...">
+                </div>
+            </div>
+            
+            {% if music_list %}
+                <div class="music-list">
+                    {% for music in music_list %}
+                        <div class="music-item">
+                            <form method="post" enctype="multipart/form-data" class="edit-music-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="music_id" value="{{ music.id }}">
+                                
+                                <div class="music-item-header">
+                                    <div class="music-header">
+                                        <h3 class="music-title">{{ music.song_title }}</h3>
+                                        <span class="music-artist">by {{ music.artist }}</span>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-save-top">Save Changes</button>
+                                </div>
+                                
+                                <!-- Current Audio Player (Always Visible) -->
+                                {% if music.audio_file %}
+                                    <div class="current-audio">
+                                        <div class="current-audio-label">Current Audio:</div>
+                                        <audio controls>
+                                            <source src="{{ music.audio_file.url }}" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
+                                {% else %}
+                                    <div class="no-audio">⚠️ No audio file uploaded</div>
+                                {% endif %}
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Artist:</label>
+                                        <input type="text" name="artist" value="{{ music.artist }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Song Title:</label>
+                                        <input type="text" name="song_title" value="{{ music.song_title }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Difficulty:</label>
+                                        <input type="number" name="difficulty" value="{{ music.difficulty }}" step="0.01" min="0" max="1">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>{% if music.audio_file %}Replace Audio File:{% else %}Add Audio File:{% endif %}</label>
+                                        <input type="file" name="audio_file" accept="audio/*">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-music">No music added yet. Add your first track above!</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup preview for new music upload only
+            const newAudioInput = document.querySelector('#id_audio_file');
+            const newAudioPlayer = document.getElementById('new-audio-player');
+            const newFileInfo = document.getElementById('new-file-info');
+            
+            if (newAudioInput && newAudioPlayer && newFileInfo) {
+                newAudioInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    
+                    if (file) {
+                        // Check if it's an audio file
+                        if (!file.type.startsWith('audio/')) {
+                            alert('Please select an audio file.');
+                            e.target.value = '';
+                            newAudioPlayer.src = '';
+                            newFileInfo.textContent = 'Please select a valid audio file';
+                            return;
+                        }
+                        
+                        // Create object URL for preview
+                        const objectURL = URL.createObjectURL(file);
+                        newAudioPlayer.src = objectURL;
+                        
+                        // Format file size
+                        const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                        newFileInfo.textContent = `${file.name} (${fileSize} MB)`;
+                        
+                        // Clean up object URL when audio is loaded
+                        newAudioPlayer.onloadedmetadata = function() {
+                            URL.revokeObjectURL(objectURL);
+                        };
+                    } else {
+                        newAudioPlayer.src = '';
+                        newFileInfo.textContent = 'No file selected';
+                    }
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.getElementById('music-search');
+            const musicItems = document.querySelectorAll('.music-item');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    
+                    musicItems.forEach(function(item) {
+                        const artist = item.querySelector('.music-artist').textContent.toLowerCase();
+                        const title = item.querySelector('.music-title').textContent.toLowerCase();
+                        
+                        if (artist.includes(searchTerm) || title.includes(searchTerm)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}

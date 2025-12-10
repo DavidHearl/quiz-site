@@ -30,7 +30,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-unsafe")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["quiz.mediaservers.co.uk","127.0.0.1","localhost", "100.113.6.98:8000", "*"]
 
@@ -95,10 +95,17 @@ SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# allauth deprecations: migrate to new settings
+# Allow login via username only (equivalent to ACCOUNT_AUTHENTICATION_METHOD='username')
+ACCOUNT_LOGIN_METHODS = {"username"}
 
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = False
+# Signup fields: keep username and passwords; email optional
+ACCOUNT_SIGNUP_FIELDS = [
+    'username*',
+    'password1*',
+    'password2*',
+]
+
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 
 LOGIN_URL = '/'

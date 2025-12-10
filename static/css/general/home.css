@@ -11,6 +11,34 @@
     margin: 8px 0;
 }
 
+.rounds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.auto-select-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    white-space: nowrap;
+}
+
+.auto-select-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
 .authentication-label {
     color: #eff27e;
     font-weight: 700;
@@ -258,7 +286,7 @@ hr {
 
 .disabled-rounds-heading {
     font-size: 14px;
-    color: #666;
+    color: white;
     margin: 10px 0;
 }
 

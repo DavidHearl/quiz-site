@@ -1,15 +1,20 @@
 .player-name {
     text-transform: capitalize;
     text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+    color: #1f2937;
 }
 
 .results-container {
     display: flex;
     justify-content: center;
-    margin-top: 12px;
-    gap: 4px;
+    margin-top: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .answer-list {
@@ -17,71 +22,100 @@
     flex-direction: column;
     list-style-type: none;
     padding: 0;
+    gap: 0.5rem;
 }
 
 .answer-list li {
-    margin-top: 4px;
-    padding: 4px;
-    padding-right: 8px;
-    border: 1px solid black;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .player-result {
-    padding: 8px;
+    padding: 1.5rem;
     background: white;
-    border-radius: 8px;
-    border: 1px solid black;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    min-width: 200px;
 }
 
 .update-score-container {
     display: flex;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
 }
 
 .quiz-title {
     text-align: center;
-    font-size: 1.2rem;
-    background: white;
-    padding: 8px;
-    border: 1px solid black;
-    border-radius: 8px;
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    color: #1f2937;
 }
 
 .score-input {
-    padding: 6px 8px;
+    padding: 0.5rem 0.75rem;
     margin: 0;
-    border-radius: 4px;
-    border: 1px solid black;
-    width: 50px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    width: 60px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.score-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .submit-button,
 .next-button {
     width: 100%;
-    font-size: 16px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    background-color: rgb(48, 182, 215);
     border-radius: 8px;
-    border: 1px solid black;
+    border: none;
+    transition: all 0.3s ease;
 }
 
-.submit-button{
-    border: 1px solid black;
-    padding: 4px 8px;
+.submit-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.submit-button:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .next-button {
-    margin-top: 16px;
-    padding: 8px;
+    margin: 2rem auto 0;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    width: auto;
+    max-width: 300px;
+    display: block;
 }
 
-.next-button:hover,
-.submit-button:hover {
-    background: darkslategray;
-    color: white;
+.next-button:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .answer-list {
@@ -110,18 +144,24 @@
 }
 
 .correct {
-    background-color: rgb(96, 231, 96);
-    color: black;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .incorrect {
-    background-color: rgb(255, 96, 96);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 .partial {
-    background-color: rgb(255, 255, 116);
-    color: black;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 @media (max-width: 600px) {

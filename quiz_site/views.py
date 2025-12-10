@@ -411,6 +411,21 @@ def loading_page(request):
     Display a loading page before redirecting to the active quiz
     """
     return render(request, 'quiz_site/loading.html')
+
+
+def check_quiz_started(request):
+    """
+    Check if the quiz has started (rounds have been selected and quiz is active)
+    """
+    try:
+        quiz = Quiz.objects.latest('date_created')
+        # Quiz is considered "started" if it has rounds selected and question_counter >= 0
+        # Or if rounds exist and random_numbers have been generated
+        started = quiz.rounds.exists() and quiz.random_numbers
+        return JsonResponse({'started': started})
+    except Quiz.DoesNotExist:
+        return JsonResponse({'started': False})
+
     
 # -------------------------------------------------------------------------------
 # ----------------------------- Question Models ---------------------------------

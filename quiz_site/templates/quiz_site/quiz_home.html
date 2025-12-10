@@ -24,6 +24,32 @@
         
         // Poll for updates every 5 seconds
         setInterval(checkForPlayerUpdates, 5000);
+
+        // Auto select 5 random rounds
+        function autoSelectRounds() {
+            // Get all enabled checkboxes (not disabled)
+            const allCheckboxes = document.querySelectorAll('.active-rounds .question-checkbox:not([disabled])');
+            
+            // First, uncheck all checkboxes
+            allCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Convert NodeList to array for easier manipulation
+            const checkboxArray = Array.from(allCheckboxes);
+            
+            // Shuffle the array using Fisher-Yates algorithm
+            for (let i = checkboxArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [checkboxArray[i], checkboxArray[j]] = [checkboxArray[j], checkboxArray[i]];
+            }
+            
+            // Select the first 5 (or less if there aren't 5 available)
+            const numToSelect = Math.min(5, checkboxArray.length);
+            for (let i = 0; i < numToSelect; i++) {
+                checkboxArray[i].checked = true;
+            }
+        }
     </script>
 {% endblock %}
 
@@ -91,7 +117,10 @@
                 <input type="hidden" id="id_quiz_name" name="quiz_name" value="{{ latest_quiz.quiz_name }}">
         
                 <!-- Rounds -->
-                <p class="instructions">What question sets do you want?</p>
+                <div class="rounds-header">
+                    <p class="instructions">What question sets do you want?</p>
+                    <button type="button" class="btn btn-secondary auto-select-btn" onclick="autoSelectRounds()">🎲 Auto Select 5 Rounds</button>
+                </div>
                 <div class="question-groups">
                     <!-- Active Rounds -->
                     <div class="active-rounds">

@@ -5,15 +5,17 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(110deg, rgba(229, 98, 11, 0.85) 31.93%, rgba(28, 231, 50, 0.69) 90.7%);
-    height: 100vh;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 #main {
     flex: 1 1 auto;
     flex-grow: 1;
+    overflow-y: auto;
 }
 
 .container {
@@ -29,7 +31,7 @@ body {
 .welcome-user {
     margin: 8px 24px 0px 12px;
     padding: 4px;
-    color: #c6c6c6;
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 400;
     font-size: 0.9rem;
     font-style: italic;
@@ -95,7 +97,7 @@ a:hover {
     position: relative;
     padding-bottom: 44px;
     color: black;
-    box-shadow: 1px 1px 4px bla
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Wide Database */
@@ -103,23 +105,26 @@ a:hover {
     display: flex;
     flex-direction: column;
     background-color: white;
-    border: 1px solid black;
+    border: 1px solid #e5e7eb;
     padding: 6px;
     width: 100%;
     border-radius: 8px;
     margin: 0px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .data-card-medium {
     display: flex;
     align-items: center;
     flex-direction: column;
-    border: 1px solid black;
+    background: white;
+    border: 1px solid #e5e7eb;
     padding: 8px;
     width: 275px;
     border-radius: 16px;
     position: relative;
     padding-bottom: 44px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .data-card-search {
@@ -255,19 +260,28 @@ background-color: #568869;
 
 .auth-link2 {
     margin: 0;
-    color: #217e82;
+    color: #fbbf24;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .auth-button {
     width: 100%;
     color: white;
     padding: 6px;
-    background: linear-gradient(315deg, rgb(101, 133, 202), rgb(51, 87, 204));
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     border-radius: 8px;
     margin-top: 16px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.auth-button:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .login > ul {
@@ -297,6 +311,7 @@ background-color: #568869;
 .logout-message {
     font-size: 1.3rem;
     font-weight: 500;
+    color: white;
 }
 
 .return-home {
@@ -304,6 +319,12 @@ background-color: #568869;
     justify-content: center;
     font-size: 1rem;
     margin-top: 8px;
+    color: white;
+}
+
+.return-home a {
+    color: #fbbf24;
+    font-weight: 500;
 }
 
 .disabled {

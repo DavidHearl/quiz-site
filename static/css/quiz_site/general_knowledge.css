@@ -1,98 +1,121 @@
-.missing-category {
-    background-color: rgba(139, 0, 0, 0.2);
+/* ============================================
+   General Knowledge Page Styles
+   ============================================ */
+
+.database-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
 }
 
-/* Tab Styles */
+/* Missing Category Warning */
+.missing-category {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+}
+
+/* ============================================
+   Category Tabs
+   ============================================ */
 .category-tabs {
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 20px;
-    gap: 2px;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
 }
 
 .category-tab {
-    padding: 10px 15px;
-    background-color: #f8f8f8;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     cursor: pointer;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
+    border: 2px solid transparent;
+    border-radius: 10px;
     transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Compact category tabs for form inputs */
+.category-tab:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
+}
+
+.category-tab.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #764ba2;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.category-count {
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: inherit;
+    border-radius: 12px;
+    padding: 0.15rem 0.5rem;
+    font-weight: 600;
+}
+
+.active .category-count {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+}
+
+/* Compact category tabs for forms */
 .form-category-tabs {
     border-bottom: none;
     margin: 0;
-    gap: 1px;
+    gap: 0.25rem;
     flex-wrap: wrap;
 }
 
 .form-category-tab {
-    padding: 4px 8px;
+    padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
-    border-radius: 4px;
-    margin: 1px;
-}
-
-.category-tab:hover {
-    background-color: #e9e9e9;
-}
-
-.category-tab.active {
-    background-color: #2575fc;
-    color: white;
-    border-color: #2575fc;
-}
-
-.category-count {
-    font-size: 0.8rem;
-    margin-left: 6px;
-    background-color: #f0f0f0;
-    color: #333;
-    border-radius: 10px;
-    padding: 2px 6px;
-}
-
-.active .category-count {
-    background-color: white;
-    color: #2575fc;
+    border-radius: 6px;
+    margin: 0.125rem;
 }
 
 .questions-table {
     width: 100%;
-    border-collapse: separate; /* Changed from collapse */
-    border-spacing: 0 12px; /* Add vertical spacing between rows */
-    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .table-header {
-    background-color: #f8f8f8;
-    border-bottom: 2px solid #ddd;
-    font-weight: bold;
-    color: #333;
-    padding: 12px 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: 600;
+    color: #374151;
+    padding: 1rem 1.25rem;
     text-align: left;
 }
 
 .question-row {
-    transition: background-color 0.2s;
-    margin-bottom: 12px; /* Add space between rows */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .question-row:hover {
-    background-color: #f9f9f9;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
 }
 
 .question-row form {
-    padding: 16px 15px;
+    padding: 1.5rem;
     display: flex;
     flex-wrap: nowrap;
-    gap: 15px;
+    gap: 1rem;
     align-items: stretch;
     background: white;
     position: relative;
@@ -127,24 +150,30 @@
 }
 
 .missing {
-    background-color: #ffdddd;
+    background-color: rgba(251, 191, 36, 0.1);
+    border: 1px solid #fbbf24;
+    border-radius: 6px;
 }
 
 .submit {
-    padding: 8px 12px;
-    background-color: #2575fc;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
-    min-height: 36px;
+    font-weight: 600;
+    min-height: 42px;
     display: block;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .submit:hover {
-    background-color: #1a65e0;
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .btn-save {
@@ -152,26 +181,138 @@
 }
 
 .difficulty-input {
-    border: 1px solid black;
-    padding: 4px;
-    margin-bottom: 8px;
-    border-radius: 4px;
+    border: 2px solid #e5e7eb;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.difficulty-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .database-container {
-    margin: 12px;
+    margin: 2rem auto;
+    max-width: 1400px;
+    padding: 0 2rem;
 }
 
 .category-dropdown {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    background-color: white;
+}
+
+.category-dropdown:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .actions-cell {
     display: flex;
     flex-direction: column;
     flex: 1;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   Delete Button
+   ============================================ */
+.btn-delete {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    margin-top: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* ============================================
+   Form Inputs
+   ============================================ */
+.question-input,
+.choice-input,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.question-input:focus,
+.choice-input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ============================================
+   Cell Labels
+   ============================================ */
+.cell-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .database-container {
+        padding: 0 1rem;
+    }
+    
+    .question-row form {
+        flex-direction: column;
+    }
+    
+    .question-cell,
+    .answer-choices-cell,
+    .difficulty-category-cell {
+        min-width: 100%;
+    }
+    
+    .category-tabs {
+        gap: 0.25rem;
+    }
+    
+    .category-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
 }

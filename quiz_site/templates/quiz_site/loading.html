@@ -17,16 +17,29 @@
         text-align: center;
         padding: 50px;
         margin-top: 100px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        max-width: 600px;
+        margin: 100px auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .loading-title {
         margin-bottom: 30px;
-        color: #2575fc;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
     }
     
     .loading-text {
         margin-top: 20px;
-        color: #666;
+        color: #4b5563;
+        font-size: 1.1rem;
     }
     
     .spinner {
@@ -38,7 +51,7 @@
     .spinner > div {
         width: 18px;
         height: 18px;
-        background-color: #2575fc;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 100%;
         display: inline-block;
         animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -62,10 +75,23 @@
     }
 </style>
 
-<!-- <script>
-    // Redirect to the active quiz after 2 seconds
-    setTimeout(function() {
-        window.location.href = "{% url 'active_quiz:active_quiz' %}";
-    }, 2000);
-</script> -->
+<script>
+    // Poll for quiz start
+    function checkQuizStarted() {
+        fetch("{% url 'check_quiz_started' %}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.started) {
+                    window.location.href = "{% url 'active_quiz:active_quiz' %}";
+                }
+            })
+            .catch(error => console.error('Error checking quiz status:', error));
+    }
+    
+    // Check immediately on load
+    checkQuizStarted();
+    
+    // Then poll every 2 seconds
+    setInterval(checkQuizStarted, 2000);
+</script>
 {% endblock %}
