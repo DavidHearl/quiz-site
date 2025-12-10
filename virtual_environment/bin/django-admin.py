@@ -1,4 +1,4 @@
-#!/Users/davidhearl/Documents/GitHub/quiz-site/virtual_environment/bin/python3
+#!/home/django/apps/quiz-site/virtual_environment/bin/python3
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 
