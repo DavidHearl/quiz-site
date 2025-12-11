@@ -46,18 +46,18 @@
             <div class="tab-content hidden" id="master-content">
                 {% if user.is_authenticated %}
                 <h3>Create or Manage a Quiz</h3>
-                <form method="post">
+                <form class="new-quiz-form" method="post">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="id_quiz_name" class="form-label">Quiz Name</label>
                         <input type="text" class="form-input" id="id_quiz_name" name="quiz_name" required placeholder="Enter quiz name">
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary">Create Quiz</button>
+                        <button type="submit" class="btn btn-success">Create Quiz</button>
                     </div>
                 </form>
 
-                <div class="manage-quizzes-container" style="margin-top: 20px;">
+                <div class="manage-quizzes-container">
                     <a href="{% url 'manage_quizzes' %}" class="btn btn-secondary">Manage Quizzes</a>
                 </div>
 
@@ -81,7 +81,7 @@
     
     <div class="features">
         <div class="features-header">
-            <h2>Why Choose QuizMaster?</h2>
+            <h2 class="title-color">Why Choose QuizMaster?</h2>
         </div>
         <div class="feature-grid">
             <div class="feature-card">

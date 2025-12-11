@@ -1,0 +1,116 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/music.css' %}">
+{% endblock %}
+{% if current_music %}
+    <div class="question-card">
+        <h2 class="quiz-question">Name the Artist and the Song</h2>
+    </div>
+    
+    {% if request.user.username == 'david' %}
+        <div class="music-player-container">
+            <audio id="music-player" controls>
+                <source src="{{ current_music.audio_file.url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    {% endif %}
+
+    <div class="music-form-container">
+        <form id="music-form" method="post" action="{% url 'active_quiz:next_music' %}">
+            {% csrf_token %}
+            <input type="hidden" name="correct_artist" value="{{ current_music.artist }}">
+            <input type="hidden" name="correct_song" value="{{ current_music.song_title }}">
+            
+            {% if request.user.username != 'david' %}
+                <div class="input-group">
+                    <label for="artist_answer">Artist:</label>
+                    <input 
+                        type="text" 
+                        id="artist_answer" 
+                        name="artist_answer" 
+                        class="music-input" 
+                        {% if request.user.player.question_answered != 0 %}disabled{% endif %}
+                        placeholder="Enter artist name"
+                        autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <label for="song_answer">Song Title:</label>
+                    <input 
+                        type="text" 
+                        id="song_answer" 
+                        name="song_answer" 
+                        class="music-input" 
+                        {% if request.user.player.question_answered != 0 %}disabled{% endif %}
+                        placeholder="Enter song title"
+                        autocomplete="off">
+                </div>
+                
+                <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
+            {% else %}
+                <div class="reveal-buttons">
+                    <button type="button" class="reveal-button" id="reveal-artist-btn" onclick="revealArtist()">Reveal Artist</button>
+                    <button type="button" class="reveal-button reveal-song-btn" id="reveal-song-btn" onclick="revealSong()" disabled>Reveal Song</button>
+                </div>
+                
+                <div class="answer-display" id="answer-display" style="display: none;">
+                    <p id="artist-reveal" style="display: none;">
+                        <strong>Artist:</strong> {{ current_music.artist }}
+                    </p>
+                    <p id="song-reveal" style="display: none;">
+                        <strong>Song:</strong> {{ current_music.song_title }}
+                    </p>
+                </div>
+                
+                <button type="button" id="next-button" class="next-button" onclick="submitForm()">Next</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<script>
+    function revealArtist() {
+        const answerDisplay = document.getElementById('answer-display');
+        const artistReveal = document.getElementById('artist-reveal');
+        const revealArtistBtn = document.getElementById('reveal-artist-btn');
+        const revealSongBtn = document.getElementById('reveal-song-btn');
+        
+        answerDisplay.style.display = 'block';
+        artistReveal.style.display = 'block';
+        artistReveal.classList.add('fade-in');
+        
+        revealArtistBtn.disabled = true;
+        revealArtistBtn.classList.add('revealed');
+        revealSongBtn.disabled = false;
+    }
+    
+    function revealSong() {
+        const songReveal = document.getElementById('song-reveal');
+        const revealSongBtn = document.getElementById('reveal-song-btn');
+        
+        songReveal.style.display = 'block';
+        songReveal.classList.add('fade-in');
+        
+        revealSongBtn.disabled = true;
+        revealSongBtn.classList.add('revealed');
+    }
+    
+    function submitForm() {
+        document.getElementById('music-form').submit();
+    }
+
+    document.getElementById('music-form').addEventListener('submit', function(event) {
+        const user = "{{ request.user.username }}";
+        if (user !== 'david') {
+            const artistAnswer = document.getElementById('artist_answer').value.trim();
+            const songAnswer = document.getElementById('song_answer').value.trim();
+            
+            if (!artistAnswer || !songAnswer) {
+                event.preventDefault();
+                alert('Please fill in both the artist and song title.');
+                return false;
+            }
+        }
+    });
+</script>

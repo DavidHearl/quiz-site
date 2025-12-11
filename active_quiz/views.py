@@ -62,6 +62,7 @@ def active_quiz(request):
         "Who is the Oldest": handle_who_is_the_oldest_round,
         "Who is the Imposter": handle_who_is_the_imposter_round,
         "Fighter Jets": handle_fighter_jet_round,
+        "Music": handle_music_round,
     }
 
     context = {
@@ -73,6 +74,7 @@ def active_quiz(request):
         'gk_choices': [],
         'current_celebrity': None,
         'choices': [],
+        'current_music': None,
     }
 
     if current_round in round_handlers:
@@ -446,6 +448,80 @@ def next_fighter_jet(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
             logger.debug(f"Correct answer saved to quiz: {correct_answer}")
+
+    return iterate_next_question(request)
+
+
+@login_required
+def next_music(request):
+    if request.method == 'POST':
+        artist_answer = request.POST.get('artist_answer', '').strip()
+        song_answer = request.POST.get('song_answer', '').strip()
+        correct_artist = request.POST.get('correct_artist', '')
+        correct_song = request.POST.get('correct_song', '')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+
+        # Calculate partial matching scores for artist and song
+        artist_score = 0
+        song_score = 0
+        
+        if artist_answer and correct_artist:
+            # Split into words and check partial matches
+            artist_words_user = set(artist_answer.lower().split())
+            artist_words_correct = set(correct_artist.lower().split())
+            artist_matches = len(artist_words_user & artist_words_correct)
+            artist_total = len(artist_words_correct)
+            
+            # Award points: full match = 1 point, partial match = 0.5 points per word
+            if artist_answer.lower() == correct_artist.lower():
+                artist_score = 1.0
+            elif artist_matches > 0:
+                artist_score = (artist_matches / artist_total) * 0.5
+        
+        if song_answer and correct_song:
+            # Split into words and check partial matches
+            song_words_user = set(song_answer.lower().split())
+            song_words_correct = set(correct_song.lower().split())
+            song_matches = len(song_words_user & song_words_correct)
+            song_total = len(song_words_correct)
+            
+            # Award points: full match = 1 point, partial match = 0.5 points per word
+            if song_answer.lower() == correct_song.lower():
+                song_score = 1.0
+            elif song_matches > 0:
+                song_score = (song_matches / song_total) * 0.5
+        
+        # Total score (max 2 points: 1 for artist + 1 for song)
+        total_score = artist_score + song_score
+        
+        # Update player stats
+        player.player_score = (player.player_score or 0) + total_score
+        
+        if total_score >= 2.0:
+            player.question_answered = 1  # Fully Correct
+            messages.success(request, f'Perfect! You earned {total_score:.1f} points!')
+        elif total_score > 0:
+            player.question_answered = 3  # Partial
+            messages.warning(request, f'Partial answer. You earned {total_score:.1f} points.')
+        else:
+            player.question_answered = 2  # Incorrect
+            player.incorrect_answers = (player.incorrect_answers or 0) + 1
+            if request.user.username != 'david':
+                messages.error(request, 'Incorrect answer. No points earned.')
+
+        # Record the answer and score
+        round_name = "Music"
+        combined_answer = f"{artist_answer} - {song_answer}"
+        player.answers.setdefault(round_name, []).append(combined_answer)
+        player.points.setdefault(round_name, []).append(total_score)
+        player.save()
+
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            correct_answer = f"{correct_artist} - {correct_song}"
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
 
     return iterate_next_question(request)
 
@@ -1455,4 +1531,13 @@ def handle_fighter_jet_round(quiz, current_index):
         'choices': choices,
         'question_type': question_type,
         'correct_answer': correct_answer,
+    }
+
+
+def handle_music_round(quiz, current_index):
+    music_ids = quiz.random_numbers.get("Music", [])
+    current_music = Music.objects.get(id=music_ids[current_index])
+    
+    return {
+        'current_music': current_music,
     }

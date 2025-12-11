@@ -135,6 +135,8 @@
                     {% include 'who_is_the_oldest_content.html' %}
                 {% elif current_round == "Who is the Imposter" %}
                     {% include 'who_is_the_imposter_content.html' %}
+                {% elif current_music and current_round == "Music" %}
+                    {% include 'music_content.html' %}
                 {% endif %}
             </div>
             

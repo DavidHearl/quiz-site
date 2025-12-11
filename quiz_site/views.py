@@ -150,6 +150,7 @@ def quiz_home(request):
         "Celebrity Age": Celebrities,
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
+        "Music": Music,
     }
 
     # Initialize dictionary to store previously seen questions by round

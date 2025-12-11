@@ -10,4 +10,5 @@ def counts(request):
         'celebrities_count': Celebrities.objects.count(),
         'movies_count': Movies.objects.count(),
         'locations_count': Locations.objects.count(),
+        'music_count': Music.objects.count(),
     }
