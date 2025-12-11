@@ -9,7 +9,6 @@ Pillow>=11.0
 # only keep these if your code actually uses them:
 django-allauth>=65.0
 django-storages>=1.14
-cloudinary>=1.41
 
 # if your code parses XML or relies on it:
 # lxml==5.3.0
