@@ -29,8 +29,7 @@ services:
 
     volumes:
       - staticfiles:/app/staticfiles
-      - media:/app/media
-      - .:/app
+      - /srv/django_media/quiz-site:/app/media
 
     restart: unless-stopped
 
