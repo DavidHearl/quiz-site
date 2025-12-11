@@ -1,19 +1,82 @@
+/* True or False specific styles */
+.true-false-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+#true-false-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .true-or-false-container {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 20px;
 }
 
 .true-button,
 .false-button {
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 1.2rem;
-    margin: 12px;
-    width: 30%;
-    max-width: 200px;
-    border: 1px solid black;
+    flex: 1;
+    max-width: 300px;
+    padding: 40px 20px;
+    border-radius: 15px;
+    font-size: 2rem;
+    font-weight: 700;
+    border: none;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.true-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.true-button:hover:not(:disabled) {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+}
+
+.false-button {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.false-button:hover:not(:disabled) {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
+}
+
+.true-button:active:not(:disabled),
+.false-button:active:not(:disabled) {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.true-button:disabled,
+.false-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.true-button.highlight-correct,
+.false-button.highlight-correct {
+    animation: pulse 0.5s ease-in-out 3;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 .buttons-div {
@@ -21,6 +84,34 @@
     justify-content: center;
 }
 
-#next-button {
-    min-width: 200px;
+.buttons-div .next-button {
+    min-width: 300px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .true-or-false-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .true-button,
+    .false-button {
+        max-width: none;
+        padding: 30px 20px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .true-button,
+    .false-button {
+        padding: 25px 15px;
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+    
+    .buttons-div .next-button {
+        min-width: 200px;
+    }
 }

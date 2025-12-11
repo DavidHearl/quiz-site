@@ -1,0 +1,94 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/locations.css' %}">
+{% endblock %}
+
+{% if current_location %}
+    <div class="question-card">
+        <h2 class="quiz-question">Name the famous landmark</h2>
+    </div>
+    
+    <div class="location-card">
+        <img class="location-image" src="{{ current_location.photo.url }}" alt="Location Image">
+    </div>
+    
+    {% if request.user.username != 'david' %}
+        <div class="letter-boxes" id="letter-boxes"></div>
+    {% endif %}
+    
+    <div class="text-container">
+        {% if request.user.username != 'david' %}
+            <style>
+                #quiz-form {
+                    flex-direction: column;
+                }
+            </style>
+        {% endif %}
+
+        <form id="quiz-form" method="post" action="{% url 'active_quiz:next_location' %}">
+            {% csrf_token %}
+            <div class="text-answer">
+            {% if request.user.username != 'david' %}
+                <input type="text" class="text-input" id="location" name="location" placeholder="Enter location name" autocomplete="off">
+            {% endif %}
+                <input type="hidden" name="correct_location" value="{{ current_location.location }}">
+            </div>
+
+            {% if request.user.username == 'david' %}
+                <button type="button" id="reveal-name-button" class="reveal-button" onclick="revealName()">Reveal Location</button>
+                
+                <div class="answer-display" id="answer-display" style="display: none;">
+                    <p id="location-reveal">
+                        <strong>Location:</strong> {{ current_location.location }}
+                    </p>
+                </div>
+                
+                <button id="submit" type="submit" class="next-button">Next</button>
+            {% else %}
+                <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
+            {% endif %}
+            
+        </form>
+        <div id="obfuscated-name"></div>
+    </div>
+{% endif %}
+<script>
+    const locationName = "{{ current_location.location }}";
+    const isQuizMaster = "{{ request.user.username }}" === 'david';
+    
+    function revealName() {
+        const answerDisplay = document.getElementById('answer-display');
+        const locationReveal = document.getElementById('location-reveal');
+        const revealButton = document.getElementById('reveal-name-button');
+        
+        answerDisplay.style.display = 'block';
+        locationReveal.classList.add('fade-in');
+        
+        revealButton.disabled = true;
+        revealButton.classList.add('revealed');
+    }
+    
+    // Create boxed letters for players with word grouping
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!isQuizMaster) {
+            const letterBoxesContainer = document.getElementById('letter-boxes');
+            if (letterBoxesContainer) {
+                const words = locationName.split(' ');
+                
+                words.forEach((word, wordIndex) => {
+                    // Create a wrapper for each word to keep letters together
+                    const wordWrapper = document.createElement('div');
+                    wordWrapper.className = 'word-wrapper';
+                    
+                    word.split('').forEach(char => {
+                        const box = document.createElement('div');
+                        box.className = 'letter-box';
+                        wordWrapper.appendChild(box);
+                    });
+                    
+                    letterBoxesContainer.appendChild(wordWrapper);
+                });
+            }
+        }
+    });
+</script>

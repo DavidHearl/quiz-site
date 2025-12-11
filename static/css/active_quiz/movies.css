@@ -1,4 +1,4 @@
-/* Who is the Imposter Styling */
+/* Movies Round Styling */
 .celebrities-grid {
     display: flex;
     justify-content: center;
@@ -13,18 +13,14 @@
 .celebrity-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border: 3px solid rgba(102, 126, 234, 0.3);
     border-radius: 15px;
     padding: 15px;
     overflow: hidden;
-    width: calc(20% - 16px);
-    min-width: 180px;
+    width: calc(25% - 15px);
+    min-width: 200px;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 .celebrity-card:hover {
@@ -33,42 +29,49 @@
     border-color: rgba(102, 126, 234, 0.6);
 }
 
-.celebrity-card.selected {
-    border-color: #667eea;
-    border-width: 4px;
-    background: rgba(102, 126, 234, 0.1);
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-}
-
-.celebrity-card.highlight-imposter {
-    border-color: #ef4444;
-    border-width: 4px;
-    background: rgba(239, 68, 68, 0.1);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-    animation: pulse 1s ease-in-out 3;
-}
-
 .celebrity-photo {
     width: 100%;
     height: auto;
-    max-height: 250px;
+    max-height: 300px;
     object-fit: contain;
     border-radius: 10px;
     display: block;
-    margin-bottom: 10px;
 }
 
-.celebrity-name {
-    font-size: 1rem;
+.movie-input-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+}
+
+.movie-label {
+    display: block;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #333;
+    color: white;
+    margin-bottom: 10px;
     text-align: center;
-    margin: 0;
-    padding: 8px 0 0 0;
 }
 
-.celebrity-radio {
-    display: none;
+.movie-input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    color: #333;
+    font-weight: 500;
+}
+
+.movie-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
 }
 
 .answer-display {
@@ -77,7 +80,7 @@
     padding: 20px 30px;
     border-radius: 12px;
     margin: 20px 0 15px 0;
-    border: 2px solid rgba(239, 68, 68, 0.5);
+    border: 2px solid rgba(102, 126, 234, 0.3);
     opacity: 0;
     transition: opacity 0.5s ease;
     max-width: 600px;
@@ -87,7 +90,7 @@
 .answer-text {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #ef4444;
+    color: #667eea;
     text-align: center;
     margin: 0;
 }
@@ -114,67 +117,63 @@
     box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
 }
 
-#imposter-form {
+#movie-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
 
-#imposter-form .next-button {
-    max-width: 600px;
+#movie-title {
+    box-sizing: border-box;
 }
 
-.quiz-question {
-    margin-bottom: 0;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+#answer-display {
+    box-sizing: border-box;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .celebrities-grid {
         gap: 15px;
-    }
-
-    .celebrity-card {
-        width: calc(33.333% - 10px);
-        min-width: 150px;
+        margin: 20px 0;
     }
 
     .celebrity-photo {
-        max-height: 200px;
+        height: 200px;
     }
 
-    .celebrity-name {
-        font-size: 0.9rem;
+    .movie-input {
+        font-size: 1rem;
+        padding: 12px 18px;
+    }
+
+    .answer-text {
+        font-size: 1.2rem;
     }
 }
 
 @media (max-width: 480px) {
     .celebrities-grid {
+        grid-template-columns: 1fr;
         gap: 12px;
     }
 
-    .celebrity-card {
-        width: calc(50% - 6px);
-        min-width: 140px;
-        padding: 12px;
-    }
-
     .celebrity-photo {
-        max-height: 180px;
+        height: 250px;
     }
 
-    .celebrity-name {
-        font-size: 0.85rem;
+    .celebrity-card {
+        padding: 4px;
+    }
+
+    .movie-input {
+        font-size: 0.95rem;
+        padding: 12px 15px;
     }
 
     .answer-text {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .reveal-button {

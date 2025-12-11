@@ -1,37 +1,236 @@
-.text-answer-label {
-    margin: 0 4px;
+/* Celebrity-specific styles */
+.celebrity-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-#celebrity-name {
-    border-radius: 4px;
-    margin-bottom: 4px;
-    background: white;
-    padding: 4px 8px;
+.celebrity-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    margin-bottom: 30px;
+}
+
+/* Letter boxes container */
+.letter-boxes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.name-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.word-wrapper {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+.letter-box {
+    width: 32px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.letter-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Form container */
+.celebrity-form-container {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
 }
 
 #quiz-form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    max-width: 600px;
-    margin: 0 auto;
+    gap: 15px;
 }
 
-.buttons-div {
-    display: flex;
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.text-input-div {
+.input-group {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 8px;
     gap: 8px;
 }
 
-.text-input {
-    padding: 4px;
+.input-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin-left: 5px;
+}
+
+.celebrity-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.05rem;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    color: #1f2937;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.celebrity-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.celebrity-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.celebrity-input::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Answer display for quiz master */
+.answer-display {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    margin-top: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.answer-display p {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.answer-display strong {
+    color: #667eea;
+    font-size: 1.4rem;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Quiz master buttons */
+.reveal-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(251, 146, 60, 0.4);
+    transition: all 0.3s ease;
+}
+
+.reveal-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(251, 146, 60, 0.5);
+}
+
+.reveal-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .celebrity-image {
+        max-height: 300px;
+    }
+    
+    .name-section {
+        gap: 12px;
+    }
+    
+    .letter-box {
+        width: 28px;
+        height: 36px;
+        border-width: 2px;
+    }
+    
+    .word-wrapper {
+        gap: 4px;
+    }
+    
+    .celebrity-input {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    .quiz-master-buttons {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .celebrity-image {
+        max-height: 250px;
+    }
+    
+    .name-section {
+        gap: 10px;
+    }
+    
+    .letter-box {
+        width: 24px;
+        height: 32px;
+        border-width: 1.5px;
+        border-radius: 4px;
+    }
+    
+    .word-wrapper {
+        gap: 3px;
+    }
+    
+    .celebrity-input {
+        padding: 10px;
+    }
 }

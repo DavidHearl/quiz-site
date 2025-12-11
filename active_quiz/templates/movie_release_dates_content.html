@@ -1,32 +1,41 @@
 {% load static %}
 {% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/active_quiz.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/movie_release_dates.css' %}">
 {% endblock %}
 
 {% if current_movie %}
-    <div class="movie-card">
-        <img class="movie-poster" src="{{ current_movie.poster.url }}" alt="Movie Poster">
-        <h2 class="movie-title">{{ current_movie.title }}</h2>
+    <div class="movie-poster-container">
+        <img class="movie-poster" src="{{ current_movie.poster.url }}" alt="{{ current_movie.title }}">
     </div>
-    <div class="slider-container">
-        <form id="year-form" method="post" action="{% url 'active_quiz:next_movie_release_date' %}">
-            {% csrf_token %}
-            <input type="hidden" name="correct_year" value="{{ correct_year }}">
-            <!-- <label for="year-slider">Guess the Release Year:</label> -->
-            <div class="slider-bar-container">
-                <input type="range" id="year-slider" name="year" min="1950" max="{{ current_year }}" value="2000" oninput="updateYearDisplay(this.value)">
-                <span id="year-display">2000</span>
+
+    <form id="year-form" method="post" action="{% url 'active_quiz:next_movie_release_date' %}">
+        {% csrf_token %}
+        <input type="hidden" name="correct_year" value="{{ correct_year }}">
+        
+        {% if request.user.username == 'david' %}
+            <div class="answer-display" id="answer-display" style="display: none;">
+                <p class="answer-text">{{ correct_year }}</p>
             </div>
-            <div class="button-div">
-                {% if request.user.username == 'david' %}
-                    <button type="button" class="reveal-button" onclick="revealCorrectYear()">Reveal Correct Year</button>
-                    <button type="submit" class="submit-button">Next</button>
-                {% else %}
-                    <button type="submit" class="submit-button">Submit</button>
-                {% endif %}
+            <button type="button" class="reveal-button" onclick="revealYear()">Reveal Year</button>
+            <button type="submit" class="next-button">Next</button>
+        {% else %}
+            <div class="year-display-box">
+                <div id="year-display" class="year-number">2000</div>
+                <div class="year-unit">release year</div>
             </div>
-        </form>
-    </div>
+            
+            <div class="slider-wrapper">
+                <div class="slider-track">
+                    <span class="slider-min">1950</span>
+                    <input type="range" id="year-slider" name="year" min="1950" max="{{ current_year }}" value="2000" oninput="updateYearDisplay(this.value)">
+                    <span class="slider-max">{{ current_year }}</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-button">Submit</button>
+        {% endif %}
+    </form>
 {% endif %}
 
 <script>
@@ -34,10 +43,11 @@
         document.getElementById('year-display').textContent = value;
     }
 
-    function revealCorrectYear() {
-        const correctYear = "{{ correct_year }}";
-        const slider = document.getElementById('year-slider');
-        slider.value = correctYear;
-        updateYearDisplay(correctYear);
+    function revealYear() {
+        const answerDisplay = document.getElementById('answer-display');
+        answerDisplay.style.display = 'block';
+        setTimeout(() => {
+            answerDisplay.style.opacity = '1';
+        }, 10);
     }
 </script>

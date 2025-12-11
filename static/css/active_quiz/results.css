@@ -1,110 +1,491 @@
-.quiz-title {
-    display: flex;
-    justify-content: center;
+.results-page {
+    padding: 32px 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.6s ease-in;
 }
 
-.podium {
+/* Celebration Header */
+.celebration-header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: slideDown 0.8s ease-out;
+}
+
+.trophy-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.quiz-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+/* Podium Container */
+.podium-container {
     display: flex;
     justify-content: center;
-    width: 100%;
-    gap: 12px;
-    height: 300px;
-    max-width: 900px;
-    margin: auto;
+    align-items: flex-end;
+    gap: 30px;
+    margin: 60px auto;
+    max-width: 1000px;
+    perspective: 1000px;
 }
 
 .podium-place {
-    width: 30%;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: end;
     align-items: center;
-    gap: 8px;
+    position: relative;
+    animation: riseUp 0.8s ease-out forwards;
+    opacity: 0;
 }
 
-.first-place-podium,
-.second-place-podium,
-.third-place-podium {
-    width: 90%;
-    border: 1px solid;
-    padding: 4px;
+.first-place {
+    animation-delay: 0.2s;
+    z-index: 3;
+}
+
+.second-place {
+    animation-delay: 0.4s;
+    z-index: 2;
+}
+
+.third-place {
+    animation-delay: 0.6s;
+    z-index: 1;
+}
+
+/* Crown for First Place */
+.crown {
+    font-size: 50px;
+    position: absolute;
+    top: -40px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 5px 10px rgba(255, 215, 0, 0.5));
+}
+
+/* Player Photo */
+.player-photo-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.player-photo,
+.photo-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.first-place .player-photo,
+.first-place .photo-placeholder {
+    width: 140px;
+    height: 140px;
+    border-color: #ffd700;
+}
+
+.photo-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
-    justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
 }
 
-.first-place-podium {
-    height: 45%;
-    background-color: orange;
+.podium-place:hover .player-photo,
+.podium-place:hover .photo-placeholder {
+    transform: scale(1.1) rotate(5deg);
 }
 
-.second-place-podium {
-    height: 30%;
-    background-color: gray;
+/* Medal Badges */
+.medal {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 40px;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+    animation: swing 2s ease-in-out infinite;
 }
 
-.third-place-podium {
-    height: 20%;
-    background-color: brown;
+.first-place .medal {
+    font-size: 50px;
+}
+
+/* Player Name and Stats */
+.player-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    text-transform: capitalize;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.first-place .player-name {
+    font-size: 1.8rem;
+}
+
+.player-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 15px 30px;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.score-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.first-place .score-value {
+    font-size: 2.5rem;
+}
+
+/* Podium Bars */
+.podium-bar {
+    width: 200px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-bottom: none;
+    position: relative;
+}
+
+.podium-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 15px 15px 0 0;
+}
+
+.gold-bar {
+    height: 200px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+}
+
+.silver-bar {
+    height: 150px;
+    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 50%, #c0c0c0 100%);
+}
+
+.bronze-bar {
+    height: 120px;
+    background: linear-gradient(135deg, #cd7f32 0%, #e6a557 50%, #cd7f32 100%);
+}
+
+.rank {
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+/* Remaining Players */
+.remaining-players {
+    margin-top: 60px;
+    animation: fadeIn 1s ease-in 1s forwards;
+    opacity: 0;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.player-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.player-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.player-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    border-color: rgba(102, 126, 234, 0.5);
+}
+
+.rank-badge {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.small-photo,
+.small-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.small-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.player-info .name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    text-transform: capitalize;
+}
+
+.score-badge {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes riseUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0) rotate(0deg);
+    0%, 100% {
+        transform: translateY(0);
     }
-    40% {
-        transform: translateY(-30px) rotate(-10deg);
+    50% {
+        transform: translateY(-20px);
     }
-    60% {
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(-10deg);
+    }
+    50% {
         transform: translateY(-15px) rotate(10deg);
     }
 }
 
-.placeholder, .profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 10px;
+@keyframes swing {
+    0%, 100% {
+        transform: rotate(-10deg);
+    }
+    50% {
+        transform: rotate(10deg);
+    }
 }
 
-.placeholder {
-    background-color: #f0f0f0;
-    animation: bounce 2s infinite;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .quiz-title {
+        font-size: 2rem;
+    }
+    
+    .trophy-icon {
+        font-size: 60px;
+    }
+    
+    .podium-container {
+        gap: 15px;
+        margin: 40px auto;
+    }
+    
+    .player-photo,
+    .photo-placeholder {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .first-place .player-photo,
+    .first-place .photo-placeholder {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .player-name {
+        font-size: 1.2rem;
+    }
+    
+    .first-place .player-name {
+        font-size: 1.4rem;
+    }
+    
+    .score-value {
+        font-size: 1.5rem;
+    }
+    
+    .first-place .score-value {
+        font-size: 1.8rem;
+    }
+    
+    .podium-bar {
+        width: 120px;
+    }
+    
+    .gold-bar {
+        height: 150px;
+    }
+    
+    .silver-bar {
+        height: 110px;
+    }
+    
+    .bronze-bar {
+        height: 90px;
+    }
+    
+    .rank {
+        font-size: 2rem;
+    }
+    
+    .crown {
+        font-size: 35px;
+        top: -30px;
+    }
+    
+    .medal {
+        font-size: 30px;
+    }
+    
+    .first-place .medal {
+        font-size: 35px;
+    }
+    
+    .player-list {
+        grid-template-columns: 1fr;
+    }
 }
 
-.profile-image {
-    object-fit: cover;
-    animation: bounce 2s infinite;
-}
-
-.results-container {
-    display: flex;
-    flex-direction: column;
-    margin-top: 32px;
-    gap: 8px;
-}
-
-.player-name {
-    text-transform: capitalize;
-}
-
-.player-result {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-    background-color: white;
-    border-radius: 4px;
-}
-
-.gold {
-    background-color: gold;
-}
-.silver {
-    background-color: silver;
-}
-.bronze {
-    background-color: #cd7f32;
+@media (max-width: 480px) {
+    .results-page {
+        padding: 20px 10px;
+    }
+    
+    .quiz-title {
+        font-size: 1.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .podium-container {
+        gap: 10px;
+    }
+    
+    .podium-bar {
+        width: 90px;
+    }
+    
+    .player-name {
+        font-size: 1rem;
+    }
+    
+    .player-stats {
+        padding: 10px 15px;
+    }
 }

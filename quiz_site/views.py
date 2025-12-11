@@ -150,7 +150,10 @@ def quiz_home(request):
         "Celebrity Age": Celebrities,
         "Who is the Oldest": Celebrities,
         "Movies": Movies,
+        "Movie Release Dates": Movies,
+        "Who is the Imposter": Movies,
         "Music": Music,
+        "Locations": Locations,
     }
 
     # Initialize dictionary to store previously seen questions by round
@@ -249,12 +252,14 @@ def quiz_home(request):
                 base_query = model.objects.none()
         elif round_name == "Capital Cities":
             base_query = base_query.filter(capital__isnull=False).exclude(capital='')
+        elif round_name == "Movies":
+            # Filter movies that have at least 4 actors
+            base_query = Movies.objects.annotate(actor_count=Count('actors')).filter(actor_count__gte=4)
         elif round_name == "Movie Release Dates":
-            base_query = Movies.objects.all()
-            print(f"Total movies: {base_query.count()}")
             base_query = Movies.objects.filter(release_date__isnull=False)
-            print(f"Movies with release dates: {base_query.count()}")
-            
+        elif round_name == "Who is the Imposter":
+            # Filter movies that have at least 4 actors (need 4 from movie + 1 imposter)
+            base_query = Movies.objects.annotate(actor_count=Count('actors')).filter(actor_count__gte=4)
             
         # Exclude questions previously seen by current players
         if previously_seen_questions[round_name]:

@@ -14,7 +14,7 @@
 .celebrity-item {
     display: flex;
     align-items: center;
-    margin: 8px 0;
+    margin: 12px 0;
     text-align: center;
 }
 
@@ -22,59 +22,83 @@
     display: flex;
     align-items: center;
     width: 100%;
-    border: 1px solid black;
-    border-radius: 8px;
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.celebrity-content:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    border-color: rgba(102, 126, 234, 0.6);
 }
 
 .celebrity-image {
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border-radius: 8px;
-    margin: 0 12px 0 0;
+    margin: 0;
     border: none;
-    border-right: 1px solid black;
+    flex-shrink: 0;
 }
 
 .celebrity-info {
     display: flex;
     flex-direction: column;
     align-items: start;
+    flex: 1;
+    padding: 0 15px;
 }
 
 .celebrity-name {
-    margin: 4px 0;
-    font-size: 1rem;
-    padding-right: 4px;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
 }
 
 .move-buttons {
     display: flex;
-    justify-content: center;
     margin-left: auto;
+    border-left: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .move-buttons button {
     height: 100px;
-    padding: 4px 16px;
-    font-size: 16px;
+    width: 50px;
+    padding: 0;
+    font-size: 1.5rem;
     cursor: pointer;
     border: none;
+    transition: all 0.3s ease;
+    font-weight: 700;
+}
+
+.move-buttons button:hover {
+    transform: scale(1.05);
 }
 
 .move-up {
-    background: rgb(46, 191, 46);
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    border-right: 1px solid black !important;
-    border-left: 1px solid black !important;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.move-up:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
 .move-down {
-    background: rgb(255, 129, 129);
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.move-down:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
 }
 
 .order-indicator {
@@ -87,7 +111,10 @@
 }
 
 .label-oldest, .label-youngest {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     margin: 0 10px;
 }
 
@@ -136,41 +163,89 @@
 .buttons-div {
     display: flex;
     gap: 12px;
-    margin-top: 12px;
-}
-
-.buttons-div {
-    display: flex;
-    justify-content: center;
-    margin-top: 8px;
-}
-
-.reveal-order-button,
-.next-button {
-    padding: 8px 16px;
-    background-color: rgb(40, 180, 210);
-    border-radius: 8px;
-    border: 1px solid white;
-    margin-top: 0;
-}
-
-.submit-button {
-    margin-top: 0;
+    margin-top: 20px;
     width: 100%;
 }
 
-@media (max-width: 600px) {
+.reveal-order-button {
+    flex: 1;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(251, 146, 60, 0.4);
+    transition: all 0.3s ease;
+    margin-top: 0;
+}
+
+.reveal-order-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(251, 146, 60, 0.5);
+}
+
+.reveal-order-button:active {
+    transform: translateY(0);
+}
+
+.buttons-div .next-button {
+    flex: 1;
+    margin-top: 0;
+}
+
+.buttons-div .submit-button {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
     .celebrity-image {
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
     }
 
     .move-buttons button {
-        height: 90px;
-        padding: 4px 12px;
+        height: 80px;
+        width: 45px;
+        font-size: 1.3rem;
     }
 
     .celebrity-name {
-        font-size: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .celebrity-info {
+        padding: 0 10px;
+    }
+    
+    .buttons-div {
+        flex-direction: column;
+    }
+    
+    .label-oldest, .label-youngest {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .celebrity-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .move-buttons button {
+        height: 70px;
+        width: 40px;
+        font-size: 1.2rem;
+    }
+
+    .celebrity-name {
+        font-size: 0.9rem;
+    }
+    
+    .celebrity-info {
+        padding: 0 8px;
     }
 }

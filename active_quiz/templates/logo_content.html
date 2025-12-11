@@ -4,56 +4,80 @@
 {% endblock %}
 
 {% if current_logo %}
-    <div class="logo-card">
-        <h2 class="logo-question">Which company does this logo belong to ?</h2>
-        <img class="logo-image" src="{{ current_logo.logo.url }}" alt="Logo Image">
-        <h2 class="company-name" id="obfuscated-name">
-            <!-- The obfuscated name will be inserted here by JavaScript -->
-        </h2>
+    <div class="question-card">
+        <h2 class="quiz-question">Which company does this logo belong to?</h2>
     </div>
-    <div class="text-container">
+    
+    <div class="logo-card">
+        <img class="logo-image" src="{{ current_logo.logo.url }}" alt="Logo Image">
         {% if request.user.username != 'david' %}
-            <style>
-                #quiz-form {
-                    flex-direction: column;
-                }
-            </style>
+            <div class="letter-boxes-container">
+                <div id="company-name-boxes" class="name-section"></div>
+            </div>
         {% endif %}
-
+    </div>
+    
+    <div class="logo-form-container">
         <form id="quiz-form" method="post" action="{% url 'active_quiz:next_logo' %}">
             {% csrf_token %}
-            <div class="text-answer">
             {% if request.user.username != 'david' %}
-                <input type="text" class="text-input" id="company" name="company">
-            {% endif %}
-                <input type="hidden" name="correct_company" value="{{ current_logo.company }}">
-            </div>
-
-            {% if request.user.username == 'david' %}
-                <button type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
-                <button id="submit" type="submit" class="submit-button">Next</button>
-            {% else %}
+                <div class="input-group">
+                    <label class="input-label" for="company">Company Name</label>
+                    <input type="text" class="logo-input" id="company" name="company" 
+                           placeholder="Enter company name" 
+                           {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
+                </div>
                 <button type="submit" class="submit-button" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
+            {% else %}
+                <div class="answer-display" id="answer-display" style="display: none;">
+                    <p><strong>Answer:</strong> <span id="company-name"></span></p>
+                </div>
+                <button type="button" class="reveal-button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+                <button id="submit" type="submit" class="next-button">Next</button>
             {% endif %}
-            
+            <input type="hidden" name="correct_company" value="{{ current_logo.company }}">
         </form>
-        <div id="obfuscated-name"></div>
     </div>
 {% endif %}
 <script>
     const companyName = "{{ current_logo.company }}";
-    function obfuscateName(name) {
-        return name.split('').map(char => char === ' ' ? ' ' : '*').join('');
-    }
-    function revealName() {
-        document.getElementById('obfuscated-name').innerText = companyName;
-    }
-    document.getElementById('obfuscated-name').innerText = obfuscateName(companyName);
 
-    function highlightCorrectAnswer() {
-        document.getElementById('company').value = companyName;
-        setTimeout(() => {
-            document.getElementById('quiz-form').submit();
-        }, 2000);
+    function createLetterBoxes(name, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // Split name into words
+        const words = name.split(' ');
+        
+        words.forEach(word => {
+            const wordWrapper = document.createElement('div');
+            wordWrapper.className = 'word-wrapper';
+            
+            for (let char of word) {
+                const box = document.createElement('div');
+                box.className = 'letter-box';
+                wordWrapper.appendChild(box);
+            }
+            
+            container.appendChild(wordWrapper);
+        });
+    }
+
+    function revealName() {
+        const answerDisplay = document.getElementById('answer-display');
+        const companyNameSpan = document.getElementById('company-name');
+        
+        if (answerDisplay && companyNameSpan) {
+            companyNameSpan.textContent = companyName;
+            answerDisplay.style.display = 'block';
+            answerDisplay.classList.add('fade-in');
+        }
+    }
+
+    // Create letter boxes for players
+    if ("{{ request.user.username }}" !== 'david') {
+        createLetterBoxes(companyName, 'company-name-boxes');
     }
 </script>

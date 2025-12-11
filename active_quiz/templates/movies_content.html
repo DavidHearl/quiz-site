@@ -1,0 +1,48 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/active_quiz.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/active_quiz/movies.css' %}">
+{% endblock %}
+
+{% if current_movie %}
+    <div class="question-card">
+        <h2 class="quiz-question">What movie is this?</h2>
+    </div>
+
+    <div class="celebrities-grid">
+        {% for actor in actors %}
+            <div class="celebrity-card">
+                <img class="celebrity-photo" src="{{ actor.photo.url }}" alt="{{ actor.first_name }} {{ actor.last_name }}">
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="movie-form" method="post" action="{% url 'active_quiz:next_movie' %}">
+        {% csrf_token %}
+        <input type="hidden" name="correct_title" value="{{ current_movie.title }}">
+        
+        {% if request.user.username == 'david' %}
+            <div class="answer-display" id="answer-display" style="display: none;">
+                <p class="answer-text">{{ current_movie.title }}</p>
+            </div>
+            <button type="button" class="reveal-button" onclick="revealMovie()">Reveal Movie</button>
+            <button type="submit" class="next-button">Next</button>
+        {% else %}
+            <div class="movie-input-container">
+                <label for="movie-title" class="movie-label">Your Answer:</label>
+                <input type="text" id="movie-title" name="movie_title" class="movie-input" placeholder="Enter the movie name" autocomplete="off" required>
+            </div>
+            <button type="submit" class="submit-button">Submit</button>
+        {% endif %}
+    </form>
+{% endif %}
+
+<script>
+    function revealMovie() {
+        const answerDisplay = document.getElementById('answer-display');
+        answerDisplay.style.display = 'block';
+        setTimeout(() => {
+            answerDisplay.style.opacity = '1';
+        }, 10);
+    }
+</script>

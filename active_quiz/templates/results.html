@@ -5,53 +5,128 @@
 {% endblock %}
 {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-    <div class="container">
-        <h1 class="quiz-title">Quiz Results</h1>
-        <div class="podium">
+    <div class="results-page">
+        <div class="celebration-header">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="quiz-title">Quiz Complete!</h1>
+            <p class="subtitle">Here are the final standings</p>
+        </div>
+
+        <div class="podium-container">
             {% if players|length >= 2 %}
-                <div class="podium-place">
-                    {% if players.1.player_photo %}
-                        <img src="{{ players.1.player_photo.url }}" alt="{{ players.1.user.username }}" class="profile-image">
-                    {% else %}
-                        <div class="placeholder"></div>
-                    {% endif %}
-                    <div class="second-place-podium">
-                        <p>2</p>
+                <div class="podium-place second-place">
+                    <div class="player-photo-container">
+                        {% if players.1.player_photo %}
+                            <img src="{{ players.1.player_photo.url }}" alt="{{ players.1.user.username }}" class="player-photo">
+                        {% else %}
+                            <div class="photo-placeholder">{{ players.1.user.username|first|upper }}</div>
+                        {% endif %}
+                        <div class="medal silver-medal">🥈</div>
+                    </div>
+                    <h3 class="player-name">{{ players.1.user.username }}</h3>
+                    <div class="player-stats">
+                        <span class="score-label">Score</span>
+                        <span class="score-value">{{ players.1.player_score }}</span>
+                    </div>
+                    <div class="podium-bar silver-bar">
+                        <span class="rank">2</span>
                     </div>
                 </div>
             {% endif %}
+
             {% if players|length >= 1 %}
-                <div class="podium-place">
-                    {% if players.0.player_photo %}
-                        <img src="{{ players.0.player_photo.url }}" alt="{{ players.0.user.username }}" class="profile-image">
-                    {% else %}
-                        <div class="placeholder"></div>
-                    {% endif %}
-                    <div class="first-place-podium">
-                        <p>1</p>
+                <div class="podium-place first-place">
+                    <div class="crown">👑</div>
+                    <div class="player-photo-container">
+                        {% if players.0.player_photo %}
+                            <img src="{{ players.0.player_photo.url }}" alt="{{ players.0.user.username }}" class="player-photo">
+                        {% else %}
+                            <div class="photo-placeholder">{{ players.0.user.username|first|upper }}</div>
+                        {% endif %}
+                        <div class="medal gold-medal">🥇</div>
+                    </div>
+                    <h3 class="player-name">{{ players.0.user.username }}</h3>
+                    <div class="player-stats">
+                        <span class="score-label">Score</span>
+                        <span class="score-value">{{ players.0.player_score }}</span>
+                    </div>
+                    <div class="podium-bar gold-bar">
+                        <span class="rank">1</span>
                     </div>
                 </div>
             {% endif %}
+
             {% if players|length >= 3 %}
-                <div class="podium-place">
-                    {% if players.2.player_photo %}
-                        <img src="{{ players.2.player_photo.url }}" alt="{{ players.2.user.username }}" class="profile-image">
-                    {% else %}
-                        <div class="placeholder"></div>
-                    {% endif %}
-                    <div class="third-place-podium">
-                        <p>3</p>
+                <div class="podium-place third-place">
+                    <div class="player-photo-container">
+                        {% if players.2.player_photo %}
+                            <img src="{{ players.2.player_photo.url }}" alt="{{ players.2.user.username }}" class="player-photo">
+                        {% else %}
+                            <div class="photo-placeholder">{{ players.2.user.username|first|upper }}</div>
+                        {% endif %}
+                        <div class="medal bronze-medal">🥉</div>
+                    </div>
+                    <h3 class="player-name">{{ players.2.user.username }}</h3>
+                    <div class="player-stats">
+                        <span class="score-label">Score</span>
+                        <span class="score-value">{{ players.2.player_score }}</span>
+                    </div>
+                    <div class="podium-bar bronze-bar">
+                        <span class="rank">3</span>
                     </div>
                 </div>
             {% endif %}
         </div>
-        <div class="results-container">
-            {% for player in players %}
-                <div class="player-result {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
-                    <p class="player-name">{{ player.user.username }}</p>
-                    <p class="player-score">{{ player.player_score }}</p>
-                </div>
-            {% endfor %}
+
+        {% if players|length > 3 %}
+        <div class="remaining-players">
+            <h2 class="section-title">Other Finishers</h2>
+            <div class="player-list">
+                {% for player in players %}
+                    {% if forloop.counter > 3 %}
+                        <div class="player-card" data-rank="{{ forloop.counter }}">
+                            <div class="rank-badge">{{ forloop.counter }}</div>
+                            <div class="player-info">
+                                {% if player.player_photo %}
+                                    <img src="{{ player.player_photo.url }}" alt="{{ player.user.username }}" class="small-photo">
+                                {% else %}
+                                    <div class="small-placeholder">{{ player.user.username|first|upper }}</div>
+                                {% endif %}
+                                <span class="name">{{ player.user.username }}</span>
+                            </div>
+                            <div class="score-badge">{{ player.player_score }}</div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
+        {% endif %}
     </div>
+
+    <script>
+        // Trigger confetti on page load
+        setTimeout(() => {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }, 500);
+
+        // Trigger more confetti after a delay
+        setTimeout(() => {
+            confetti({
+                particleCount: 50,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 }
+            });
+            confetti({
+                particleCount: 50,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 }
+            });
+        }, 1500);
+    </script>
 {% endblock %}

@@ -129,6 +129,8 @@
                     {% include 'true_or_false_content.html' %}
                 {% elif current_celebrity and current_round == "Celebrity Age" %}
                     {% include 'celebrity_age_content.html' %}
+                {% elif current_movie and current_round == "Movies" %}
+                    {% include 'movies_content.html' %}
                 {% elif current_movie and current_round == "Movie Release Dates" %}
                     {% include 'movie_release_dates_content.html' %}
                 {% elif current_round == "Who is the Oldest" %}
@@ -137,6 +139,8 @@
                     {% include 'who_is_the_imposter_content.html' %}
                 {% elif current_music and current_round == "Music" %}
                     {% include 'music_content.html' %}
+                {% elif current_location and current_round == "Locations" %}
+                    {% include 'locations_content.html' %}
                 {% endif %}
             </div>
             

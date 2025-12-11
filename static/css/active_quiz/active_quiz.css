@@ -50,17 +50,41 @@
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .multiple-choice {
+    position: relative;
     display: flex;
-    text-align: center;
+    text-align: left;
     align-items: center;
-    padding: 12px;
-    background: white;
-    border-radius: 8px;
-    margin: 12px 0;
-    border: 1px solid rgb(81, 81, 81);
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+}
+
+.multiple-choice:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    border-color: rgba(102, 126, 234, 0.6);
+}
+
+.multiple-choice:has(.radio-button:checked) {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.multiple-choice:has(.radio-button:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .flag-card,
@@ -86,7 +110,22 @@
 .radio-button {
     width: 20px;
     height: 20px;
-    margin: 0 4px 0 0;
+    margin: 0 12px 0 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.multiple-choice-label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    flex: 1;
+}
+
+.multiple-choice:has(.radio-button:checked) .multiple-choice-label {
+    color: #667eea;
+    font-weight: 700;
 }
 
 .success,
@@ -110,13 +149,19 @@
 }
 
 .highlight-correct {
-    background-color: rgb(80, 190, 80);
-    font-weight: bold;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%) !important;
+    border-color: #10b981 !important;
+    color: white !important;
+}
+
+.highlight-correct .multiple-choice-label {
+    color: white !important;
+    font-weight: 700 !important;
 }
 
 .quiz-question {
     font-size: 1.2rem;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     text-align: center;
     background: white;
     padding: 32px;
@@ -157,16 +202,38 @@
 
 .submit-button,
 .next-button {
-    padding: 8px 16px;
-    font-size: 16px;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 12px;
     cursor: pointer;
-    background-color: rgb(40, 180, 210);
-    border-radius: 8px;
-    border: 1px solid white;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
 }
 
-.next-button:hover,
-.submit-button:hover,
+.submit-button:hover:not(:disabled),
+.next-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+}
+
+.submit-button:active:not(:disabled),
+.next-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submit-button:disabled,
+.next-button:disabled {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .reveal-order-button:hover,
 .reveal-button:hover {
     background: darkslategray;
@@ -289,6 +356,84 @@
 .countdown-timer.critical {
     background-color: rgba(220, 20, 20, 0.8);
     animation: pulse 1s infinite;
+}
+
+/* Message Popups */
+.messages {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    max-width: 600px;
+    width: 90%;
+}
+
+.messagelist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.messagelist li {
+    padding: 16px 24px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+.messagelist li.success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.messagelist li.error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.messagelist li.warning {
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.95) 0%, rgba(249, 115, 22, 0.95) 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .messages {
+        top: 60px;
+        width: 95%;
+    }
+    
+    .messagelist li {
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+    
+    .multiple-choice {
+        padding: 10px 12px;
+    }
+    
+    .multiple-choice-label {
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 600px) {

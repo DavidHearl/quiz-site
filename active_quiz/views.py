@@ -58,11 +58,13 @@ def active_quiz(request):
         "Logos": handle_logos_round,
         "True or False": handle_true_or_false_round,
         "Celebrity Age": handle_celebrity_age_round,
+        "Movies": handle_movies_round,
         "Movie Release Dates": handle_movie_release_dates_round,
         "Who is the Oldest": handle_who_is_the_oldest_round,
         "Who is the Imposter": handle_who_is_the_imposter_round,
         "Fighter Jets": handle_fighter_jet_round,
         "Music": handle_music_round,
+        "Locations": handle_locations_round,
     }
 
     context = {
@@ -75,6 +77,7 @@ def active_quiz(request):
         'current_celebrity': None,
         'choices': [],
         'current_music': None,
+        'current_location': None,
     }
 
     if current_round in round_handlers:
@@ -935,6 +938,66 @@ def next_logo(request):
 
 
 @login_required
+def next_location(request):
+    if request.method == 'POST':
+        selected_answer = request.POST.get('location', '').strip()
+        correct_answer = request.POST.get('correct_location', '')
+        player = request.user.player
+        quiz = Quiz.objects.latest('date_created')
+        
+        # Initialize score
+        score = 0
+        
+        if request.user.username != 'david':
+            if selected_answer and correct_answer:
+                # Calculate Levenshtein distance
+                distance = levenshtein_distance(selected_answer.lower(), correct_answer.lower())
+                
+                # Split into words and check partial matches
+                user_words = set(selected_answer.lower().split())
+                correct_words = set(correct_answer.lower().split())
+                matches = len(user_words & correct_words)
+                total_words = len(correct_words)
+                
+                # Award points: exact match or 1 character off = 1.5 points, partial match proportional
+                if selected_answer.lower() == correct_answer.lower():
+                    score = 1.5
+                    player.question_answered = 1  # Correct
+                    messages.success(request, f'Perfect! You earned {score:.1f} points!')
+                elif distance == 1:
+                    score = 1.5
+                    player.question_answered = 1  # Correct (close enough)
+                    messages.success(request, f'Close enough! You earned {score:.1f} points!')
+                elif matches > 0:
+                    score = (matches / total_words) * 0.75
+                    player.question_answered = 3  # Partial
+                    messages.warning(request, f'Partial answer. You earned {score:.1f} points.')
+                else:
+                    player.question_answered = 2  # Incorrect
+                    player.incorrect_answers = (player.incorrect_answers or 0) + 1
+                    messages.error(request, 'Incorrect answer. No points earned.')
+                
+                player.player_score = (player.player_score or 0) + score
+            else:
+                player.question_answered = 2  # Incorrect
+                player.incorrect_answers = (player.incorrect_answers or 0) + 1
+                messages.error(request, 'Incorrect answer. No points earned.')
+        
+        # Record the answer and score
+        round_name = "Locations"
+        player.answers.setdefault(round_name, []).append(selected_answer)
+        player.points.setdefault(round_name, []).append(score)
+        player.save()
+        
+        # Save the correct answer to quiz.correct_answers if not already saved
+        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+            quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
+            quiz.save()
+        
+    return iterate_next_question(request)
+
+
+@login_required
 def next_true_or_false(request):
     if request.method == 'POST':
         selected_answer = request.POST.get('answer')
@@ -1038,34 +1101,40 @@ def next_movie_release_date(request):
         selected_year = request.POST.get('year')
         correct_year = request.POST.get('correct_year')
         
-        if request.user.username != 'david' and (selected_year is None or correct_year is None):
-            messages.error(request, 'Both the selected and correct years must be provided.')
-            return redirect('active_quiz:active_quiz')
-        
-        if selected_year is not None:
-            selected_year = int(selected_year)
-        correct_year = int(correct_year)
-        
         player = request.user.player
-        year_difference = abs(selected_year - correct_year)
+        round_name = "Movie Release Dates"
         
-        # Award points based on how close the user was to the correct year
-        if year_difference == 0:
-            score = 2
-        elif year_difference <= 1:
-            score = 1.5
-        elif year_difference <= 2:
-            score = 1.2
-        elif year_difference <= 4:
-            score = 0.7
-        elif year_difference <= 6:
-            score = 0.3
-        elif year_difference <= 8:
-            score = 0.1
+        # Quiz master can skip without selecting
+        if request.user.username == 'david':
+            # Just move to next question
+            pass
         else:
-            score = 0
-        
-        if request.user.username != 'david':
+            # Players must provide a year
+            if selected_year is None or correct_year is None:
+                messages.error(request, 'Both the selected and correct years must be provided.')
+                return redirect('active_quiz:active_quiz')
+            
+            selected_year = int(selected_year)
+            correct_year = int(correct_year)
+            
+            year_difference = abs(selected_year - correct_year)
+            
+            # Award points based on how close the user was to the correct year
+            if year_difference == 0:
+                score = 2
+            elif year_difference <= 1:
+                score = 1.5
+            elif year_difference <= 2:
+                score = 1.2
+            elif year_difference <= 4:
+                score = 0.7
+            elif year_difference <= 6:
+                score = 0.3
+            elif year_difference <= 8:
+                score = 0.1
+            else:
+                score = 0
+            
             player.player_score = (player.player_score or 0) + score
             if score >= 1:
                 player.question_answered = 1
@@ -1079,15 +1148,78 @@ def next_movie_release_date(request):
                 messages.success(request, f'You were {year_difference} years off! You have earned {score} points.')
             else:
                 messages.error(request, f'You were {year_difference} years off. No points earned.')
+            
+            # Record the answer and score
+            player.answers.setdefault(round_name, []).append(selected_year)
+            player.points.setdefault(round_name, []).append(round(score, 1))
+            player.save()
+
+            # Save the correct answer to quiz.correct_answers if not already saved
+            if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+                quiz.correct_answers.setdefault(round_name, []).append(correct_year)
+                quiz.save()
+        
+    return iterate_next_question(request)
+
+
+@login_required
+def next_movie(request):
+    if request.method == 'POST':
+        quiz = Quiz.objects.latest('date_created')
+        movie_title = request.POST.get('movie_title', '').strip()
+        correct_title = request.POST.get('correct_title', '').strip()
+        
+        if request.user.username != 'david' and not movie_title:
+            messages.error(request, 'Please enter a movie title.')
+            return redirect('active_quiz:active_quiz')
+        
+        player = request.user.player
+        score = 0
+        
+        if request.user.username != 'david':
+            # Normalize both titles for comparison
+            user_answer = movie_title.lower().strip()
+            correct_answer = correct_title.lower().strip()
+            
+            # Check for exact match
+            if user_answer == correct_answer:
+                score = 1.5
+                messages.success(request, f'Correct! You earned {score} points.')
+            else:
+                # Use Levenshtein distance for fuzzy matching
+                distance = Levenshtein.distance(user_answer, correct_answer)
+                max_length = max(len(user_answer), len(correct_answer))
+                
+                # Allow up to 15% character differences for partial credit
+                tolerance_ratio = distance / max_length if max_length > 0 else 1
+                
+                if tolerance_ratio <= 0.15:  # Very close
+                    score = 1.5
+                    messages.success(request, f'Close enough! You earned {score} points.')
+                elif tolerance_ratio <= 0.30:  # Moderately close
+                    score = 0.75
+                    messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
+                else:
+                    score = 0
+                    messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
+            
+            player.player_score = (player.player_score or 0) + score
+            if score >= 1:
+                player.question_answered = 1
+            elif 0 < score < 1:
+                player.question_answered = 3
+            else:
+                player.question_answered = 2
+        
         # Record the answer and score
-        round_name = "Movie Release Dates"
-        player.answers.setdefault(round_name, []).append(selected_year)
+        round_name = "Movies"
+        player.answers.setdefault(round_name, []).append(movie_title if movie_title else correct_title)
         player.points.setdefault(round_name, []).append(round(score, 1))
         player.save()
 
         # Save the correct answer to quiz.correct_answers if not already saved
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(correct_year)
+            quiz.correct_answers.setdefault(round_name, []).append(correct_title)
             quiz.save()
         
     return iterate_next_question(request)
@@ -1152,38 +1284,43 @@ def next_who_is_the_imposter(request):
     if request.method == 'POST':
         selected_celebrity_id = request.POST.get('selected_celebrity_id')
         imposter_id = request.POST.get('imposter_id')
-
-        if not selected_celebrity_id or not imposter_id:
-            return JsonResponse({'error': 'Invalid data'}, status=400)
-
-        selected_celebrity_id = int(selected_celebrity_id)
-        imposter_id = int(imposter_id)
-
+        
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
+        round_name = "Who is the Imposter"
 
-        if request.user.username != 'david':
+        # Quiz master can skip without selecting
+        if request.user.username == 'david':
+            # Just move to next question
+            pass
+        else:
+            # Players must select an answer
+            if not selected_celebrity_id or not imposter_id:
+                messages.error(request, 'Please select a celebrity.')
+                return redirect('active_quiz:active_quiz')
+            
+            selected_celebrity_id = int(selected_celebrity_id)
+            imposter_id = int(imposter_id)
+            
             if selected_celebrity_id == imposter_id:
-                player.player_score = (player.player_score or 0) + 1
-                player.question_answered = 1  # Correct
                 score = 1.5
-                messages.success(request, 'Correct! You have identified the imposter.')
+                player.player_score = (player.player_score or 0) + score
+                player.question_answered = 1  # Correct
+                messages.success(request, f'Correct! You earned {score} points.')
             else:
-                player.incorrect_answers = (player.incorrect_answers or 0) + 1
-                player.question_answered = 2  # Incorrect
                 score = 0
-                messages.error(request, 'Incorrect. Try again.')
+                player.question_answered = 2  # Incorrect
+                messages.error(request, 'Incorrect. No points earned.')
 
             # Record the answer and score
-            round_name = "Who is the Imposter"
             player.answers.setdefault(round_name, []).append(selected_celebrity_id)
             player.points.setdefault(round_name, []).append(score)
             player.save()
 
-        # Save the correct answer to quiz.correct_answers if not already saved
-        if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
-            quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
-            quiz.save()
+            # Save the correct answer to quiz.correct_answers if not already saved
+            if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
+                quiz.correct_answers.setdefault(round_name, []).append(imposter_id)
+                quiz.save()
 
     return iterate_next_question(request)
 
@@ -1459,6 +1596,19 @@ def handle_movie_release_dates_round(quiz, current_index):
     }
 
 
+def handle_movies_round(quiz, current_index):
+    movie_ids = quiz.random_numbers.get("Movies", [])
+    current_movie = Movies.objects.get(id=movie_ids[current_index])
+    
+    # Get 4 actors from the movie
+    actors = list(current_movie.actors.all())[:4]
+    
+    return {
+        'current_movie': current_movie,
+        'actors': actors,
+    }
+
+
 def handle_who_is_the_oldest_round(quiz, current_index):
     # Get the list of celebrity ID groups for the "Who is the Oldest" round
     celebrity_id_groups = quiz.random_numbers.get("Who is the Oldest", [])
@@ -1540,4 +1690,15 @@ def handle_music_round(quiz, current_index):
     
     return {
         'current_music': current_music,
+    }
+
+
+def handle_locations_round(quiz, current_index):
+    location_ids = quiz.random_numbers.get("Locations", [])
+    current_location = Locations.objects.get(id=location_ids[current_index])
+    obfuscated_name = ''.join('*' if char != ' ' else ' ' for char in current_location.location)
+    
+    return {
+        'current_location': current_location,
+        'obfuscated_name': obfuscated_name,
     }

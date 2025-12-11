@@ -6,36 +6,40 @@
 {% if current_celebrity %}
     <div class="celebrity-card">
         <img class="celebrity-image" src="{{ current_celebrity.photo.url }}" alt="Celebrity Image">
-        <h2 class="celebrity-name" id="celebrity-name">
-            <!-- The obfuscated name will be inserted here by JavaScript -->
-        </h2>
+        {% if request.user.username != 'david' %}
+            <div class="letter-boxes-container">
+                <div id="first-name-boxes" class="name-section"></div>
+                <div id="last-name-boxes" class="name-section"></div>
+            </div>
+        {% endif %}
     </div>
-    <div class="text-container">
+    <div class="celebrity-form-container">
         <form id="quiz-form" method="post" action="{% url 'active_quiz:next_celebrity' %}">
             {% csrf_token %}
             {% if request.user.username != 'david' %}
-                <div class="text-input-div">
-                    <div class="text-answer">
-                        <label class="text-answer-label" for="first_name">First Name:</label>
-                        <input type="text" class="text-input" id="first_name" name="first_name" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
-                    </div>
-                    <div class="text-answer">
-                        <label class="text-answer-label" for="last_name">Last Name:</label>
-                        <input type="text" class="text-input" id="last_name" name="last_name" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
-                    </div>
+                <div class="input-group">
+                    <label class="input-label" for="first_name">First Name</label>
+                    <input type="text" class="celebrity-input" id="first_name" name="first_name" 
+                           placeholder="Enter first name" 
+                           {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
                 </div>
+                <div class="input-group">
+                    <label class="input-label" for="last_name">Last Name</label>
+                    <input type="text" class="celebrity-input" id="last_name" name="last_name" 
+                           placeholder="Enter last name" 
+                           {% if request.user.player.question_answered != 0 %}disabled{% endif %}>
+                </div>
+                <button class="submit-button" id="submit" type="submit" 
+                        {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
+            {% else %}
+                <div class="answer-display" id="answer-display" style="display: none;">
+                    <p><strong>Answer:</strong> <span id="celebrity-name"></span></p>
+                </div>
+                <button class="reveal-button" type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
+                <button class="next-button" id="submit" type="submit">Next</button>
             {% endif %}
             <input type="hidden" name="correct_first_name" value="{{ current_celebrity.first_name }}">
             <input type="hidden" name="correct_last_name" value="{{ current_celebrity.last_name }}">
-            <div class="buttons-div">
-                {% if request.user.username == 'david' %}
-                        <button class="next-button" type="button" id="reveal-name-button" onclick="revealName()">Reveal Name</button>
-                        <button class="submit-button" id="submit" type="submit">Next</button>
-                    </div>
-                {% else %}
-                    <button class="submit-button" id="submit" type="submit" {% if request.user.player.question_answered != 0 %}disabled{% endif %}>Submit</button>
-                {% endif %}
-            </div>
         </form>
     </div>
 {% endif %}
@@ -43,15 +47,43 @@
     const firstName = "{{ current_celebrity.first_name }}";
     const lastName = "{{ current_celebrity.last_name }}";
 
-    function obfuscateName(firstName, lastName) {
-        const obfuscatedFirstName = "*".repeat(firstName.length);
-        const obfuscatedLastName = "*".repeat(lastName.length);
-        return `${obfuscatedFirstName} ${obfuscatedLastName}`;
+    function createLetterBoxes(name, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // Split name into words
+        const words = name.split(' ');
+        
+        words.forEach(word => {
+            const wordWrapper = document.createElement('div');
+            wordWrapper.className = 'word-wrapper';
+            
+            for (let char of word) {
+                const box = document.createElement('div');
+                box.className = 'letter-box';
+                wordWrapper.appendChild(box);
+            }
+            
+            container.appendChild(wordWrapper);
+        });
     }
 
     function revealName() {
-        document.getElementById('celebrity-name').textContent = `${firstName} ${lastName}`;
+        const answerDisplay = document.getElementById('answer-display');
+        const celebrityNameSpan = document.getElementById('celebrity-name');
+        
+        if (answerDisplay && celebrityNameSpan) {
+            celebrityNameSpan.textContent = `${firstName} ${lastName}`;
+            answerDisplay.style.display = 'block';
+            answerDisplay.classList.add('fade-in');
+        }
     }
 
-    document.getElementById('celebrity-name').textContent = obfuscateName(firstName, lastName);
+    // Create letter boxes for players
+    if ("{{ request.user.username }}" !== 'david') {
+        createLetterBoxes(firstName, 'first-name-boxes');
+        createLetterBoxes(lastName, 'last-name-boxes');
+    }
 </script>

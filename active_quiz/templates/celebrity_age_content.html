@@ -7,14 +7,24 @@
         <img class="celebrity-image" src="{{ current_celebrity.photo.url }}" alt="Celebrity Image">
         <h2 class="celebrity-name">{{ current_celebrity.first_name }} {{ current_celebrity.last_name }}</h2>
     </div>
-    <div class="slider-container">
+    <div class="age-guess-container">
         <form id="age-form" method="post" action="{% url 'active_quiz:next_celebrity_age' %}">
             {% csrf_token %}
             <input type="hidden" name="correct_age" value="{{ correct_age }}">
-            <label for="age-slider">Guess the Age:</label>
-            <input type="range" id="age-slider" name="age" min="18" max="100" value="50" oninput="updateAgeDisplay(this.value)">
-            <span id="age-display">50</span>
-            <br>
+            <div class="slider-wrapper">
+                <label for="age-slider" class="slider-label">Guess the Age</label>
+                <div class="age-display-box">
+                    <span id="age-display">50</span>
+                    <span class="age-unit">years old</span>
+                </div>
+                <div class="slider-track">
+                    <input type="range" id="age-slider" name="age" min="18" max="100" value="50" oninput="updateAgeDisplay(this.value)">
+                    <div class="slider-labels">
+                        <span>18</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
             {% if request.user.username == 'david' %}
                 <button type="button" class="next-button" onclick="highlightCorrectAnswer()">Next</button>
             {% else %}

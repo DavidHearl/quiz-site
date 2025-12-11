@@ -1,3 +1,17 @@
-.next-button {
+/* Flag-specific styles only - shared styles in active_quiz.css */
+.flag-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.flag-image {
     width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
 }

@@ -1,88 +1,223 @@
-#year-form {
+/* Movie Release Dates Styling */
+.movie-poster-container {
+    margin: 20px 0;
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
 }
 
 .movie-poster {
-    max-width: 250px;
-    border-radius: 8px;
-    border: 1px solid black;
+    max-width: 400px;
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
-.year-button {
-    padding: 8px;
-    min-width: 60px;
+.year-display-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 30px 0 20px 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    max-width: 300px;
+    width: 100%;
+}
+
+.year-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #667eea;
+    text-align: center;
+    margin: 0;
+    line-height: 1;
+}
+
+.year-unit {
     font-size: 1.2rem;
     font-weight: 600;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
+    color: #666;
+    text-align: center;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.year-button:hover {
-    background: lightblue;
-    color: white;
-}
-
-.movie-card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-bottom: 8px;
-}
-
-.movie-title {
-    padding: 4px 8px;
-    background: white;
-    margin-top: 8px;
-    border: 1px solid black;
-    border-radius: 8px;
-}
-
-.year-options-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 16px;
-}
-
-.slider-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.slider-bar-container {
-    display: flex;
-    background: white;
-    padding: 8px 16px;
-    border-radius: 8px;
+.slider-wrapper {
     width: 100%;
     max-width: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    margin: 20px 0;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    box-sizing: border-box;
+}
+
+.slider-track {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.slider-min,
+.slider-max {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #667eea;
+    min-width: 50px;
+    text-align: center;
 }
 
 #year-slider {
-    width: 100%;
+    flex: 1;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #10b981 0%, #667eea 50%, #ef4444 100%);
+    outline: none;
+    -webkit-appearance: none;
 }
 
-#year-display {
-    margin-left: 12px;
+#year-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-.button-div {
+#year-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+#year-slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+#year-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+#year-form {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    gap: 12px;
-    margin-top: 12px;
+}
+
+#year-form .next-button {
+    max-width: 600px;
+}
+
+.answer-display {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px 30px;
+    border-radius: 12px;
+    margin: 20px 0 15px 0;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    max-width: 600px;
+    width: 100%;
+}
+
+.answer-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+    text-align: center;
+    margin: 0;
 }
 
 .reveal-button {
-    padding: 8px 16px;
-    background-color: rgb(40, 180, 210);
-    border-radius: 8px;
-    border: 1px solid white;
-    margin-top: 0;
+    width: 100%;
+    max-width: 600px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+}
+
+.reveal-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .movie-poster {
+        max-width: 350px;
+    }
+
+    .year-number {
+        font-size: 2.5rem;
+    }
+
+    .year-unit {
+        font-size: 1rem;
+    }
+
+    .slider-wrapper {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .movie-poster {
+        max-width: 300px;
+    }
+
+    .year-number {
+        font-size: 2rem;
+    }
+
+    .year-unit {
+        font-size: 0.9rem;
+    }
+
+    .slider-wrapper {
+        padding: 20px;
+    }
+
+    .slider-min,
+    .slider-max {
+        font-size: 0.9rem;
+        min-width: 45px;
+    }
+
+    #year-slider::-webkit-slider-thumb {
+        width: 25px;
+        height: 25px;
+    }
+
+    #year-slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+    }
 }
