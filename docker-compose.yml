@@ -1,44 +1,31 @@
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: quiz-site-nginx
+    ports:
+      - "127.0.0.1:80:80"
+    volumes:
+      - /srv/nginx/quiz-site/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/django_media/quiz-site/media:/media:ro
+    depends_on:
+      - web
+
   web:
     build: .
+    container_name: quiz-site-web
     env_file:
       - .env
-    networks: [traefik-net]
     ports:
-      - "8000:8000"
-    labels:
-      - traefik.enable=true
-
-      # Main Django app
-      - traefik.http.routers.quiz.rule=Host(`quiz.mediaservers.co.uk`)
-      - traefik.http.routers.quiz.entrypoints=web
-      - traefik.http.routers.quiz.service=quiz
-      - traefik.http.services.quiz.loadbalancer.server.port=8000
-
-      # Static files
-      - traefik.http.routers.quiz-static.rule=Host(`quiz.mediaservers.co.uk`) && PathPrefix(`/static`)
-      - traefik.http.routers.quiz-static.entrypoints=web
-      - traefik.http.routers.quiz-static.service=quiz-static
-      - traefik.http.services.quiz-static.loadbalancer.server.port=8000
-
-      # Media files
-      - traefik.http.routers.quiz-media.rule=Host(`quiz.mediaservers.co.uk`) && PathPrefix(`/media`)
-      - traefik.http.routers.quiz-media.entrypoints=web
-      - traefik.http.routers.quiz-media.service=quiz-media
-      - traefik.http.services.quiz-media.loadbalancer.server.port=8000
-
+      - "127.0.0.1:8000:8000"
     volumes:
       - staticfiles:/app/staticfiles
-      - /srv/django_media/quiz-site:/app/media
-
+      - /srv/django_media/quiz-site/media:/app/media
     restart: unless-stopped
-
     healthcheck:
-      test: ["CMD-SHELL","wget -qO- http://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 5
-
     command:
       - gunicorn
       - quiz.wsgi:application
@@ -50,8 +37,3 @@ services:
 
 volumes:
   staticfiles:
-  media:
-
-networks:
-  traefik-net:
-    external: true
