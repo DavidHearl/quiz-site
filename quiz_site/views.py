@@ -856,7 +856,8 @@ def locations(request):
 
 def edit_locations(request, location_id):
     users = User.objects.all()
-    location = get_object_or_404(Location, pk=location_id)
+    location = get_object_or_404(Locations, pk=location_id)
+    locations = Locations.objects.all()
     location_form = LocationForm(instance=location)
 
     if request.method == 'POST':
@@ -878,6 +879,18 @@ def edit_locations(request, location_id):
     }
 
     return render(request, 'quiz_site/location.html', context)
+
+
+def delete_locations(request, location_id):
+    """
+    View to delete a specific location from the database
+    """
+    location = get_object_or_404(Locations, pk=location_id)
+    location_name = location.location  # Store the name before deletion for the message
+    location.delete()
+    messages.success(request, f'Location "{location_name}" deleted successfully.')
+    
+    return redirect('locations')
 
 
 def music(request):

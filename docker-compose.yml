@@ -1,28 +1,28 @@
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: quiz-site-nginx
+    ports:
+      - "127.0.0.1:80:80"
+    volumes:
+      - /srv/nginx/quiz-site/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/django_media/quiz-site/media:/media:ro
+    depends_on:
+      - web
+
   web:
     build: .
+    container_name: quiz-site-web
     env_file:
       - .env
-    # gunicorn command is already in your Dockerfile CMD; no need to repeat it here
-    # command: gunicorn quiz_site.wsgi:application -w 3 -b :8000
-    networks: [traefik-net]
     ports:
-      - "8000:8000"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.quiz.rule=Host(`quiz.mediaservers.co.uk`)
-      - traefik.http.routers.quiz.entrypoints=web
-      - traefik.http.services.quiz.loadbalancer.server.port=8000
-    # optional but nice: persist static/media across rebuilds
+      - "127.0.0.1:8000:8000"
     volumes:
       - staticfiles:/app/staticfiles
-      - media:/app/media
-      - .:/app
+      - /srv/django_media/quiz-site/media:/app/media
     restart: unless-stopped
-    # Only keep this if you actually have a /healthz view;
-    # otherwise use "/" or drop the healthcheck for now.
     healthcheck:
-      test: ["CMD-SHELL","wget -qO- http://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -37,9 +37,3 @@ services:
 
 volumes:
   staticfiles:
-  media:
-
-
-networks:
-  traefik-net:
-    external: true

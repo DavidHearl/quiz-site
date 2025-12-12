@@ -40,7 +40,7 @@
 
         {% for location in locations %}
             <div class="data-card">
-                <form class="form-container" method="post" enctype="multipart/form-data">
+                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_locations' location.id %}">
                     {% csrf_token %}
 
                     <!-- Location -->
@@ -67,7 +67,12 @@
                         <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
                     </div>
                     
-                    <button class="submit" type="submit">Submit</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="submit" type="submit">Submit</button>
+                        <a href="{% url 'delete_locations' location.id %}" class="btn btn-delete" 
+                           onclick="return confirm('Are you sure you want to delete {{ location.location }}?')"
+                           style="background-color: #dc3545; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block; text-align: center;">Delete</a>
+                    </div>
                 </form> 
             </div>
         {% endfor %}
