@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Rounds Management{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general/rounds.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="rounds-container">
+        <div class="rounds-header">
+            <h1>Rounds Management</h1>
+            <p>View and manage quiz rounds</p>
+        </div>
+        
+        <!-- Add New Round Section -->
+        <div class="add-round-section">
+            <h2 class="section-title">Add New Round</h2>
+            <form method="post" class="add-round-form">
+                {% csrf_token %}
+                <input type="hidden" name="add_round" value="1">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ add_form.question_type.id_for_label }}">Round Name:</label>
+                        {{ add_form.question_type }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ add_form.description.id_for_label }}">Description:</label>
+                        {{ add_form.description }}
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label for="{{ add_form.disabled.id_for_label }}">Disabled:</label>
+                        {{ add_form.disabled }}
+                    </div>
+                    <div class="form-group button-group">
+                        <button type="submit" class="btn btn-primary">Add Round</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Active Rounds Section -->
+        <div class="rounds-section">
+            <h2 class="section-title">Active Rounds <span class="count-badge active-count">{{ active_count }}</span></h2>
+            {% if active_rounds %}
+                <table class="rounds-table">
+                    <thead>
+                        <tr>
+                            <th>Round Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for round in active_rounds %}
+                        <tr>
+                            <td class="round-name">{{ round.question_type }}</td>
+                            <td>{{ round.description|default:"No description" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary edit-btn" onclick="toggleEditForm({{ round.id }})">Edit</button>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="toggle_round" value="1">
+                                    <input type="hidden" name="round_id" value="{{ round.id }}">
+                                    <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Disable this round?')">Disable</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Hidden edit form -->
+                        <tr id="edit-form-{{ round.id }}" style="display: none;">
+                            <td colspan="3">
+                                <form method="post" class="edit-round-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="edit_round" value="1">
+                                    <input type="hidden" name="round_id" value="{{ round.id }}">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Round Name:</label>
+                                            <input type="text" name="question_type" value="{{ round.question_type }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Description:</label>
+                                            <textarea name="description" rows="2">{{ round.description }}</textarea>
+                                        </div>
+                                        <div class="form-group checkbox-group">
+                                            <label>Disabled:</label>
+                                            <input type="checkbox" name="disabled" {% if round.disabled %}checked{% endif %}>
+                                        </div>
+                                        <div class="form-group button-group">
+                                            <button type="submit" class="btn btn-success">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" onclick="toggleEditForm({{ round.id }})">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-rounds">
+                    <p>No active rounds found.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Disabled Rounds Section -->
+        <div class="rounds-section">
+            <h2 class="section-title">Disabled Rounds <span class="count-badge disabled-count">{{ disabled_count }}</span></h2>
+            {% if disabled_rounds %}
+                <table class="rounds-table">
+                    <thead>
+                        <tr>
+                            <th>Round Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for round in disabled_rounds %}
+                        <tr>
+                            <td class="round-name">{{ round.question_type }}</td>
+                            <td>{{ round.description|default:"No description" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary edit-btn" onclick="toggleEditForm({{ round.id }})">Edit</button>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="toggle_round" value="1">
+                                    <input type="hidden" name="round_id" value="{{ round.id }}">
+                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Enable this round?')">Enable</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Hidden edit form -->
+                        <tr id="edit-form-{{ round.id }}" style="display: none;">
+                            <td colspan="3">
+                                <form method="post" class="edit-round-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="edit_round" value="1">
+                                    <input type="hidden" name="round_id" value="{{ round.id }}">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Round Name:</label>
+                                            <input type="text" name="question_type" value="{{ round.question_type }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Description:</label>
+                                            <textarea name="description" rows="2">{{ round.description }}</textarea>
+                                        </div>
+                                        <div class="form-group checkbox-group">
+                                            <label>Disabled:</label>
+                                            <input type="checkbox" name="disabled" {% if round.disabled %}checked{% endif %}>
+                                        </div>
+                                        <div class="form-group button-group">
+                                            <button type="submit" class="btn btn-success">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" onclick="toggleEditForm({{ round.id }})">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-rounds">
+                    <p>No disabled rounds found.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        {% if not active_rounds and not disabled_rounds %}
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <p>No rounds found. Please check your database setup.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleEditForm(roundId) {
+            const formRow = document.getElementById('edit-form-' + roundId);
+            if (formRow.style.display === 'none' || formRow.style.display === '') {
+                formRow.style.display = 'table-row';
+            } else {
+                formRow.style.display = 'none';
+            }
+        }
+    </script>
+{% endblock %}

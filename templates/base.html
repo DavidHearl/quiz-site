@@ -51,10 +51,24 @@
         <div id="nav-menu" style="display: none;">
             <h3 class="category-heading">Page Navigation</h3>
             <a class="navigation-sub-label" href="{% url 'home' %}">Home</a>
+            {% if user.is_superuser %}
+                <a class="navigation-sub-label" href="{% url 'manage_quizzes' %}">Manage Quizzes</a>
+                <a class="navigation-sub-label" href="{% url 'rounds' %}">Rounds</a>
+            {% endif %}
 
             {% if user.is_superuser %}
-                <h3 class="category-heading">Question Databases</h3>
-                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'general_knowledge' %}{% endif %}">General Knowledge <span class="to-finish">({{ general_knowledge_count }})</span></a>
+                <h3 class="category-heading">General Questions</h3>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'general' %}{% endif %}">General <span class="to-finish">({{ general_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'science' %}{% endif %}">Science <span class="to-finish">({{ science_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'geography' %}{% endif %}">Geography <span class="to-finish">({{ geography_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'history' %}{% endif %}">History <span class="to-finish">({{ history_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'entertainment' %}{% endif %}">Entertainment & Pop Culture <span class="to-finish">({{ entertainment_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'maths' %}{% endif %}">Maths <span class="to-finish">({{ maths_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'mythology' %}{% endif %}">Mythology <span class="to-finish">({{ mythology_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'technology' %}{% endif %}">Technology <span class="to-finish">({{ technology_count }})</span></a>
+                <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'sport' %}{% endif %}">Sport <span class="to-finish">({{ sport_count }})</span></a>
+
+                <h3 class="category-heading">Other Questions</h3>
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'true_or_false' %}{% endif %}">True or False <span class="to-finish">({{ true_or_false_count }})</span></a>
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'flags' %}{% endif %}">Countries/Flag <span class="finished">({{flags_count}})</span></a>
                 <a class="navigation-sub-label" href="{% if user.is_superuser %}{% url 'logos' %}{% endif %}">Companies/Logo <span class="to-finish">({{logos_count}})</span></a>
@@ -75,6 +89,11 @@
                 <a class="navigation-sub-label" href="{% url 'account_login' %}">Login</a>
                 <a class="navigation-sub-label" href="{% url 'account_signup' %}">Register</a>
             {% endif %}
+            
+            <!-- Version Display -->
+            <div class="version-display">
+                <span class="version-text">Version 3.0.12</span>
+            </div>
         </div>
 
         <!-- {% if not user.is_authenticated %}

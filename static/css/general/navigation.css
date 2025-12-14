@@ -50,6 +50,15 @@ a:hover {
     background-color: rgb(240, 240, 240);
 }
 
+.version-display {
+    text-align: center;
+}
+
+.version-text {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
 @media (max-width: 1420px) {
     #navigation {
         margin: 12px;

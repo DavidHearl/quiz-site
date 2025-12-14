@@ -3,77 +3,112 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/movies.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/location.css' %}">
 {% endblock %}
 
 {% block content %}
     <div class="database-container">
-        <div class="data-card">
-            <form class="form-container" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <!-- Location -->
-                <div>
-                    <input id="id_location" type="text" name="location" value="{{ locations.location }}">
-                </div>
-
-                <!-- Placeholder Image -->
-                <div class="flex">
-                    <div class="image-placeholder">Placeholder</div>
-                </div>
-
-                <!-- Photo -->
-                <div>
-                    <label for="id_photo">Photo:</label>
-                    <input id="id_photo" type="file" name="photo">
-                </div>
-
-                <!-- Difficulty -->
-                <div class="column-flex">
-                    <label for="id_difficulty">Difficulty:</label>
-                    <input id="id_difficulty" type="text" name="difficulty" value="{{ locations.difficulty }}">
-                </div>
-
-                <button class="submit" type="submit">Submit</button>
-            </form> 
+        <div class="page-header">
+            <h1 class="title">Location Management</h1>
+            <p>Add and manage quiz locations</p>
         </div>
-
-        {% for location in locations %}
-            <div class="data-card">
-                <form class="form-container" method="post" enctype="multipart/form-data" action="{% url 'edit_locations' location.id %}">
+        
+        <!-- Add New Location Section -->
+        <div class="add-location-section">
+            <h2 class="section-title">Add New Location</h2>
+            <div class="add-location-form-container">
+                <form class="add-location-form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                    
+                    <div class="add-form-fields">
+                        <div class="add-info-group">
+                            <label for="id_location">Location Name:</label>
+                            <input id="id_location" type="text" name="location" placeholder="Enter location name..." required>
+                        </div>
 
-                    <!-- Location -->
-                    <div>
-                        <input id="id_location" type="text" name="location" value="{{ location.location }}">
-                    </div>
+                        <div class="add-info-group">
+                            <label for="id_difficulty">Difficulty:</label>
+                            <input id="id_difficulty" type="text" name="difficulty" placeholder="e.g., Easy, Medium, Hard">
+                        </div>
 
-                    <!-- Flag Image -->
-                    <div class="flex">
-                        {% if location.photo %}
-                            <img class="card-image" src="{{ location.photo.url }}" alt="">
-                        {% endif %}
-                    </div>
-
-                    <!-- Photo -->
-                    <div>
-                        <label for="id_photo">Photo:</label>
-                        <input id="id_photo" type="file" name="photo">
-                    </div>
-
-                    <!-- Difficulty -->
-                    <div class="column-flex">
-                        <label for="id_difficulty">Difficulty:</label>
-                        <input id="id_difficulty" type="text" name="difficulty" value="{{ location.difficulty }}">
+                        <div class="add-info-group">
+                            <label for="id_photo">Photo:</label>
+                            <input id="id_photo" type="file" name="photo" accept="image/*">
+                        </div>
                     </div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <button class="submit" type="submit">Submit</button>
-                        <a href="{% url 'delete_locations' location.id %}" class="btn btn-delete" 
-                           onclick="return confirm('Are you sure you want to delete {{ location.location }}?')"
-                           style="background-color: #dc3545; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block; text-align: center;">Delete</a>
+                    <div class="add-form-actions">
+                        <button class="btn btn-add" type="submit">Add Location</button>
                     </div>
                 </form> 
             </div>
-        {% endfor %}
+        </div>
+
+        <!-- Existing Locations Section -->
+        <div class="existing-locations-section">
+            <h2 class="section-title">Existing Locations</h2>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="locationSearch" class="search-input" placeholder="Search locations by name..." onkeyup="filterLocations()">
+            </div>
+
+            <div id="locationsList" class="locations-table-container">
+                {% for location in locations %}
+                <div class="location-row">
+                    <form class="location-form" method="post" enctype="multipart/form-data" action="{% url 'edit_locations' location.id %}">
+                        {% csrf_token %}
+                        
+                        <div class="location-image-cell">
+                            {% if location.photo %}
+                                <img class="location-thumbnail" src="{{ location.photo.url }}" alt="{{ location.location }}">
+                            {% else %}
+                                <div class="no-image-placeholder">No Image</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="location-info-cell">
+                            <div class="info-row">
+                                <div class="info-group">
+                                    <label for="id_location_{{ location.id }}">Location:</label>
+                                    <input id="id_location_{{ location.id }}" type="text" name="location" value="{{ location.location }}" required>
+                                </div>
+                                <div class="info-group">
+                                    <label for="id_difficulty_{{ location.id }}">Difficulty:</label>
+                                    <input id="id_difficulty_{{ location.id }}" type="text" name="difficulty" value="{{ location.difficulty }}">
+                                </div>
+                                <div class="info-group">
+                                    <label for="id_photo_{{ location.id }}">Update Photo:</label>
+                                    <input id="id_photo_{{ location.id }}" type="file" name="photo" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="location-actions-cell">
+                            <button class="btn btn-update" type="submit">Update</button>
+                            <a href="{% url 'delete_locations' location.id %}" class="btn btn-delete" 
+                               onclick="return confirm('Are you sure you want to delete {{ location.location }}?')">Delete</a>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterLocations() {
+            const searchInput = document.getElementById('locationSearch').value.toLowerCase();
+            const locationRows = document.querySelectorAll('#locationsList .location-row');
+            
+            locationRows.forEach(row => {
+                const locationName = row.querySelector('input[name="location"]').value.toLowerCase();
+                if (locationName.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 {% endblock %}

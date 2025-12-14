@@ -501,6 +501,25 @@ def edit_general_knowledge(request, question_id):
             question.save()
             messages.success(request, 'Question edited successfully.')
             print('Question edited successfully')
+            
+            # Redirect back to the appropriate category page
+            if question.category:
+                category_name = question.category.category
+                category_url_map = {
+                    'General': 'general',
+                    'Science': 'science',
+                    'Geography': 'geography',
+                    'History': 'history',
+                    'Entertainment': 'entertainment',
+                    'Pop Culture': 'entertainment',  # Merged with Entertainment
+                    'Maths': 'maths',
+                    'Mythology': 'mythology',
+                    'Technology': 'technology',
+                    'Sport': 'sport',
+                }
+                redirect_url = category_url_map.get(category_name, 'general_knowledge')
+                return redirect(redirect_url)
+            
             return redirect('general_knowledge')
 
     context = {
@@ -523,6 +542,111 @@ def delete_general_knowledge(request, question_id):
     messages.success(request, f'Question "{question_text}" deleted successfully.')
     
     return redirect('general_knowledge')
+
+
+# Separate views for each General Knowledge category
+def general(request):
+    return _category_view(request, 'General', 'general.html')
+
+def science(request):
+    return _category_view(request, 'Science', 'science.html')
+
+def geography(request):
+    return _category_view(request, 'Geography', 'geography.html')
+
+def history(request):
+    return _category_view(request, 'History', 'history.html')
+
+def entertainment(request):
+    """Entertainment view - now includes Pop Culture questions"""
+    users = User.objects.all()
+    # Get both Entertainment and Pop Culture categories
+    questions = GeneralKnowledge.objects.none()
+    categories = []
+    
+    try:
+        entertainment_cat = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+        questions = questions | GeneralKnowledge.objects.filter(category=entertainment_cat)
+        categories.append(entertainment_cat)
+    except GeneralKnowledgeCategory.DoesNotExist:
+        pass
+    
+    try:
+        pop_culture_cat = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+        questions = questions | GeneralKnowledge.objects.filter(category=pop_culture_cat)
+        categories.append(pop_culture_cat)
+    except GeneralKnowledgeCategory.DoesNotExist:
+        pass
+    
+    form = GeneralKnowledgeForm()
+    
+    if request.method == 'POST':
+        form = GeneralKnowledgeForm(request.POST, request.FILES)
+        if form.is_valid():
+            question = form.save(commit=False)
+            # Default to Entertainment category if it exists
+            if categories:
+                question.category = categories[0]
+            question.save()
+            messages.success(request, 'Question added successfully.')
+            return redirect(request.path)
+    
+    context = {
+        'general_knowledge': questions,
+        'general_knowledge_form': form,
+        'users': users,
+        'category_name': 'Entertainment & Pop Culture',
+        'question_count': questions.count(),
+    }
+    
+    return render(request, 'quiz_site/entertainment.html', context)
+
+def maths(request):
+    return _category_view(request, 'Maths', 'maths.html')
+
+def pop_culture(request):
+    """Redirect to entertainment view since they're now merged"""
+    return redirect('entertainment')
+
+def mythology(request):
+    return _category_view(request, 'Mythology', 'mythology.html')
+
+def technology(request):
+    return _category_view(request, 'Technology', 'technology.html')
+
+def sport(request):
+    return _category_view(request, 'Sport', 'sport.html')
+
+def _category_view(request, category_name, template_name):
+    """
+    Helper function to handle category-specific views
+    """
+    users = User.objects.all()
+    try:
+        category = GeneralKnowledgeCategory.objects.get(category=category_name)
+        questions = GeneralKnowledge.objects.filter(category=category)
+    except GeneralKnowledgeCategory.DoesNotExist:
+        questions = GeneralKnowledge.objects.none()
+    
+    form = GeneralKnowledgeForm()
+
+    if request.method == 'POST':
+        form = GeneralKnowledgeForm(request.POST, request.FILES)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.category = category
+            question.save()
+            messages.success(request, 'Question added successfully.')
+            return redirect(request.path)
+
+    context = {
+        'general_knowledge': questions,
+        'general_knowledge_form': form,
+        'users': users,
+        'category_name': category_name,
+    }
+
+    return render(request, f'quiz_site/{template_name}', context)
 
 
 def true_or_false(request):
@@ -944,3 +1068,53 @@ def edit_music(request, music_id):
     }
 
     return render(request, 'quiz_site/edit_music.html', context)
+
+
+@login_required
+def rounds(request):
+    """
+    View to display all rounds with their disabled/active status
+    """
+    active_rounds = Rounds.objects.filter(disabled=False).order_by('question_type')
+    disabled_rounds = Rounds.objects.filter(disabled=True).order_by('question_type')
+    
+    # Handle form submissions
+    if request.method == 'POST':
+        if 'add_round' in request.POST:
+            # Add new round
+            form = RoundsForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Round added successfully.')
+                return redirect('rounds')
+        elif 'edit_round' in request.POST:
+            # Edit existing round
+            round_id = request.POST.get('round_id')
+            round_obj = get_object_or_404(Rounds, id=round_id)
+            form = RoundsForm(request.POST, instance=round_obj)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Round updated successfully.')
+                return redirect('rounds')
+        elif 'toggle_round' in request.POST:
+            # Toggle active/disabled status
+            round_id = request.POST.get('round_id')
+            round_obj = get_object_or_404(Rounds, id=round_id)
+            round_obj.disabled = not round_obj.disabled
+            round_obj.save()
+            status = "disabled" if round_obj.disabled else "enabled"
+            messages.success(request, f'Round {status} successfully.')
+            return redirect('rounds')
+    
+    # Forms for the template
+    add_form = RoundsForm()
+    
+    context = {
+        'active_rounds': active_rounds,
+        'disabled_rounds': disabled_rounds,
+        'add_form': add_form,
+        'active_count': active_rounds.count(),
+        'disabled_count': disabled_rounds.count(),
+    }
+    
+    return render(request, 'quiz_site/rounds.html', context)

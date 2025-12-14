@@ -1,0 +1,482 @@
+/* Location Management Page - Modern Styling */
+
+.database-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Page Header */
+.page-header {
+    text-align: center;
+    padding-bottom: 12px;
+}
+
+.title {
+    color: #eee;
+}
+
+.page-header p {
+    font-size: 16px;
+    margin-top: 8px;
+    color: #ddd;
+}
+
+.section-title {
+    font-size: 24px;
+    color: #eee;
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    font-weight: 600;
+}
+
+.add-location-form-container {
+    margin-bottom: 4px;
+}
+
+/* Search Bar */
+.search-container {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
+}
+
+.search-input::placeholder {
+    color: #6c757d;
+}
+
+/* Add New Location Form - Horizontal Layout */
+.add-location-form-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.add-location-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.add-form-fields {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+}
+
+.add-info-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.add-info-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6c757d;
+    margin: 0;
+}
+
+.add-info-group input[type="text"],
+.add-info-group input[type="file"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.add-info-group input[type="text"]:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
+}
+
+.add-info-group input[type="file"] {
+    font-size: 12px;
+    padding: 6px 8px;
+}
+
+.add-form-actions {
+    flex: 0 0 auto;
+}
+
+.btn-add {
+    background: #007bff;
+    color: white;
+    padding: 8px 24px;
+}
+
+.btn-add:hover {
+    background: #0056b3;
+}
+
+/* Horizontal Table Layout for Existing Locations */
+.locations-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.location-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.2s;
+}
+
+.location-row:hover {
+    background-color: #f8f9fa;
+}
+
+.location-row:last-child {
+    border-bottom: none;
+}
+
+.location-form {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.location-image-cell {
+    flex: 0 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.location-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.no-image-placeholder {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    border: 2px dashed #ced4da;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #6c757d;
+    text-align: center;
+}
+
+.location-info-cell {
+    flex: 1;
+    min-width: 0;
+}
+
+.info-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.info-group {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6c757d;
+    margin: 0;
+}
+
+.info-group input[type="text"],
+.info-group input[type="file"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.info-group input[type="text"]:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
+}
+
+.info-group input[type="file"] {
+    font-size: 12px;
+    padding: 6px 8px;
+}
+
+.location-actions-cell {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+}
+
+/* Form Styling */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
+}
+
+/* Column Flex for Vertical Layout */
+.column-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.column-flex label {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.column-flex input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.column-flex input:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
+}
+
+/* Image Display for Add New Section */
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.image-placeholder {
+    width: 300px;
+    height: 200px;
+    background: #e9ecef;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Buttons */
+.submit,
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.submit {
+    background: #007bff;
+    color: white;
+}
+
+.submit:hover {
+    background: #0056b3;
+}
+
+.btn-update {
+    background: #28a745;
+    color: white;
+}
+
+.btn-update:hover {
+    background: #218838;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .database-container {
+        padding: 10px;
+    }
+    
+    /* Add new form responsive */
+    .add-location-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .add-form-fields {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .add-info-group {
+        min-width: auto;
+    }
+    
+    .add-form-actions {
+        width: 100%;
+    }
+    
+    .btn-add {
+        width: 100%;
+    }
+    
+    /* Horizontal layout responsive */
+    .location-row {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .location-form {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .location-image-cell {
+        flex: 0 0 auto;
+    }
+    
+    .info-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .info-group {
+        min-width: auto;
+    }
+    
+    .location-actions-cell {
+        width: 100%;
+    }
+    
+    .location-actions-cell .btn {
+        flex: 1;
+    }
+}
+
+/* File Input Styling */
+input[type="file"] {
+    padding: 8px 12px;
+    background: white;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #f8f9fa;
+    color: #495057;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #e9ecef;
+}

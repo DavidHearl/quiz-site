@@ -19,6 +19,15 @@ class QuizSelectionForm(forms.Form):
         fields = ['quiz_name', 'users', 'rounds', 'exclude_previous']
 
 
+class RoundsForm(forms.ModelForm):
+    class Meta:
+        model = Rounds
+        fields = ['question_type', 'description', 'disabled']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Describe what this round entails...'}),
+        }
+
+
 class CustomUserCreationForm(UserCreationForm):
     """
     A form that creates a user, with no email field and with

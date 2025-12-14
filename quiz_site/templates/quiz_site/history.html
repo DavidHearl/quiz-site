@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}History Questions{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/quiz_site/general_knowledge.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="database-container">
+        <h2>History Questions</h2>
+
+        <!-- Questions Table -->
+        <div class="questions-table">
+            <!-- New Question Form (Creation Form) -->
+            <div class="question-row">
+                <form class="creation-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="question-cell">
+                        <label class="cell-label" for="id_question">Question:</label>
+                        <textarea class="question-input" id="id_question" name="question" rows="3"></textarea>
+                    </div>
+
+                    <div class="answer-choices-cell">
+                        <label class="cell-label" for="id_answer">Answer:</label>
+                        <input class="question-input" id="id_answer" type="text" name="answer">
+
+                        <label class="cell-label">Answer Choices:</label>
+                        <div class="choices-grid">
+                            <input class="question-input" id="id_choice_1" type="text" name="choice_1" placeholder="Choice 1">
+                            <input class="question-input" id="id_choice_2" type="text" name="choice_2" placeholder="Choice 2">
+                            <input class="question-input" id="id_choice_3" type="text" name="choice_3" placeholder="Choice 3">
+                        </div>
+                    </div>
+
+                    <div class="actions-cell">
+                        <label class="cell-label" for="id_difficulty">Difficulty:</label>
+                        <input class="difficulty-input" id="id_difficulty" type="text" name="difficulty">
+
+                        <button class="submit btn-primary" type="submit">Add Question</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Existing Questions -->
+            {% for question in general_knowledge %}
+            <div class="question-row">
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_general_knowledge' question.id %}">
+                    {% csrf_token %}
+                    <div class="question-cell">
+                        <label class="cell-label" for="id_question_{{ question.id }}">Question:</label>
+                        <textarea class="question-input" id="id_question_{{ question.id }}" name="question" rows="3">{{ question.question }}</textarea>
+                    </div>
+
+                    <div class="answer-choices-cell">
+                        <label class="cell-label" for="id_answer_{{ question.id }}">Answer:</label>
+                        <input class="question-input" id="id_answer_{{ question.id }}" type="text" name="answer" value="{{ question.answer }}">
+
+                        <label class="cell-label">Answer Choices:</label>
+                        <div class="choices-grid">
+                            <input class="question-input" id="id_choice_1_{{ question.id }}" type="text" name="choice_1" placeholder="Choice 1" value="{{ question.choice_1 }}">
+                            <input class="question-input" id="id_choice_2_{{ question.id }}" type="text" name="choice_2" placeholder="Choice 2" value="{{ question.choice_2 }}">
+                            <input class="question-input" id="id_choice_3_{{ question.id }}" type="text" name="choice_3" placeholder="Choice 3" value="{{ question.choice_3 }}">
+                        </div>
+                    </div>
+
+                    <div class="actions-cell">
+                        <label class="cell-label" for="id_difficulty_{{ question.id }}">Difficulty:</label>
+                        <input class="difficulty-input" id="id_difficulty_{{ question.id }}" type="text" name="difficulty" value="{{ question.difficulty }}">
+
+                        <button class="submit" type="submit">Save</button>
+                        <a href="{% url 'delete_general_knowledge' question.id %}" class="btn-delete"
+                        onclick="return confirm('Are you sure you want to delete this question?')">Delete</a>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -28,6 +28,7 @@ class Player(models.Model):
 # Rounds model, used to store the different types of questions that can be asked
 class Rounds(models.Model):
     question_type = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True, help_text="Description of what this round entails")
     selected = models.BooleanField(default=False)
     disabled = models.BooleanField(default=False)
 
