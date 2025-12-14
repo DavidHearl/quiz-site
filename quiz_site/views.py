@@ -202,21 +202,17 @@ def quiz_home(request):
                 base_query = base_query.filter(category=category)
             except GeneralKnowledgeCategory.DoesNotExist:
                 base_query = model.objects.none()
-        elif round_name == "Entertainment":
+        elif round_name == "Entertainment" or round_name == "Pop Culture":
             try:
-                category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
-                base_query = base_query.filter(category=category)
+                # Query both Entertainment and Pop Culture categories
+                entertainment_cat = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+                pop_culture_cat = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+                base_query = base_query.filter(category__in=[entertainment_cat, pop_culture_cat])
             except GeneralKnowledgeCategory.DoesNotExist:
                 base_query = model.objects.none()
         elif round_name == "Maths":
             try:
                 category = GeneralKnowledgeCategory.objects.get(category='Maths')
-                base_query = base_query.filter(category=category)
-            except GeneralKnowledgeCategory.DoesNotExist:
-                base_query = model.objects.none()
-        elif round_name == "Pop Culture":
-            try:
-                category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
                 base_query = base_query.filter(category=category)
             except GeneralKnowledgeCategory.DoesNotExist:
                 base_query = model.objects.none()
@@ -317,9 +313,10 @@ def quiz_home(request):
                     elif round_name == "History":
                         history_category = GeneralKnowledgeCategory.objects.get(category='History')
                         base_query = base_query.filter(category=history_category)
-                    elif round_name == "Entertainment":
+                    elif round_name == "Entertainment" or round_name == "Pop Culture":
                         entertainment_category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
-                        base_query = base_query.filter(category=entertainment_category)
+                        pop_culture_category = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+                        base_query = base_query.filter(category__in=[entertainment_category, pop_culture_category])
                     elif round_name == "Mythology":
                         category = GeneralKnowledgeCategory.objects.get(category='Mythology')
                         base_query = base_query.filter(category=category)
