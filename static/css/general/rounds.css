@@ -1,303 +1,299 @@
 .rounds-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .rounds-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .rounds-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .rounds-table th,
-        .rounds-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .rounds-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .rounds-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-disabled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .rounds-section {
-            margin-bottom: 40px;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #2575fc;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .count-badge {
-            font-size: 14px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 24px;
-            height: 24px;
-        }
-        
-        .active-count {
-            background: #28a745;
-        }
-        
-        .disabled-count {
-            background: #dc3545;
-        }
-        
-        .no-rounds {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-style: italic;
-        }
-        
-        /* Form Styles */
-        .add-round-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border: 1px solid #dee2e6;
-        }
-        
-        .add-round-form, .edit-round-form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border: 1px solid #e9ecef;
-        }
-        
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: flex-end;
-            margin-bottom: 0;
-        }
-        
-        .form-group {
-            flex: 1 1 250px;
-            min-width: 200px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .form-group.checkbox-group {
-            flex: 0 0 auto;
-            min-width: 100px;
-            flex-direction: row;
-            align-items: center;
-            gap: 8px;
-            padding-top: 22px;
-        }
-        
-        .form-group.button-group {
-            flex: 0 0 auto;
-            min-width: auto;
-            justify-content: flex-end;
-            align-self: flex-end;
-            padding-top: 22px;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-            
-            .form-group {
-                min-width: auto;
-                flex: 1 1 auto;
-            }
-            
-            .form-group.checkbox-group,
-            .form-group.button-group {
-                align-self: flex-start;
-                padding-top: 0;
-            }
-            
-            .form-group.button-group {
-                width: 100%;
-            }
-            
-            .form-group.button-group .btn {
-                flex: 1;
-            }
-            
-            .rounds-container {
-                padding: 10px;
-            }
-            
-            .rounds-table th,
-            .rounds-table td {
-                padding: 10px 8px;
-                font-size: 14px;
-            }
-            
-            .add-round-section {
-                padding: 15px;
-            }
-            
-            .add-round-form, .edit-round-form {
-                padding: 15px;
-            }
-        }
-        
-        .form-group label {
-            display: block;
-            margin: 0 0 5px 0;
-            font-weight: 500;
-            color: #333;
-            line-height: 1.4;
-            font-size: 14px;
-        }
-        
-        .form-group input[type="text"],
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-            box-sizing: border-box;
-        }
-        
-        .form-group input[type="text"]:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #2575fc;
-            box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-            line-height: 1.4;
-        }
-        
-        .form-group input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            transform: scale(1.2);
-            cursor: pointer;
-        }
-        
-        .form-group.checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-        }
-        
-        /* Button Styles */
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #0056b3;
-            transform: translateY(-1px);
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #1e7e34;
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #545b62;
-            transform: translateY(-1px);
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-        
-        .btn-warning:hover {
-            background: #e0a800;
-            transform: translateY(-1px);
-        }
-        
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 12px;
-        }
-        
-        .edit-btn {
-            margin-right: 5px;
-        }
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.rounds-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.rounds-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.rounds-table th,
+.rounds-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.rounds-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.rounds-table tr:hover {
+    background: #f8f9fa;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-disabled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.rounds-section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #2575fc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.count-badge {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+}
+
+.active-count {
+    background: #28a745;
+}
+
+.disabled-count {
+    background: #dc3545;
+}
+
+.no-rounds {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Form Styles */
+.add-round-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #dee2e6;
+}
+
+.add-round-form, .edit-round-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    margin-bottom: 0;
+}
+
+.form-group {
+    flex: 1 1 250px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group.checkbox-group {
+    flex: 0 0 auto;
+    min-width: 100px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-top: 22px;
+}
+
+.form-group.button-group {
+    flex: 0 0 auto;
+    min-width: auto;
+    justify-content: flex-end;
+    align-self: flex-end;
+    padding-top: 22px;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .form-group {
+        min-width: auto;
+        flex: 1 1 auto;
+    }
+    
+    .form-group.checkbox-group,
+    .form-group.button-group {
+        align-self: flex-start;
+        padding-top: 0;
+    }
+    
+    .form-group.button-group {
+        width: 100%;
+    }
+    
+    .form-group.button-group .btn {
+        flex: 1;
+    }
+    
+    .rounds-container {
+        padding: 10px;
+    }
+    
+    .rounds-table th,
+    .rounds-table td {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+    
+    .add-round-section {
+        padding: 15px;
+    }
+    
+    .add-round-form, .edit-round-form {
+        padding: 15px;
+    }
+}
+
+.form-group label {
+    display: block;
+    margin: 0 0 5px 0;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.4;
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.form-group.checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Button Styles */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #1e7e34;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.edit-btn {
+    margin-right: 5px;
+}

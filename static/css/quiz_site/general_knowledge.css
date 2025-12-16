@@ -39,7 +39,6 @@
 
 .category-tab:hover {
     background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
 }
 
@@ -108,7 +107,6 @@
 
 .question-row:hover {
     box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
-    transform: translateY(-2px);
 }
 
 .question-row form {
@@ -172,7 +170,6 @@
 
 .submit:hover {
     background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
@@ -246,7 +243,6 @@
 
 .btn-delete:hover {
     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 

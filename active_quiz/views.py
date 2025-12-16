@@ -1178,8 +1178,21 @@ def next_movie(request):
         
         if request.user.username != 'david':
             # Normalize both titles for comparison
-            user_answer = movie_title.lower().strip()
-            correct_answer = correct_title.lower().strip()
+            # Remove common articles and punctuation for better matching
+            def normalize_title(title):
+                title = title.lower().strip()
+                # Remove leading articles
+                for article in ['the ', 'a ', 'an ']:
+                    if title.startswith(article):
+                        title = title[len(article):]
+                # Remove common punctuation
+                title = title.replace(':', '').replace('-', ' ').replace('.', '')
+                # Normalize multiple spaces to single space
+                title = ' '.join(title.split())
+                return title
+            
+            user_answer = normalize_title(movie_title)
+            correct_answer = normalize_title(correct_title)
             
             # Check for exact match
             if user_answer == correct_answer:
@@ -1190,18 +1203,33 @@ def next_movie(request):
                 distance = Levenshtein.distance(user_answer, correct_answer)
                 max_length = max(len(user_answer), len(correct_answer))
                 
-                # Allow up to 15% character differences for partial credit
+                # Calculate tolerance ratio
                 tolerance_ratio = distance / max_length if max_length > 0 else 1
                 
-                if tolerance_ratio <= 0.15:  # Very close
-                    score = 1.5
-                    messages.success(request, f'Close enough! You earned {score} points.')
-                elif tolerance_ratio <= 0.30:  # Moderately close
-                    score = 0.75
-                    messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
+                # For short titles, be more lenient with absolute character differences
+                # For longer titles, use ratio-based tolerance
+                if max_length <= 10:
+                    # Short titles: allow 1-2 character mistakes for full credit
+                    if distance <= 2:
+                        score = 1.5
+                        messages.success(request, f'Close enough! You earned {score} points.')
+                    elif distance <= 3:
+                        score = 0.75
+                        messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
+                    else:
+                        score = 0
+                        messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
                 else:
-                    score = 0
-                    messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
+                    # Longer titles: use ratio-based tolerance
+                    if tolerance_ratio <= 0.15:  # Very close (within 15%)
+                        score = 1.5
+                        messages.success(request, f'Close enough! You earned {score} points.')
+                    elif tolerance_ratio <= 0.30:  # Moderately close (within 30%)
+                        score = 0.75
+                        messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
+                    else:
+                        score = 0
+                        messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
             
             player.player_score = (player.player_score or 0) + score
             if score >= 1:

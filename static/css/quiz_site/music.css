@@ -184,12 +184,10 @@ audio {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn:active {
-    transform: translateY(0);
 }
 
 .btn-primary {

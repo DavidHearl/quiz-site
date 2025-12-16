@@ -165,7 +165,6 @@
 }
 
 .reveal-button:hover {
-    transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
 }
 

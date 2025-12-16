@@ -32,7 +32,6 @@
 }
 
 .celebrity-content:hover {
-    transform: translateX(5px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     border-color: rgba(102, 126, 234, 0.6);
 }
@@ -183,12 +182,10 @@
 }
 
 .reveal-order-button:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(251, 146, 60, 0.5);
 }
 
 .reveal-order-button:active {
-    transform: translateY(0);
 }
 
 .buttons-div .next-button {

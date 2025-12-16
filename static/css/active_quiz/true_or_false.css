@@ -39,7 +39,7 @@
 }
 
 .true-button:hover:not(:disabled) {
-    transform: translateY(-5px) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
 }
 
@@ -49,13 +49,13 @@
 }
 
 .false-button:hover:not(:disabled) {
-    transform: translateY(-5px) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
 }
 
 .true-button:active:not(:disabled),
 .false-button:active:not(:disabled) {
-    transform: translateY(-2px) scale(1.02);
+    transform: scale(1.02);
 }
 
 .true-button:disabled,

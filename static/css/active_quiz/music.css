@@ -61,7 +61,6 @@
     border-color: #667eea;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3),
                 0 6px 20px rgba(0, 0, 0, 0.3);
-    transform: translateY(-2px);
 }
 
 .music-input:disabled {
@@ -94,12 +93,10 @@
 }
 
 .reveal-button:hover:not(:disabled) {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(251, 146, 60, 0.5);
 }
 
 .reveal-button:active:not(:disabled) {
-    transform: translateY(0);
 }
 
 .reveal-button:disabled {
@@ -155,11 +152,9 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(-10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -179,12 +174,10 @@
 }
 
 .submit-button:hover:not(:disabled) {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
 }
 
 .submit-button:active:not(:disabled) {
-    transform: translateY(0);
 }
 
 .submit-button:disabled {
@@ -211,12 +204,10 @@
 }
 
 .next-button:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
 }
 
 .next-button:active {
-    transform: translateY(0);
 }
 
 #artist_answer,
@@ -273,11 +264,9 @@
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 

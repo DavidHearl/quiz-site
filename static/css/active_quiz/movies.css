@@ -11,31 +11,29 @@
 }
 
 .celebrity-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 15px;
-    overflow: hidden;
-    width: calc(25% - 15px);
-    min-width: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: calc(25% - 15px);
+    min-width: 200px;
+    transition: all 0.3s ease;
 }
 
-.celebrity-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    border-color: rgba(102, 126, 234, 0.6);
+.celebrity-card:hover .celebrity-photo {
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
 .celebrity-photo {
     width: 100%;
     height: auto;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: 10px;
+    object-fit: cover;
+    border-radius: 15px;
     display: block;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 .movie-input-container {
@@ -71,7 +69,6 @@
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-    transform: translateY(-2px);
 }
 
 .answer-display {
@@ -113,7 +110,6 @@
 }
 
 .reveal-button:hover {
-    transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
 }
 
@@ -139,8 +135,8 @@
         margin: 20px 0;
     }
 
-    .celebrity-photo {
-        height: 200px;
+    .celebrity-card {
+        width: calc(33.333% - 10px);
     }
 
     .movie-input {
@@ -155,16 +151,12 @@
 
 @media (max-width: 480px) {
     .celebrities-grid {
-        grid-template-columns: 1fr;
         gap: 12px;
     }
 
-    .celebrity-photo {
-        height: 250px;
-    }
-
     .celebrity-card {
-        padding: 4px;
+        width: calc(50% - 6px);
+        min-width: 0;
     }
 
     .movie-input {

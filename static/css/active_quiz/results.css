@@ -258,7 +258,6 @@
 }
 
 .player-card:hover {
-    transform: translateY(-5px);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
     border-color: rgba(102, 126, 234, 0.5);
 }
@@ -333,40 +332,34 @@
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-50px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @keyframes riseUp {
     from {
         opacity: 0;
-        transform: translateY(100px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @keyframes bounce {
     0%, 100% {
-        transform: translateY(0);
     }
     50% {
-        transform: translateY(-20px);
     }
 }
 
 @keyframes float {
     0%, 100% {
-        transform: translateY(0) rotate(-10deg);
+        transform: rotate(-10deg);
     }
     50% {
-        transform: translateY(-15px) rotate(10deg);
+        transform: rotate(10deg);
     }
 }
 

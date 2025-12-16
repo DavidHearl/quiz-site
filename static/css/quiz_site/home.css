@@ -106,11 +106,6 @@
     display: none;
 }
 
-/* Form styling */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
 .form-label {
     display: block;
     margin-bottom: 0.5rem;
@@ -146,12 +141,13 @@
     text-decoration: none;
     vertical-align: middle;
     cursor: pointer;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-radius: 8px;
     transition: all 0.2s ease-in-out;
     margin-bottom: 0.5rem;
     border: none;
     width: 100%;
+    font-size: 1rem;
 }
 
 .btn-primary {
@@ -188,6 +184,13 @@
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
 }
 
+#join_code,
+#id_quiz_name {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    font-size: 1.5rem;
+}
+
 /* Features section */
 .features {
     margin-top: 2rem;
@@ -215,13 +218,11 @@
     border-radius: 15px;
     background: white;
     height: 100%;
-    transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .feature-card:hover {
-    transform: translateY(-8px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     border-color: rgba(102, 126, 234, 0.3);
 }
@@ -249,11 +250,9 @@
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 

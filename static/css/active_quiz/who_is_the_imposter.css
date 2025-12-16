@@ -11,39 +11,28 @@
 }
 
 .celebrity-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 3px solid rgba(102, 126, 234, 0.3);
-    border-radius: 15px;
-    padding: 15px;
-    overflow: hidden;
-    width: calc(20% - 16px);
-    min-width: 180px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    width: calc(20% - 16px);
+    min-width: 180px;
 }
 
-.celebrity-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    border-color: rgba(102, 126, 234, 0.6);
+.celebrity-card:hover .celebrity-photo {
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
-.celebrity-card.selected {
+.celebrity-card.selected .celebrity-photo {
     border-color: #667eea;
     border-width: 4px;
-    background: rgba(102, 126, 234, 0.1);
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3), 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
-.celebrity-card.highlight-imposter {
+.celebrity-card.highlight-imposter .celebrity-photo {
     border-color: #ef4444;
     border-width: 4px;
-    background: rgba(239, 68, 68, 0.1);
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
     animation: pulse 1s ease-in-out 3;
 }
@@ -51,11 +40,15 @@
 .celebrity-photo {
     width: 100%;
     height: auto;
-    max-height: 250px;
-    object-fit: contain;
-    border-radius: 10px;
+    object-fit: cover;
+    border-radius: 15px;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 .celebrity-name {
@@ -110,7 +103,6 @@
 }
 
 .reveal-button:hover {
-    transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
 }
 
@@ -145,10 +137,6 @@
         min-width: 150px;
     }
 
-    .celebrity-photo {
-        max-height: 200px;
-    }
-
     .celebrity-name {
         font-size: 0.9rem;
     }
@@ -161,12 +149,7 @@
 
     .celebrity-card {
         width: calc(50% - 6px);
-        min-width: 140px;
-        padding: 12px;
-    }
-
-    .celebrity-photo {
-        max-height: 180px;
+        min-width: 0;
     }
 
     .celebrity-name {

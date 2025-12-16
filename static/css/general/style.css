@@ -67,9 +67,10 @@ a:hover {
     padding-left: 32px;
 }
 
-/* Main Content */
+.form-group {
+    margin-bottom: 1rem;
+}
 
-/* Database Styling */
 .database-container {
     display: flex;
     gap: 12px;
@@ -238,12 +239,12 @@ background-color: #568869;
     justify-content: center;
 }
 
-.auth-primary {
+/* .auth-primary {
     justify-content: center;
     display: flex;
     color: black;
     font-weight: 600;
-}
+} */
 
 .auth-secondary {
     justify-content: center;
@@ -279,7 +280,6 @@ background-color: #568869;
 
 .auth-button:hover {
     background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
@@ -305,6 +305,8 @@ background-color: #568869;
     background: white;
     color: black;
     text-align: start;
+    border: 1px solid #8e8e8e;
+    box-shadow: 1px 1px 1px #8e8e8e;
 }
 
 .logout-message {
