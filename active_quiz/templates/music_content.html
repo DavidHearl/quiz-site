@@ -10,7 +10,7 @@
     {% if request.user.username == 'david' %}
         <div class="music-player-container">
             <audio id="music-player" controls>
-                <source src="{{ current_music.audio_file.url }}" type="audio/mpeg">
+                <source src="{{ current_music.audio_file.url }}" type="audio/mp4">
                 Your browser does not support the audio element.
             </audio>
         </div>

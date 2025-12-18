@@ -1198,8 +1198,22 @@ def next_movie(request):
             if user_answer == correct_answer:
                 score = 1.5
                 messages.success(request, f'Correct! You earned {score} points.')
+            # Check if one title is a substring of the other (handles partial matches)
+            elif user_answer in correct_answer or correct_answer in user_answer:
+                # Make sure the match is substantial enough (at least 50% of the shorter title)
+                min_length = min(len(user_answer), len(correct_answer))
+                max_length = max(len(user_answer), len(correct_answer))
+                
+                # If the shorter answer is at least 50% of the longer one, accept it
+                if min_length >= max_length * 0.5:
+                    score = 1.5
+                    messages.success(request, f'Correct! You earned {score} points.')
+                else:
+                    # Too short to be a valid partial match
+                    score = 0
+                    messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
             else:
-                # Use Levenshtein distance for fuzzy matching
+                # Use Levenshtein distance for fuzzy matching (typos)
                 distance = Levenshtein.distance(user_answer, correct_answer)
                 max_length = max(len(user_answer), len(correct_answer))
                 
