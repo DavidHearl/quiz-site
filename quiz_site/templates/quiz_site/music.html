@@ -22,6 +22,11 @@
                     <label for="id_song_title">Song Title:</label>
                     {{ music_form.song_title }}
                 </div>
+
+                <div class="form-group">
+                    <label for="id_release_date">Release Date:</label>
+                    {{ music_form.release_date }}
+                </div>
                 
                 <div class="form-group">
                     <label for="id_difficulty">Difficulty (0-1):</label>
@@ -93,6 +98,11 @@
                                     <div class="form-group">
                                         <label>Song Title:</label>
                                         <input type="text" name="song_title" value="{{ music.song_title }}" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Release Date:</label>
+                                        <input type="date" name="release_date" value="{{ music.release_date|date:'Y-m-d' }}">
                                     </div>
                                     
                                     <div class="form-group">

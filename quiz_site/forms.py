@@ -126,6 +126,9 @@ class MusicForm(forms.ModelForm):
     class Meta:
         model = Music
         fields = '__all__'
+        widgets = {
+            'release_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

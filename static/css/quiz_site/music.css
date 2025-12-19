@@ -78,16 +78,22 @@
 
 .form-group input[type="text"],
 .form-group input[type="number"],
+.form-group input[type="date"],
 .form-group input[type="file"] {
-    padding: 0.625rem;
+    padding: 8px;
     border: 2px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.95rem;
     transition: all 0.3s ease;
 }
 
+.form-group input[type="date"] {
+    padding: 6px 8px;
+}
+
 .form-group input[type="text"]:focus,
-.form-group input[type="number"]:focus {
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -113,6 +119,7 @@
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     border-radius: 12px;
     border: 2px solid #cbd5e0;
+    padding-bottom: 4px;
 }
 
 .audio-preview-label {
@@ -188,6 +195,7 @@ audio {
 }
 
 .btn:active {
+    transform: translateY(1px);
 }
 
 .btn-primary {
