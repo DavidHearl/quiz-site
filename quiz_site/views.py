@@ -1115,3 +1115,101 @@ def rounds(request):
     }
     
     return render(request, 'quiz_site/rounds.html', context)
+
+
+@login_required
+def manage_users(request):
+    """View for managing users - viewing profiles, resetting passwords, etc."""
+    if not request.user.is_superuser:
+        messages.error(request, 'You do not have permission to access this page.')
+        return redirect('home')
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        user_id = request.POST.get('user_id')
+
+        if action == 'reset_password' and user_id:
+            try:
+                user = User.objects.get(id=user_id)
+                new_password = request.POST.get('new_password')
+                confirm_password = request.POST.get('confirm_password')
+
+                if not new_password or not confirm_password:
+                    return JsonResponse({'success': False, 'error': 'Both password fields are required'})
+
+                if new_password != confirm_password:
+                    return JsonResponse({'success': False, 'error': 'Passwords do not match'})
+
+                if len(new_password) < 8:
+                    return JsonResponse({'success': False, 'error': 'Password must be at least 8 characters long'})
+
+                user.set_password(new_password)
+                user.save()
+
+                messages.success(request, f'Password reset successfully for {user.username}')
+                return JsonResponse({'success': True})
+
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'User not found'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+
+        elif action == 'upload_photo' and user_id and request.FILES.get('photo'):
+            try:
+                user = User.objects.get(id=user_id)
+                player, created = Player.objects.get_or_create(user=user)
+
+                player.player_photo = request.FILES['photo']
+                player.save()
+
+                messages.success(request, f'Profile photo uploaded successfully for {user.username}')
+                return JsonResponse({'success': True, 'photo_url': player.player_photo.url})
+
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'User not found'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+
+        elif action == 'delete_user' and user_id:
+            try:
+                user = User.objects.get(id=user_id)
+                username = user.username
+                user.delete()
+
+                messages.success(request, f'User {username} has been deleted successfully')
+                return JsonResponse({'success': True})
+
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'User not found'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+
+    users = User.objects.all().order_by('username')
+    user_profiles = []
+
+    for user in users:
+        try:
+            player = Player.objects.get(user=user)
+            has_photo = bool(player.player_photo)
+            photo_url = player.player_photo.url if has_photo else None
+        except Player.DoesNotExist:
+            player = None
+            has_photo = False
+            photo_url = None
+
+        user_profiles.append({
+            'user': user,
+            'player': player,
+            'has_photo': has_photo,
+            'photo_url': photo_url,
+            'is_active': user.is_active,
+            'date_joined': user.date_joined,
+            'last_login': user.last_login,
+        })
+
+    context = {
+        'user_profiles': user_profiles,
+        'total_users': users.count(),
+    }
+
+    return render(request, 'quiz_site/manage_users.html', context)

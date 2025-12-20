@@ -374,6 +374,10 @@ def next_flag(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
+
     return iterate_next_question(request)
 
 
@@ -385,7 +389,10 @@ def next_general_knowledge(request):
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
-        if selected_answer == correct_answer:
+        # Determine if answer is correct
+        is_correct = selected_answer == correct_answer
+
+        if is_correct:
             player.player_score = (player.player_score or 0) + 1
             player.question_answered = 1  # Correct
             score = 2
@@ -407,6 +414,9 @@ def next_general_knowledge(request):
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
+
+        # Adjust question difficulty based on answer correctness
+        adjust_question_difficulty(quiz, round_name, is_correct)
 
     return iterate_next_question(request)
 
@@ -451,6 +461,10 @@ def next_fighter_jet(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
             logger.debug(f"Correct answer saved to quiz: {correct_answer}")
+
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
 
     return iterate_next_question(request)
 
@@ -526,6 +540,10 @@ def next_music(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
+        # Adjust question difficulty based on answer correctness (consider partial credit as correct)
+        is_correct = total_score > 0
+        adjust_question_difficulty(quiz, round_name, is_correct)
+
     return iterate_next_question(request)
 
 
@@ -560,6 +578,10 @@ def next_history(request):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
 
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
+
     return iterate_next_question(request)
 
 
@@ -591,6 +613,10 @@ def next_entertainment(request):
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
+
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
 
     return iterate_next_question(request)
 
@@ -719,6 +745,10 @@ def next_technology(request):
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
+
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
 
     return iterate_next_question(request)
 
@@ -1029,6 +1059,10 @@ def next_true_or_false(request):
         if len(player.answers[round_name]) > len(quiz.correct_answers.get(round_name, [])):
             quiz.correct_answers.setdefault(round_name, []).append(correct_answer)
             quiz.save()
+
+        # Adjust question difficulty based on answer correctness
+        is_correct = selected_answer == correct_answer
+        adjust_question_difficulty(quiz, round_name, is_correct)
 
     return iterate_next_question(request)
 
@@ -1366,9 +1400,64 @@ def next_who_is_the_imposter(request):
 
     return iterate_next_question(request)
 
-# --------------------------------------------------------------------- #
-# ---------------------- Round Handling Functions ---------------------- #
-# --------------------------------------------------------------------- #
+def adjust_question_difficulty(quiz, round_name, is_correct):
+    """Adjust the difficulty of a question based on whether it was answered correctly."""
+    try:
+        # Get the question that was just answered
+        question_ids = quiz.random_numbers.get(round_name, [])
+        rounds = quiz.rounds.all()
+        question_counter = quiz.question_counter
+        current_index = 0
+
+        # Calculate which question index was just answered
+        for round_obj in rounds:
+            round_questions = len(quiz.random_numbers.get(round_obj.question_type, []))
+            if question_counter < round_questions:
+                if round_obj.question_type == round_name:
+                    current_index = question_counter
+                break
+            question_counter -= round_questions
+
+        if current_index < len(question_ids):
+            question_id = question_ids[current_index]
+
+            # Adjust difficulty based on question type
+            if round_name in ["General Knowledge", "History", "Entertainment", "Maths", "Pop Culture", "Mythology", "Technology", "Geography", "Science", "Sport"]:
+                # These use GeneralKnowledge model with different categories
+                category_name = round_name if round_name != "General Knowledge" else "General"
+                category = GeneralKnowledgeCategory.objects.get(category=category_name)
+                question = GeneralKnowledge.objects.get(id=question_id, category=category)
+            elif round_name == "Flags":
+                question = Flags.objects.get(id=question_id)
+            elif round_name == "True or False":
+                question = TrueOrFalse.objects.get(id=question_id)
+            elif round_name == "Fighter Jets":
+                question = Jets.objects.get(id=question_id)
+            elif round_name == "Celebrities":
+                question = Celebrities.objects.get(id=question_id)
+            elif round_name == "Movies":
+                question = Movies.objects.get(id=question_id)
+            elif round_name == "Locations":
+                question = Locations.objects.get(id=question_id)
+            elif round_name == "Music":
+                question = Music.objects.get(id=question_id)
+            else:
+                return  # Unknown question type
+
+            # Adjust difficulty
+            if is_correct:
+                question.difficulty = (question.difficulty or 0.5) * 0.99
+            else:
+                question.difficulty = (question.difficulty or 0.5) * 1.01
+
+            question.save()
+
+    except (GeneralKnowledgeCategory.DoesNotExist, GeneralKnowledge.DoesNotExist, Flags.DoesNotExist,
+            TrueOrFalse.DoesNotExist, Jets.DoesNotExist, Celebrities.DoesNotExist,
+            Movies.DoesNotExist, Locations.DoesNotExist, Music.DoesNotExist,
+            IndexError, KeyError):
+        # If we can't find the question or category, just continue without adjusting difficulty
+        pass
 
 def handle_general_knowledge_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("General Knowledge", [])

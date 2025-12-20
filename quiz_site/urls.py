@@ -40,4 +40,5 @@ urlpatterns = [
     path('edit_music/<int:music_id>/', views.edit_music, name='edit_music'),
     path('manage-quizzes/', views.manage_quizzes, name='manage_quizzes'),
     path('rounds/', views.rounds, name='rounds'),
+    path('manage-users/', views.manage_users, name='manage_users'),
 ]

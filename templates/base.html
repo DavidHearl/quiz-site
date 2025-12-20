@@ -54,6 +54,7 @@
             {% if user.is_superuser %}
                 <a class="navigation-sub-label" href="{% url 'manage_quizzes' %}">Manage Quizzes</a>
                 <a class="navigation-sub-label" href="{% url 'rounds' %}">Rounds</a>
+                <a class="navigation-sub-label" href="{% url 'manage_users' %}">Manage Users</a>
             {% endif %}
 
             {% if user.is_superuser %}
@@ -92,7 +93,7 @@
             
             <!-- Version Display -->
             <div class="version-display">
-                <span class="version-text">Version 3.0.13</span>
+                <span class="version-text">Version 3.0.14</span>
             </div>
         </div>
 
