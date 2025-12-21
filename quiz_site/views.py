@@ -3,6 +3,7 @@ from django.shortcuts import render, HttpResponse, redirect, get_object_or_404, 
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth import login
 from .models import *
 from .forms import *
 from django.http import JsonResponse
@@ -332,6 +333,16 @@ def quiz_home(request):
                     elif round_name == "Sport":
                         category = GeneralKnowledgeCategory.objects.get(category='Sport')
                         base_query = base_query.filter(category=category)
+
+                    # Special filtering for Music round based on player ages
+                    if round_name == "Music":
+                        # Check if any players are born before 1990
+                        from datetime import date
+                        cutoff_date = date(1990, 1, 1)
+                        has_older_players = Player.objects.filter(player_dob__lt=cutoff_date).exists()
+                        if has_older_players:
+                            # Exclude modern music for older audiences
+                            base_query = base_query.filter(modern_music=False)
 
                     # Apply exclusion filter
                     if exclude_previous:
@@ -1170,6 +1181,26 @@ def manage_users(request):
             except Exception as e:
                 return JsonResponse({'success': False, 'error': str(e)})
 
+        elif action == 'set_dob' and user_id and request.POST.get('date_of_birth'):
+            try:
+                user = User.objects.get(id=user_id)
+                player, created = Player.objects.get_or_create(user=user)
+                
+                from datetime import datetime
+                dob_str = request.POST.get('date_of_birth')
+                player.player_dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+                player.save()
+
+                messages.success(request, f'Date of birth set successfully for {user.username}')
+                return JsonResponse({'success': True})
+
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'User not found'})
+            except ValueError:
+                return JsonResponse({'success': False, 'error': 'Invalid date format'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+
         elif action == 'delete_user' and user_id:
             try:
                 user = User.objects.get(id=user_id)
@@ -1213,3 +1244,93 @@ def manage_users(request):
     }
 
     return render(request, 'quiz_site/manage_users.html', context)
+
+
+@login_required
+def user_profile(request):
+    """View for users to manage their own profile"""
+    user = request.user
+    player, created = Player.objects.get_or_create(user=user)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'upload_photo' and request.FILES.get('photo'):
+            try:
+                player.player_photo = request.FILES['photo']
+                player.save()
+                messages.success(request, 'Profile photo updated successfully!')
+                return redirect('user_profile')
+            except Exception as e:
+                messages.error(request, f'Error uploading photo: {str(e)}')
+        
+        elif action == 'update_username' and request.POST.get('username'):
+            try:
+                new_username = request.POST.get('username').strip()
+                if User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                    messages.error(request, 'Username already taken')
+                else:
+                    user.username = new_username
+                    user.save()
+                    messages.success(request, 'Username updated successfully!')
+                return redirect('user_profile')
+            except Exception as e:
+                messages.error(request, f'Error updating username: {str(e)}')
+        
+        elif action == 'update_email':
+            try:
+                new_email = request.POST.get('email', '').strip()
+                user.email = new_email
+                user.save()
+                messages.success(request, 'Email updated successfully!')
+                return redirect('user_profile')
+            except Exception as e:
+                messages.error(request, f'Error updating email: {str(e)}')
+        
+        elif action == 'update_dob' and request.POST.get('date_of_birth'):
+            try:
+                from datetime import datetime
+                dob_str = request.POST.get('date_of_birth')
+                player.player_dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+                player.save()
+                messages.success(request, 'Date of birth updated successfully!')
+                return redirect('user_profile')
+            except ValueError:
+                messages.error(request, 'Invalid date format')
+            except Exception as e:
+                messages.error(request, f'Error updating date of birth: {str(e)}')
+        
+        elif action == 'change_password':
+            try:
+                new_password = request.POST.get('new_password')
+                confirm_password = request.POST.get('confirm_password')
+                
+                # Validate new password
+                if new_password != confirm_password:
+                    messages.error(request, 'New passwords do not match')
+                    return redirect('user_profile')
+                
+                if len(new_password) < 8:
+                    messages.error(request, 'Password must be at least 8 characters long')
+                    return redirect('user_profile')
+                
+                # Change password
+                user.set_password(new_password)
+                user.save()
+                
+                # Re-authenticate the user
+                from django.contrib.auth import login
+                login(request, user)
+                
+                messages.success(request, 'Password changed successfully!')
+                return redirect('user_profile')
+                
+            except Exception as e:
+                messages.error(request, f'Error changing password: {str(e)}')
+    
+    context = {
+        'user': user,
+        'player': player,
+    }
+    
+    return render(request, 'quiz_site/profile.html', context)

@@ -32,6 +32,13 @@
                     <label for="id_difficulty">Difficulty (0-1):</label>
                     {{ music_form.difficulty }}
                 </div>
+
+                <div class="form-group checkbox-group">
+                    <label for="id_modern_music" class="checkbox-label">
+                        {{ music_form.modern_music }}
+                        <span class="checkbox-text">Modern (post-1990)</span>
+                    </label>
+                </div>
             </div>
             
             <div class="form-group full-width">
@@ -62,14 +69,21 @@
             {% if music_list %}
                 <div class="music-list">
                     {% for music in music_list %}
-                        <div class="music-item">
+                        <div class="music-item {% if not music.audio_file or not music.release_date or not music.difficulty %}incomplete{% endif %}">
                             <form method="post" enctype="multipart/form-data" class="edit-music-form">
                                 {% csrf_token %}
                                 <input type="hidden" name="music_id" value="{{ music.id }}">
                                 
                                 <div class="music-item-header">
                                     <div class="music-header">
-                                        <h3 class="music-title">{{ music.song_title }}</h3>
+                                        <h3 class="music-title">
+                                            {% if music.audio_file and music.release_date and music.difficulty %}
+                                                <span class="complete-icon">✓</span>
+                                            {% else %}
+                                                <span class="incomplete-icon">⚠</span>
+                                            {% endif %}
+                                            {{ music.song_title }}
+                                        </h3>
                                         <span class="music-artist">by {{ music.artist }}</span>
                                     </div>
                                     <button type="submit" class="btn btn-success btn-save-top">Save Changes</button>
@@ -108,6 +122,13 @@
                                     <div class="form-group">
                                         <label>Difficulty:</label>
                                         <input type="number" name="difficulty" value="{{ music.difficulty }}" step="0.01" min="0" max="1">
+                                    </div>
+
+                                    <div class="form-group checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="modern_music" {% if music.modern_music %}checked{% endif %}>
+                                            <span class="checkbox-text">Modern (post-1990)</span>
+                                        </label>
                                     </div>
 
                                     <div class="form-group">

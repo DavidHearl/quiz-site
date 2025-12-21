@@ -41,4 +41,5 @@ urlpatterns = [
     path('manage-quizzes/', views.manage_quizzes, name='manage_quizzes'),
     path('rounds/', views.rounds, name='rounds'),
     path('manage-users/', views.manage_users, name='manage_users'),
+    path('profile/', views.user_profile, name='user_profile'),
 ]

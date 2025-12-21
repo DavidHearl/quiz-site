@@ -66,10 +66,20 @@
     overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid #e2e8f0;
+    position: relative;
+}
+
+.user-card.incomplete {
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(to right, #fef3c7 0%, white 10%);
 }
 
 .user-card:hover {
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.user-card.incomplete:hover {
+    border-left-color: #d97706;
 }
 
 /* User Header */
@@ -378,6 +388,41 @@
     font-size: 0.8rem;
     color: #718096;
     margin-top: 0.25rem;
+}
+
+/* ============================================
+   Profile Completion Status Icons
+   ============================================ */
+.profile-complete-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    vertical-align: middle;
+}
+
+.profile-incomplete-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+    vertical-align: middle;
 }
 
 /* ============================================

@@ -19,7 +19,7 @@
 
         <div class="users-grid">
             {% for profile in user_profiles %}
-                <div class="user-card">
+                <div class="user-card {% if not profile.has_photo or not profile.player.player_dob %}incomplete{% endif %}">
                     <div class="user-header">
                         <div class="user-avatar">
                             {% if profile.has_photo %}
@@ -29,7 +29,14 @@
                             {% endif %}
                         </div>
                         <div class="user-info">
-                            <h3 class="username">{{ profile.user.username }}</h3>
+                            <h3 class="username">
+                                {% if profile.has_photo and profile.player.player_dob %}
+                                    <span class="profile-complete-icon">✓</span>
+                                {% else %}
+                                    <span class="profile-incomplete-icon">⚠</span>
+                                {% endif %}
+                                {{ profile.user.username }}
+                            </h3>
                             <p class="email">{{ profile.user.email|default:"No email" }}</p>
                         </div>
                     </div>
@@ -60,6 +67,16 @@
                                     {% endif %}
                                 </span>
                             </div>
+                            <div class="detail-row">
+                                <span class="label">Date of Birth:</span>
+                                <span class="value">
+                                    {% if profile.player.player_dob %}
+                                        {{ profile.player.player_dob|date:"M d, Y" }}
+                                    {% else %}
+                                        Not set
+                                    {% endif %}
+                                </span>
+                            </div>
                         {% else %}
                             <div class="detail-row">
                                 <span class="label">Profile:</span>
@@ -81,10 +98,16 @@
                                 📷 Upload Photo
                             </button>
                         {% endif %}
+                        <button class="btn btn-info set-dob-btn"
+                                data-user-id="{{ profile.user.id }}"
+                                data-username="{{ profile.user.username }}"
+                                data-current-dob="{% if profile.player and profile.player.player_dob %}{{ profile.player.player_dob|date:'Y-m-d' }}{% endif %}">
+                            📅 Set DOB
+                        </button>
                         <button class="btn btn-danger delete-user-btn"
                                 data-user-id="{{ profile.user.id }}"
                                 data-username="{{ profile.user.username }}">
-                            �️ Delete User
+                            🗑️ Delete User
                         </button>
                     </div>
                 </div>
@@ -350,6 +373,85 @@
                     alert('An error occurred while deleting the user.');
                 });
             }
+        });
+    </script>
+
+    <!-- Set Date of Birth Modal -->
+    <div id="setDobModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Date of Birth</h2>
+                <span class="close close-dob">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Set date of birth for <strong id="dobUsername"></strong></p>
+                <form id="setDobForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="dobUserId">
+                    <input type="hidden" name="action" value="set_dob">
+                    <div class="form-group">
+                        <label for="dobInput">Date of Birth:</label>
+                        <input type="date" id="dobInput" name="date_of_birth" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeDobModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Set Date of Birth</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>        // Set DOB modal functionality
+        const dobModal = document.getElementById("setDobModal");
+        const closeDobBtn = document.querySelector(".close-dob");
+
+        function openDobModal(userId, username, currentDob) {
+            document.getElementById("dobUserId").value = userId;
+            document.getElementById("dobUsername").textContent = username;
+            document.getElementById("dobInput").value = currentDob || "";
+            dobModal.style.display = "block";
+        }
+
+        function closeDobModal() {
+            dobModal.style.display = "none";
+        }
+
+        closeDobBtn.onclick = closeDobModal;
+
+        // Set DOB buttons
+        document.querySelectorAll(".set-dob-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const userId = this.getAttribute("data-user-id");
+                const username = this.getAttribute("data-username");
+                const currentDob = this.getAttribute("data-current-dob");
+                openDobModal(userId, username, currentDob);
+            });
+        });
+
+        // Handle DOB form submission
+        document.getElementById("setDobForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(window.location.href, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Date of birth set successfully!");
+                    closeDobModal();
+                    location.reload(); // Refresh to show the new DOB
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while setting the date of birth.");
+            });
         });
     </script>
 {% endblock %}

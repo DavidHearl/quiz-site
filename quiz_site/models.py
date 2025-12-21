@@ -12,6 +12,12 @@ class Player(models.Model):
     number_of_questions = models.IntegerField(default=0)
     player_photo = models.ImageField(upload_to='player_photos', blank=True, null=True)
     player_dob = models.DateField(blank=True, null=True)
+    
+    # All-time statistics
+    all_time_score = models.FloatField(default=0.0)
+    all_time_incorrect = models.IntegerField(default=0)
+    all_time_questions = models.IntegerField(default=0)
+    
     QUESTION_STATUS_CHOICES = [
         (0, 'Not Answered'),
         (1, 'Correct'),
@@ -180,6 +186,7 @@ class Music(models.Model):
     song_title = models.CharField(max_length=100)
     audio_file = models.FileField(upload_to='music_files', null=True, blank=True)
     release_date = models.DateField(blank=True, null=True)
+    modern_music = models.BooleanField(default=False, help_text="Mark as True if this song should be excluded from users born before 1990")
 
     # Question Stats
     difficulty = models.FloatField(null=True, blank=True, default=0.5)
