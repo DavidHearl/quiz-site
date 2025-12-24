@@ -4,7 +4,7 @@
 
 .database-container {
     max-width: 1400px;
-    margin: 2rem auto;
+    margin: 16px auto;
     padding: 0 2rem;
 }
 
@@ -190,12 +190,6 @@
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
-.database-container {
-    margin: 2rem auto;
-    max-width: 1400px;
-    padding: 0 2rem;
 }
 
 .category-dropdown {

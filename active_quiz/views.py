@@ -199,36 +199,48 @@ def round_results(request):
         # Regular player only sees their own results
         players = User.objects.filter(id=request.user.id)
     
-    # Get the last round name from quiz.correct_answers
-    if quiz.correct_answers:
-        current_round = list(quiz.correct_answers.keys())[-1]
-    else:
-        current_round = None
-
+    # Determine the current round based on question_counter (same logic as active_quiz)
     question_counter = quiz.question_counter
     rounds = quiz.rounds.all()
+    current_round = None
+    temp_counter = question_counter
+    
+    # Find which round we just finished by checking question_counter
+    for round in rounds:
+        round_name = round.question_type
+        total_questions = len(quiz.random_numbers.get(round_name, []))
+        if temp_counter <= total_questions:
+            current_round = round_name
+            break
+        temp_counter -= total_questions
+    
+    # If we didn't find a round, use the last round in correct_answers as fallback
+    if current_round is None and quiz.correct_answers:
+        current_round = list(quiz.correct_answers.keys())[-1]
+
     total_questions = len(rounds) * 10
 
     # Determine the start and end indices for the last 10 questions
     start_index = max(0, question_counter - 10)
     end_index = question_counter
 
-    correct_answers = quiz.correct_answers.get(current_round, [])  # Get correct answers for the current round
-    last_10_answers = correct_answers[-10:]
+    correct_answers = quiz.correct_answers.get(current_round, []) if current_round else []
+    last_10_answers = correct_answers[-10:] if correct_answers else []
 
     # Combine answers and points for the current round
     combined_player_data = {}
-    for player in players:
-        combined_data = []
-        answers = player.player.answers.get(current_round, [])
-        points = player.player.points.get(current_round, [])
-        for i, answer in enumerate(answers):
-            combined_data.append({
-                'type': 'answer',
-                'value': answer,
-                'point': points[i] if i < len(points) else 0
-            })
-        combined_player_data[player] = combined_data
+    if current_round:
+        for player in players:
+            combined_data = []
+            answers = player.player.answers.get(current_round, [])
+            points = player.player.points.get(current_round, [])
+            for i, answer in enumerate(answers):
+                combined_data.append({
+                    'type': 'answer',
+                    'value': answer,
+                    'point': points[i] if i < len(points) else 0
+                })
+            combined_player_data[player] = combined_data
 
     context = {
         'quiz': quiz,
