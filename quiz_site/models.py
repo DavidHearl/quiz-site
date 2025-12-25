@@ -18,6 +18,9 @@ class Player(models.Model):
     all_time_incorrect = models.IntegerField(default=0)
     all_time_questions = models.IntegerField(default=0)
     
+    # Track questions seen by this player across all quizzes
+    questions_seen = models.JSONField(default=dict, blank=True, null=True, help_text="Dictionary mapping round types to lists of question IDs this player has seen")
+    
     QUESTION_STATUS_CHOICES = [
         (0, 'Not Answered'),
         (1, 'Correct'),

@@ -12,7 +12,11 @@ class QuizSelectionForm(forms.Form):
         required=False  # Make users field optional
     )
     rounds = forms.ModelMultipleChoiceField(queryset=Rounds.objects.all(), widget=forms.CheckboxSelectMultiple)
-    exclude_previous = forms.BooleanField(required=False, label="Exclude questions from previous quizzes")
+    exclude_previous = forms.BooleanField(
+        required=False, 
+        initial=True,
+        label="Exclude questions players have seen before"
+    )
 
     class Meta:
         model = Quiz

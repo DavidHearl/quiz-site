@@ -17,9 +17,143 @@ logger = logging.getLogger(__name__)
 
 QUESTION_TIMER = 300
 
+# Helper function for fuzzy string matching with partial credit
+def calculate_answer_score(user_answer, correct_answer, max_points=1.0):
+    """
+    Calculate score based on fuzzy string matching.
+    Returns a score between 0 and max_points.
+    
+    Args:
+        user_answer: The user's input (string)
+        correct_answer: The correct answer (string)
+        max_points: Maximum points for a perfect match
+    
+    Returns:
+        tuple: (score, match_type) where match_type is 'exact', 'close', 'partial', or 'incorrect'
+    """
+    if not user_answer or not correct_answer:
+        return 0.0, 'incorrect'
+    
+    # Normalize strings
+    user_normalized = user_answer.lower().strip()
+    correct_normalized = correct_answer.lower().strip()
+    
+    # Remove common articles for better matching
+    for article in ['the ', 'a ', 'an ']:
+        if user_normalized.startswith(article):
+            user_normalized = user_normalized[len(article):]
+        if correct_normalized.startswith(article):
+            correct_normalized = correct_normalized[len(article):]
+    
+    # Remove common punctuation
+    for char in [':', '-', '.', ',', '!', '?', "'", '"', '(', ')']:
+        user_normalized = user_normalized.replace(char, ' ')
+        correct_normalized = correct_normalized.replace(char, ' ')
+    
+    # Normalize whitespace
+    user_normalized = ' '.join(user_normalized.split())
+    correct_normalized = ' '.join(correct_normalized.split())
+    
+    # Exact match
+    if user_normalized == correct_normalized:
+        return max_points, 'exact'
+    
+    # Calculate Levenshtein distance
+    distance = levenshtein_distance(user_normalized, correct_normalized)
+    max_length = max(len(user_normalized), len(correct_normalized))
+    
+    if max_length == 0:
+        return 0.0, 'incorrect'
+    
+    # For very short answers (1-5 chars), allow 1 character difference for full credit
+    if max_length <= 5:
+        if distance <= 1:
+            return max_points, 'close'
+        elif distance <= 2:
+            return max_points * 0.5, 'partial'
+        else:
+            return 0.0, 'incorrect'
+    
+    # For medium answers (6-15 chars), allow 2 character difference for full credit
+    elif max_length <= 15:
+        if distance <= 2:
+            return max_points, 'close'
+        elif distance <= 4:
+            return max_points * 0.5, 'partial'
+        else:
+            # Check word overlap for partial credit
+            user_words = set(user_normalized.split())
+            correct_words = set(correct_normalized.split())
+            word_matches = len(user_words & correct_words)
+            if word_matches > 0 and len(correct_words) > 0:
+                word_score = (word_matches / len(correct_words)) * max_points * 0.3
+                return round(word_score, 2), 'partial'
+            return 0.0, 'incorrect'
+    
+    # For longer answers, use ratio-based tolerance
+    else:
+        tolerance_ratio = distance / max_length
+        
+        # 90% similarity or better = full credit
+        if tolerance_ratio <= 0.1:
+            return max_points, 'close'
+        # 70-90% similarity = half credit
+        elif tolerance_ratio <= 0.3:
+            return max_points * 0.5, 'partial'
+        # 50-70% similarity = quarter credit
+        elif tolerance_ratio <= 0.5:
+            return max_points * 0.25, 'partial'
+        else:
+            # Check word overlap for partial credit
+            user_words = set(user_normalized.split())
+            correct_words = set(correct_normalized.split())
+            word_matches = len(user_words & correct_words)
+            if word_matches > 0 and len(correct_words) > 0:
+                word_score = (word_matches / len(correct_words)) * max_points * 0.2
+                return round(word_score, 2), 'partial'
+            return 0.0, 'incorrect'
+
 '''
 Main function that controls the active quiz page.
 '''
+
+def track_question_for_players(quiz, round_name, question_index):
+    """
+    Track that all players in the quiz have now seen this question.
+    Updates each player's questions_seen field immediately.
+    """
+    question_ids = quiz.random_numbers.get(round_name, [])
+    if not question_ids or question_index >= len(question_ids):
+        return
+    
+    # Get the question ID(s) at this index
+    question_id_data = question_ids[question_index]
+    
+    # Handle nested lists (like "Who is the Oldest" round)
+    if isinstance(question_id_data, list):
+        question_ids_to_track = question_id_data
+    else:
+        question_ids_to_track = [question_id_data]
+    
+    # Update all players in this quiz
+    for player_user in quiz.players.all():
+        try:
+            player = player_user.player
+            if not player.questions_seen:
+                player.questions_seen = {}
+            
+            if round_name not in player.questions_seen:
+                player.questions_seen[round_name] = []
+            
+            # Add the question IDs
+            for qid in question_ids_to_track:
+                if qid not in player.questions_seen[round_name]:
+                    player.questions_seen[round_name].append(qid)
+            
+            player.save()
+        except Player.DoesNotExist:
+            continue
+
 @login_required
 def active_quiz(request):
     users = User.objects.all()
@@ -83,6 +217,9 @@ def active_quiz(request):
     if current_round in round_handlers:
         round_context = round_handlers[current_round](quiz, current_index)
         context.update(round_context)
+    
+    # Track that all players have now seen this question
+    track_question_for_players(quiz, current_round, current_index)
 
     return render(request, 'active_quiz.html', context)
 
@@ -114,7 +251,7 @@ def print_player_data(request):
         if player.user.username != 'david':
             player_data.append({
                 'username': player.user.username,
-                'score': player.player_score,
+                'score': round(player.player_score, 1),
                 'incorrect_answers': player.incorrect_answers,
                 'question_answered': player.question_answered,
             })
@@ -191,6 +328,35 @@ def print_player_data(request):
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     
+    # Track questions from the round that just finished
+    # This ensures questions are marked as seen even if the quiz doesn't complete
+    for player_user in quiz.players.all():
+        try:
+            player = player_user.player
+            if not player.questions_seen:
+                player.questions_seen = {}
+            
+            # Add all question IDs from this quiz to the player's seen questions
+            for round_name, question_ids in quiz.random_numbers.items():
+                if round_name not in player.questions_seen:
+                    player.questions_seen[round_name] = []
+                
+                # Handle nested lists (like "Who is the Oldest" round)
+                if question_ids and isinstance(question_ids[0], list):
+                    # Flatten the list
+                    flat_ids = [item for sublist in question_ids for item in sublist]
+                    for qid in flat_ids:
+                        if qid not in player.questions_seen[round_name]:
+                            player.questions_seen[round_name].append(qid)
+                else:
+                    for qid in question_ids:
+                        if qid not in player.questions_seen[round_name]:
+                            player.questions_seen[round_name].append(qid)
+            
+            player.save()
+        except Player.DoesNotExist:
+            continue
+    
     # Fix player selection logic
     if request.user.username == 'david':
         # Quiz master sees all players except themselves
@@ -258,6 +424,35 @@ def quiz_results(request):
     quiz = Quiz.objects.latest('date_created')
     players = Player.objects.filter(player_score__gt=0).order_by('-player_score')
     winner = players.first() if players else None
+    
+    # Track questions seen by all players in this quiz
+    for player_user in quiz.players.all():
+        try:
+            player = player_user.player
+            if not player.questions_seen:
+                player.questions_seen = {}
+            
+            # Add all question IDs from this quiz to the player's seen questions
+            for round_name, question_ids in quiz.random_numbers.items():
+                if round_name not in player.questions_seen:
+                    player.questions_seen[round_name] = []
+                
+                # Handle nested lists (like "Who is the Oldest" round)
+                if question_ids and isinstance(question_ids[0], list):
+                    # Flatten the list
+                    flat_ids = [item for sublist in question_ids for item in sublist]
+                    player.questions_seen[round_name].extend(flat_ids)
+                else:
+                    player.questions_seen[round_name].extend(question_ids)
+                
+                # Remove duplicates
+                player.questions_seen[round_name] = list(set(player.questions_seen[round_name]))
+            
+            player.save()
+        except Player.DoesNotExist:
+            # Skip if player doesn't have a Player profile
+            continue
+    
     context = {
         'quiz': quiz,
         'players': players,
@@ -364,7 +559,7 @@ def next_flag(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 1
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -405,7 +600,7 @@ def next_general_knowledge(request):
         is_correct = selected_answer == correct_answer
 
         if is_correct:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -448,7 +643,7 @@ def next_fighter_jet(request):
         print('Statment Called')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1.5
+            player.player_score = round((player.player_score or 0) + 1.5, 1)
             player.question_answered = 1  # Correct
             score = 1.5
             messages.success(request, 'Correct answer! You have earned 1.5 points.')
@@ -491,53 +686,40 @@ def next_music(request):
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
-        # Calculate partial matching scores for artist and song
-        artist_score = 0
-        song_score = 0
-        
-        if artist_answer and correct_artist:
-            # Split into words and check partial matches
-            artist_words_user = set(artist_answer.lower().split())
-            artist_words_correct = set(correct_artist.lower().split())
-            artist_matches = len(artist_words_user & artist_words_correct)
-            artist_total = len(artist_words_correct)
-            
-            # Award points: full match = 1 point, partial match = 0.5 points per word
-            if artist_answer.lower() == correct_artist.lower():
-                artist_score = 1.0
-            elif artist_matches > 0:
-                artist_score = (artist_matches / artist_total) * 0.5
-        
-        if song_answer and correct_song:
-            # Split into words and check partial matches
-            song_words_user = set(song_answer.lower().split())
-            song_words_correct = set(correct_song.lower().split())
-            song_matches = len(song_words_user & song_words_correct)
-            song_total = len(song_words_correct)
-            
-            # Award points: full match = 1 point, partial match = 0.5 points per word
-            if song_answer.lower() == correct_song.lower():
-                song_score = 1.0
-            elif song_matches > 0:
-                song_score = (song_matches / song_total) * 0.5
+        # Use the fuzzy matching helper for both artist and song
+        artist_score, artist_match_type = calculate_answer_score(artist_answer, correct_artist, max_points=1.0)
+        song_score, song_match_type = calculate_answer_score(song_answer, correct_song, max_points=1.0)
         
         # Total score (max 2 points: 1 for artist + 1 for song)
-        total_score = artist_score + song_score
+        total_score = round(artist_score + song_score, 2)
         
         # Update player stats
-        player.player_score = (player.player_score or 0) + total_score
+        player.player_score = round((player.player_score or 0) + total_score, 1)
         
+        # Provide feedback based on score
         if total_score >= 2.0:
             player.question_answered = 1  # Fully Correct
             messages.success(request, f'Perfect! You earned {total_score:.1f} points!')
+        elif total_score >= 1.5:
+            player.question_answered = 1  # Mostly Correct
+            messages.success(request, f'Great! You earned {total_score:.1f} points!')
+        elif total_score >= 1.0:
+            player.question_answered = 3  # Partial
+            feedback_parts = []
+            if artist_score >= 0.5:
+                feedback_parts.append("artist")
+            if song_score >= 0.5:
+                feedback_parts.append("song")
+            feedback = f"Good! You got the {' and '.join(feedback_parts)}. You earned {total_score:.1f} points."
+            messages.warning(request, feedback)
         elif total_score > 0:
             player.question_answered = 3  # Partial
-            messages.warning(request, f'Partial answer. You earned {total_score:.1f} points.')
+            messages.warning(request, f'Partial credit. You earned {total_score:.1f} points.')
         else:
             player.question_answered = 2  # Incorrect
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             if request.user.username != 'david':
-                messages.error(request, 'Incorrect answer. No points earned.')
+                messages.error(request, f'Incorrect. The answer was "{correct_artist} - {correct_song}". No points earned.')
 
         # Record the answer and score
         round_name = "Music"
@@ -568,7 +750,7 @@ def next_history(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 1.5
             messages.success(request, 'Correct answer! You have earned 1.5 point.')
@@ -606,7 +788,7 @@ def next_entertainment(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 1.5
             messages.success(request, 'Correct answer! You have earned 1.5 points.')
@@ -642,7 +824,7 @@ def next_maths(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 1.5
             messages.success(request, 'Correct answer! You have earned 1.5 points.')
@@ -674,7 +856,7 @@ def next_pop_culture(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -706,7 +888,7 @@ def next_mythology(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -738,7 +920,7 @@ def next_technology(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -774,7 +956,7 @@ def next_geography(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -806,7 +988,7 @@ def next_science(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -838,7 +1020,7 @@ def next_sport(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 2
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -870,7 +1052,7 @@ def next_capital_city(request):
         quiz = Quiz.objects.latest('date_created')
 
         if selected_answer == correct_answer:
-            player.player_score = (player.player_score or 0) + 1
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
             score = 1.3
             messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -898,35 +1080,44 @@ def next_capital_city(request):
 @login_required
 def next_celebrity(request):
     if request.method == 'POST':
-        selected_first_name = request.POST.get('first_name', '').strip().lower()
-        selected_last_name = request.POST.get('last_name', '').strip().lower()
-        correct_first_name = request.POST.get('correct_first_name', '').strip().lower()
-        correct_last_name = request.POST.get('correct_last_name', '').strip().lower()
+        selected_first_name = request.POST.get('first_name', '').strip()
+        selected_last_name = request.POST.get('last_name', '').strip()
+        correct_first_name = request.POST.get('correct_first_name', '').strip()
+        correct_last_name = request.POST.get('correct_last_name', '').strip()
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
 
-        def is_acceptable(answer, correct_answer):
-            return Levenshtein.distance(answer, correct_answer) <= 2
-
-        first_name_correct = is_acceptable(selected_first_name, correct_first_name)
-        last_name_correct = is_acceptable(selected_last_name, correct_last_name)
-
-        if first_name_correct and last_name_correct:
-            player.player_score = (player.player_score or 0) + 1
+        # Use fuzzy matching helper for both first and last names
+        first_name_score, first_match_type = calculate_answer_score(selected_first_name, correct_first_name, max_points=0.5)
+        last_name_score, last_match_type = calculate_answer_score(selected_last_name, correct_last_name, max_points=0.5)
+        
+        total_score = round(first_name_score + last_name_score, 2)
+        
+        # Determine question status and award points
+        if total_score >= 1.0:
+            player.player_score = round((player.player_score or 0) + 1, 1)
             player.question_answered = 1  # Correct
-            score = 2
-            messages.success(request, 'Correct answer! You have earned 1 point.')
-        elif first_name_correct or last_name_correct:
-            player.player_score = (player.player_score or 0) + 0.5
-            player.question_answered = 3  # Partially correct
             score = 1
-            messages.success(request, 'Partially correct answer! You have earned 0.5 points.')
+            messages.success(request, f'Correct! You have earned 1 point.')
+        elif total_score >= 0.5:
+            player.player_score = round((player.player_score or 0) + 0.5, 1)
+            player.question_answered = 3  # Partially correct
+            score = 0.5
+            if first_name_score > last_name_score:
+                messages.warning(request, f'Partially correct! You got the first name. You earned 0.5 points.')
+            else:
+                messages.warning(request, f'Partially correct! You got the last name. You earned 0.5 points.')
+        elif total_score > 0:
+            player.player_score = round((player.player_score or 0) + 0.25, 1)
+            player.question_answered = 3  # Partially correct
+            score = 0.25
+            messages.warning(request, f'Close! You earned {score} points.')
         else:
             player.incorrect_answers = (player.incorrect_answers or 0) + 1
             player.question_answered = 2  # Incorrect
             score = 0
             if request.user.username != 'david':
-                messages.error(request, 'Incorrect answer.')
+                messages.error(request, f'Incorrect. The answer was "{correct_first_name} {correct_last_name}".')
 
         # Record the answer and score
         round_name = "Celebrities"
@@ -950,20 +1141,22 @@ def next_logo(request):
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
         
-        # Initialize score
-        score = 0
+        # Use fuzzy matching helper
+        score, match_type = calculate_answer_score(selected_answer, correct_answer, max_points=1.0)
         
         if request.user.username != 'david':
-            if levenshtein_distance(selected_answer.lower(), correct_answer.lower()) <= 1:
-                player.player_score = (player.player_score or 0) + 1
+            if score >= 1.0:
+                player.player_score = round((player.player_score or 0) + 1, 1)
                 player.question_answered = 1  # Correct
-                score = 1.5
-                messages.success(request, 'Correct answer! You earned 1 point.')
+                messages.success(request, f'Correct! You earned 1 point.')
+            elif score > 0:
+                player.player_score = round((player.player_score or 0) + score, 1)
+                player.question_answered = 3  # Partial
+                messages.warning(request, f'Close! You earned {score:.1f} points.')
             else:
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
                 player.question_answered = 2  # Incorrect
-                score = 0
-                messages.error(request, 'Incorrect answer. No points earned.')
+                messages.error(request, f'Incorrect. The answer was "{correct_answer}". No points earned.')
         
         # Record the answer and score
         round_name = "Logos"
@@ -987,43 +1180,26 @@ def next_location(request):
         player = request.user.player
         quiz = Quiz.objects.latest('date_created')
         
-        # Initialize score
-        score = 0
+        # Use fuzzy matching helper
+        score, match_type = calculate_answer_score(selected_answer, correct_answer, max_points=1.0)
         
         if request.user.username != 'david':
-            if selected_answer and correct_answer:
-                # Calculate Levenshtein distance
-                distance = levenshtein_distance(selected_answer.lower(), correct_answer.lower())
-                
-                # Split into words and check partial matches
-                user_words = set(selected_answer.lower().split())
-                correct_words = set(correct_answer.lower().split())
-                matches = len(user_words & correct_words)
-                total_words = len(correct_words)
-                
-                # Award points: exact match or 1 character off = 1.5 points, partial match proportional
-                if selected_answer.lower() == correct_answer.lower():
-                    score = 1.5
-                    player.question_answered = 1  # Correct
-                    messages.success(request, f'Perfect! You earned {score:.1f} points!')
-                elif distance == 1:
-                    score = 1.5
-                    player.question_answered = 1  # Correct (close enough)
-                    messages.success(request, f'Close enough! You earned {score:.1f} points!')
-                elif matches > 0:
-                    score = (matches / total_words) * 0.75
-                    player.question_answered = 3  # Partial
-                    messages.warning(request, f'Partial answer. You earned {score:.1f} points.')
-                else:
-                    player.question_answered = 2  # Incorrect
-                    player.incorrect_answers = (player.incorrect_answers or 0) + 1
-                    messages.error(request, 'Incorrect answer. No points earned.')
-                
-                player.player_score = (player.player_score or 0) + score
+            if score >= 1.0:
+                player.player_score = round((player.player_score or 0) + 1, 1)
+                player.question_answered = 1  # Correct
+                messages.success(request, f'Correct! You earned 1 point.')
+            elif score >= 0.5:
+                player.player_score = round((player.player_score or 0) + score, 1)
+                player.question_answered = 3  # Partial
+                messages.warning(request, f'Close! You earned {score:.1f} points.')
+            elif score > 0:
+                player.player_score = round((player.player_score or 0) + score, 1)
+                player.question_answered = 3  # Partial
+                messages.info(request, f'Partial credit. You earned {score:.1f} points.')
             else:
-                player.question_answered = 2  # Incorrect
                 player.incorrect_answers = (player.incorrect_answers or 0) + 1
-                messages.error(request, 'Incorrect answer. No points earned.')
+                player.question_answered = 2  # Incorrect
+                messages.error(request, f'Incorrect. The answer was "{correct_answer}". No points earned.')
         
         # Record the answer and score
         round_name = "Locations"
@@ -1052,7 +1228,7 @@ def next_true_or_false(request):
 
         if request.user.username != 'david':
             if selected_answer == correct_answer:
-                player.player_score = (player.player_score or 0) + 1
+                player.player_score = round((player.player_score or 0) + 1, 1)
                 player.question_answered = 1  # Correct
                 score = 1
                 messages.success(request, 'Correct answer! You have earned 1 point.')
@@ -1112,7 +1288,7 @@ def next_celebrity_age(request):
             score = 0
         
         if request.user.username != 'david':
-            player.player_score = (player.player_score or 0) + score
+            player.player_score = round((player.player_score or 0) + score, 1)
             if score >= 1:
                 player.question_answered = 1
             elif 0 < score < 1:
@@ -1181,7 +1357,7 @@ def next_movie_release_date(request):
             else:
                 score = 0
             
-            player.player_score = (player.player_score or 0) + score
+            player.player_score = round((player.player_score or 0) + score, 1)
             if score >= 1:
                 player.question_answered = 1
             elif 0 < score < 1:
@@ -1220,84 +1396,28 @@ def next_movie(request):
             return redirect('active_quiz:active_quiz')
         
         player = request.user.player
-        score = 0
         
         if request.user.username != 'david':
-            # Normalize both titles for comparison
-            # Remove common articles and punctuation for better matching
-            def normalize_title(title):
-                title = title.lower().strip()
-                # Remove leading articles
-                for article in ['the ', 'a ', 'an ']:
-                    if title.startswith(article):
-                        title = title[len(article):]
-                # Remove common punctuation
-                title = title.replace(':', '').replace('-', ' ').replace('.', '')
-                # Normalize multiple spaces to single space
-                title = ' '.join(title.split())
-                return title
+            # Use fuzzy matching helper
+            score, match_type = calculate_answer_score(movie_title, correct_title, max_points=1.0)
             
-            user_answer = normalize_title(movie_title)
-            correct_answer = normalize_title(correct_title)
-            
-            # Check for exact match
-            if user_answer == correct_answer:
-                score = 1.5
-                messages.success(request, f'Correct! You earned {score} points.')
-            # Check if one title is a substring of the other (handles partial matches)
-            elif user_answer in correct_answer or correct_answer in user_answer:
-                # Make sure the match is substantial enough (at least 50% of the shorter title)
-                min_length = min(len(user_answer), len(correct_answer))
-                max_length = max(len(user_answer), len(correct_answer))
-                
-                # If the shorter answer is at least 50% of the longer one, accept it
-                if min_length >= max_length * 0.5:
-                    score = 1.5
-                    messages.success(request, f'Correct! You earned {score} points.')
-                else:
-                    # Too short to be a valid partial match
-                    score = 0
-                    messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
-            else:
-                # Use Levenshtein distance for fuzzy matching (typos)
-                distance = Levenshtein.distance(user_answer, correct_answer)
-                max_length = max(len(user_answer), len(correct_answer))
-                
-                # Calculate tolerance ratio
-                tolerance_ratio = distance / max_length if max_length > 0 else 1
-                
-                # For short titles, be more lenient with absolute character differences
-                # For longer titles, use ratio-based tolerance
-                if max_length <= 10:
-                    # Short titles: allow 1-2 character mistakes for full credit
-                    if distance <= 2:
-                        score = 1.5
-                        messages.success(request, f'Close enough! You earned {score} points.')
-                    elif distance <= 3:
-                        score = 0.75
-                        messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
-                    else:
-                        score = 0
-                        messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
-                else:
-                    # Longer titles: use ratio-based tolerance
-                    if tolerance_ratio <= 0.15:  # Very close (within 15%)
-                        score = 1.5
-                        messages.success(request, f'Close enough! You earned {score} points.')
-                    elif tolerance_ratio <= 0.30:  # Moderately close (within 30%)
-                        score = 0.75
-                        messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score} points.')
-                    else:
-                        score = 0
-                        messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
-            
-            player.player_score = (player.player_score or 0) + score
-            if score >= 1:
+            # Award feedback based on score
+            if score >= 1.0:
+                messages.success(request, f'Correct! You earned {score:.1f} points.')
                 player.question_answered = 1
-            elif 0 < score < 1:
+            elif score >= 0.5:
+                messages.success(request, f'Close enough! You earned {score:.1f} points.')
+                player.question_answered = 1
+            elif score > 0:
+                messages.info(request, f'Almost! The correct answer was "{correct_title}". You earned {score:.1f} points.')
                 player.question_answered = 3
             else:
+                messages.error(request, f'Incorrect. The correct answer was "{correct_title}". No points earned.')
                 player.question_answered = 2
+            
+            player.player_score = round((player.player_score or 0) + score, 1)
+        else:
+            score = 0
         
         # Record the answer and score
         round_name = "Movies"
@@ -1392,7 +1512,7 @@ def next_who_is_the_imposter(request):
             
             if selected_celebrity_id == imposter_id:
                 score = 1.5
-                player.player_score = (player.player_score or 0) + score
+                player.player_score = round((player.player_score or 0) + score, 1)
                 player.question_answered = 1  # Correct
                 messages.success(request, f'Correct! You earned {score} points.')
             else:

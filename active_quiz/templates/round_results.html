@@ -20,7 +20,7 @@
         <!-- Player Answers -->
         {% for player, items in combined_player_data.items %}
             <div class="player-result">
-                <h2 class="player-name">{{ player }} ({{ player.player.player_score }})</h2>
+                <h2 class="player-name">{{ player }} ({{ player.player.player_score|floatformat:1 }})</h2>
                 <ul class="answer-list" data-round="{{ current_round }}">
                     {% for item in items %}
                         <li class="player-answer {% if item.point|default:0 == 0 %}incorrect{% elif item.point|default:0 >= 1 %}correct{% else %}partial{% endif %}" data-question="{{ forloop.counter0 }}">

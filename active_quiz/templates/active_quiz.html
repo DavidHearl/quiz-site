@@ -52,7 +52,8 @@
                 if (playerElement) {
                     const scoreElement = playerElement.querySelector('.player-score');
                     if (scoreElement) {
-                        scoreElement.textContent = `${player.score} / ${player.score + player.incorrect_answers}`;
+                        const formattedScore = parseFloat(player.score).toFixed(1);
+                        scoreElement.textContent = `${formattedScore} / ${player.score + player.incorrect_answers}`;
                     }
                     if (player.question_answered === 1) {
                         playerElement.classList.add('correct');

@@ -26,7 +26,7 @@
                     <h3 class="player-name">{{ players.1.user.username }}</h3>
                     <div class="player-stats">
                         <span class="score-label">Score</span>
-                        <span class="score-value">{{ players.1.player_score }}</span>
+                        <span class="score-value">{{ players.1.player_score|floatformat:1 }}</span>
                     </div>
                     <div class="podium-bar silver-bar">
                         <span class="rank">2</span>
@@ -48,7 +48,7 @@
                     <h3 class="player-name">{{ players.0.user.username }}</h3>
                     <div class="player-stats">
                         <span class="score-label">Score</span>
-                        <span class="score-value">{{ players.0.player_score }}</span>
+                        <span class="score-value">{{ players.0.player_score|floatformat:1 }}</span>
                     </div>
                     <div class="podium-bar gold-bar">
                         <span class="rank">1</span>
@@ -69,7 +69,7 @@
                     <h3 class="player-name">{{ players.2.user.username }}</h3>
                     <div class="player-stats">
                         <span class="score-label">Score</span>
-                        <span class="score-value">{{ players.2.player_score }}</span>
+                        <span class="score-value">{{ players.2.player_score|floatformat:1 }}</span>
                     </div>
                     <div class="podium-bar bronze-bar">
                         <span class="rank">3</span>
@@ -94,7 +94,7 @@
                                 {% endif %}
                                 <span class="name">{{ player.user.username }}</span>
                             </div>
-                            <div class="score-badge">{{ player.player_score }}</div>
+                            <div class="score-badge">{{ player.player_score|floatformat:1 }}</div>
                         </div>
                     {% endif %}
                 {% endfor %}

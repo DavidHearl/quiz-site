@@ -344,22 +344,20 @@ def quiz_home(request):
                             # Exclude modern music for older audiences
                             base_query = base_query.filter(modern_music=False)
 
-                    # Apply exclusion filter
+                    # Apply exclusion filter to avoid repeating questions for current players
                     if exclude_previous:
-                        previous_questions = Quiz.objects.values_list('random_numbers', flat=True)
-                        previous_question_ids = set()
-                        for pq in previous_questions:
-                            if pq and isinstance(pq, dict):
-                                for key, value in pq.items():
-                                    if isinstance(value, list):
-                                        if any(isinstance(x, list) for x in value):
-                                            flattened = [item for sublist in value for item in (sublist if isinstance(sublist, list) else [sublist])]
-                                            previous_question_ids.update(flattened)
-                                        else:
-                                            previous_question_ids.update(value)
-                                    else:
-                                        previous_question_ids.add(value)
-                        base_query = base_query.exclude(id__in=previous_question_ids)
+                        # Get all players participating in this quiz
+                        current_players = Player.objects.filter(user__in=quiz.players.all())
+                        
+                        # Collect question IDs seen by ANY player for this round
+                        questions_to_exclude = set()
+                        for player in current_players:
+                            if player.questions_seen and round_name in player.questions_seen:
+                                player_seen = player.questions_seen.get(round_name, [])
+                                questions_to_exclude.update(player_seen)
+                        
+                        if questions_to_exclude:
+                            base_query = base_query.exclude(id__in=questions_to_exclude)
 
                     # Get final IDs
                     ids = list(base_query.values_list('id', flat=True))
