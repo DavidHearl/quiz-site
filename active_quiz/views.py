@@ -1552,7 +1552,12 @@ def adjust_question_difficulty(quiz, round_name, is_correct):
             question_id = question_ids[current_index]
 
             # Adjust difficulty based on question type
-            if round_name in ["General Knowledge", "History", "Entertainment", "Maths", "Pop Culture", "Mythology", "Technology", "Geography", "Science", "Sport"]:
+            if round_name == "Entertainment" or round_name == "Pop Culture":
+                # Entertainment round includes both Entertainment and Pop Culture categories
+                entertainment_cat = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+                pop_culture_cat = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+                question = GeneralKnowledge.objects.get(id=question_id, category__in=[entertainment_cat, pop_culture_cat])
+            elif round_name in ["General Knowledge", "History", "Maths", "Mythology", "Technology", "Geography", "Science", "Sport"]:
                 # These use GeneralKnowledge model with different categories
                 category_name = round_name if round_name != "General Knowledge" else "General"
                 category = GeneralKnowledgeCategory.objects.get(category=category_name)
@@ -1633,9 +1638,23 @@ def handle_history_round(quiz, current_index):
 
 def handle_entertainment_round(quiz, current_index):
     question_ids = quiz.random_numbers.get("Entertainment", [])
-    category = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+    # Entertainment round includes both Entertainment and Pop Culture categories
+    try:
+        entertainment_cat = GeneralKnowledgeCategory.objects.get(category='Entertainment')
+        pop_culture_cat = GeneralKnowledgeCategory.objects.get(category='Pop Culture')
+    except GeneralKnowledgeCategory.DoesNotExist:
+        return {'current_question': None, 'gk_choices': []}
+    
     current_question_id = question_ids[current_index]
-    current_question = GeneralKnowledge.objects.get(id=current_question_id, category=category)
+    # Try to get the question from either Entertainment or Pop Culture category
+    try:
+        current_question = GeneralKnowledge.objects.get(
+            id=current_question_id, 
+            category__in=[entertainment_cat, pop_culture_cat]
+        )
+    except GeneralKnowledge.DoesNotExist:
+        return {'current_question': None, 'gk_choices': []}
+    
     choices = [current_question.answer, current_question.choice_1, 
               current_question.choice_2, current_question.choice_3]
     random.shuffle(choices)
