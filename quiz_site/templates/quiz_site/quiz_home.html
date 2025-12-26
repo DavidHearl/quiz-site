@@ -121,6 +121,18 @@
                     <p class="instructions">What question sets do you want?</p>
                     <button type="button" class="btn btn-secondary auto-select-btn" onclick="autoSelectRounds()">🎲 Auto Select 5 Rounds</button>
                 </div>
+                
+                <!-- Exclude Previous Questions Checkbox -->
+                <div class="exclude-previous-container" style="margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                    <label for="id_exclude_previous" style="display: flex; align-items: center; cursor: pointer; font-size: 1.1rem;">
+                        <input type="checkbox" name="exclude_previous" id="id_exclude_previous" checked style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
+                        <span>{{ quiz_selection_form.exclude_previous.label }}</span>
+                    </label>
+                    <small style="display: block; margin-left: 30px; margin-top: 5px; opacity: 0.8; font-size: 0.9rem;">
+                        When checked, players won't see questions they've answered in previous quizzes
+                    </small>
+                </div>
+                
                 <div class="question-groups">
                     <!-- Active Rounds -->
                     <div class="active-rounds">

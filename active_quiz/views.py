@@ -11,6 +11,7 @@ from Levenshtein import distance as levenshtein_distance
 import logging
 from django.utils import timezone
 import math
+import sys
 
 
 logger = logging.getLogger(__name__)
@@ -121,6 +122,7 @@ def track_question_for_players(quiz, round_name, question_index):
     """
     Track that all players in the quiz have now seen this question.
     Updates each player's questions_seen field immediately.
+    Does NOT track for the quiz master 'david'.
     """
     question_ids = quiz.random_numbers.get(round_name, [])
     if not question_ids or question_index >= len(question_ids):
@@ -135,8 +137,13 @@ def track_question_for_players(quiz, round_name, question_index):
     else:
         question_ids_to_track = [question_id_data]
     
-    # Update all players in this quiz
-    for player_user in quiz.players.all():
+    # DEBUG: Log tracking
+    import sys
+    print(f"\nTRACKING: {round_name} Q{question_index} - IDs: {question_ids_to_track}", file=sys.stderr)
+    
+    # Update all players in this quiz (EXCEPT david)
+    tracked_count = 0
+    for player_user in quiz.players.exclude(username='david'):
         try:
             player = player_user.player
             if not player.questions_seen:
@@ -149,10 +156,14 @@ def track_question_for_players(quiz, round_name, question_index):
             for qid in question_ids_to_track:
                 if qid not in player.questions_seen[round_name]:
                     player.questions_seen[round_name].append(qid)
+                    tracked_count += 1
             
             player.save()
+            print(f"  Saved for {player.user.username}: now has {len(player.questions_seen[round_name])} {round_name} questions", file=sys.stderr)
         except Player.DoesNotExist:
             continue
+    
+    print(f"  Tracked {tracked_count} new question views (excluding david)\n", file=sys.stderr)
 
 @login_required
 def active_quiz(request):
@@ -218,8 +229,8 @@ def active_quiz(request):
         round_context = round_handlers[current_round](quiz, current_index)
         context.update(round_context)
     
-    # Track that all players have now seen this question
-    track_question_for_players(quiz, current_round, current_index)
+    # Note: Question tracking happens at quiz completion in quiz_results view
+    # This prevents tracking questions from incomplete/abandoned quizzes
 
     return render(request, 'active_quiz.html', context)
 
@@ -328,34 +339,8 @@ def print_player_data(request):
 def round_results(request):
     quiz = Quiz.objects.latest('date_created')
     
-    # Track questions from the round that just finished
-    # This ensures questions are marked as seen even if the quiz doesn't complete
-    for player_user in quiz.players.all():
-        try:
-            player = player_user.player
-            if not player.questions_seen:
-                player.questions_seen = {}
-            
-            # Add all question IDs from this quiz to the player's seen questions
-            for round_name, question_ids in quiz.random_numbers.items():
-                if round_name not in player.questions_seen:
-                    player.questions_seen[round_name] = []
-                
-                # Handle nested lists (like "Who is the Oldest" round)
-                if question_ids and isinstance(question_ids[0], list):
-                    # Flatten the list
-                    flat_ids = [item for sublist in question_ids for item in sublist]
-                    for qid in flat_ids:
-                        if qid not in player.questions_seen[round_name]:
-                            player.questions_seen[round_name].append(qid)
-                else:
-                    for qid in question_ids:
-                        if qid not in player.questions_seen[round_name]:
-                            player.questions_seen[round_name].append(qid)
-            
-            player.save()
-        except Player.DoesNotExist:
-            continue
+    # Note: Question tracking happens at quiz completion in quiz_results view
+    # This prevents tracking questions from incomplete/abandoned quizzes
     
     # Fix player selection logic
     if request.user.username == 'david':
@@ -425,17 +410,26 @@ def quiz_results(request):
     players = Player.objects.filter(player_score__gt=0).order_by('-player_score')
     winner = players.first() if players else None
     
-    # Track questions seen by all players in this quiz
-    for player_user in quiz.players.all():
+    print(f"\n=== QUIZ_RESULTS TRACKING ===", file=sys.stderr)
+    print(f"Quiz ID: {quiz.id}, random_numbers keys: {list(quiz.random_numbers.keys())}", file=sys.stderr)
+    
+    # Track questions seen by all players in this quiz (EXCEPT david)
+    for player_user in quiz.players.exclude(username='david'):
         try:
             player = player_user.player
+            print(f"Tracking for player: {player_user.username}", file=sys.stderr)
+            
             if not player.questions_seen:
                 player.questions_seen = {}
             
             # Add all question IDs from this quiz to the player's seen questions
             for round_name, question_ids in quiz.random_numbers.items():
+                print(f"  Round: {round_name}, IDs to track: {question_ids}", file=sys.stderr)
+                
                 if round_name not in player.questions_seen:
                     player.questions_seen[round_name] = []
+                
+                before_count = len(player.questions_seen[round_name])
                 
                 # Handle nested lists (like "Who is the Oldest" round)
                 if question_ids and isinstance(question_ids[0], list):
@@ -447,10 +441,14 @@ def quiz_results(request):
                 
                 # Remove duplicates
                 player.questions_seen[round_name] = list(set(player.questions_seen[round_name]))
+                
+                after_count = len(player.questions_seen[round_name])
+                print(f"  Added {after_count - before_count} new questions (before: {before_count}, after: {after_count})", file=sys.stderr)
             
             player.save()
+            print(f"  Saved player {player_user.username}, total questions_seen: {player.questions_seen}", file=sys.stderr)
         except Player.DoesNotExist:
-            # Skip if player doesn't have a Player profile
+            print(f"  Player.DoesNotExist for user {player_user.username}", file=sys.stderr)
             continue
     
     context = {

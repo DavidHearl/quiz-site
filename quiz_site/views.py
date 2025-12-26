@@ -294,6 +294,13 @@ def quiz_home(request):
             quiz.rounds.set(selected_rounds)
             random_numbers = {}
             exclude_previous = quiz_selection_form.cleaned_data.get('exclude_previous', False)
+            
+            # DEBUG: Log the state
+            import sys
+            print(f"\n{'='*80}", file=sys.stderr)
+            print(f"QUIZ SETUP - exclude_previous: {exclude_previous}", file=sys.stderr)
+            print(f"Players in quiz: {[u.username for u in quiz.players.all()]}", file=sys.stderr)
+            print(f"{'='*80}\n", file=sys.stderr)
 
             for round in selected_rounds:
                 round_name = round.question_type
@@ -346,18 +353,43 @@ def quiz_home(request):
 
                     # Apply exclusion filter to avoid repeating questions for current players
                     if exclude_previous:
-                        # Get all players participating in this quiz
-                        current_players = Player.objects.filter(user__in=quiz.players.all())
+                        import sys
                         
-                        # Collect question IDs seen by ANY player for this round
+                        # Get all NON-david players participating in this quiz
+                        current_player_users = quiz.players.exclude(username='david')
+                        
+                        print(f"\n{round_name} - Checking previous quizzes for {current_player_users.count()} players (excluding david):", file=sys.stderr)
+                        
+                        # Get all COMPLETED quizzes that these players participated in (excluding current quiz)
+                        # A quiz is "completed" if it has a winner or if question_counter reached the end
+                        previous_quizzes = Quiz.objects.filter(
+                            players__in=current_player_users
+                        ).exclude(id=quiz.id).distinct()
+                        
+                        print(f"  Found {previous_quizzes.count()} previous quizzes", file=sys.stderr)
+                        
+                        # Collect question IDs from all previous quizzes for this round
                         questions_to_exclude = set()
-                        for player in current_players:
-                            if player.questions_seen and round_name in player.questions_seen:
-                                player_seen = player.questions_seen.get(round_name, [])
-                                questions_to_exclude.update(player_seen)
+                        for prev_quiz in previous_quizzes:
+                            if prev_quiz.random_numbers and round_name in prev_quiz.random_numbers:
+                                question_ids = prev_quiz.random_numbers[round_name]
+                                
+                                # Handle nested lists (like "Who is the Oldest")
+                                if question_ids and isinstance(question_ids[0], list):
+                                    flat_ids = [item for sublist in question_ids for item in sublist]
+                                    questions_to_exclude.update(flat_ids)
+                                else:
+                                    questions_to_exclude.update(question_ids)
+                                
+                                print(f"  Quiz {prev_quiz.id}: found {len(question_ids)} {round_name} questions", file=sys.stderr)
+                        
+                        print(f"  Total to exclude: {len(questions_to_exclude)} questions - {sorted(list(questions_to_exclude))}", file=sys.stderr)
+                        print(f"  Available before exclusion: {base_query.count()}", file=sys.stderr)
                         
                         if questions_to_exclude:
                             base_query = base_query.exclude(id__in=questions_to_exclude)
+                        
+                        print(f"  Available after exclusion: {base_query.count()}\n", file=sys.stderr)
 
                     # Get final IDs
                     ids = list(base_query.values_list('id', flat=True))
